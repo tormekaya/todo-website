@@ -1,0 +1,58 @@
+[
+    {
+        "id": "651af9bb9a46e4b0",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "a72f64871256d68a",
+        "type": "http in",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "url": "/",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 190,
+        "y": 220,
+        "wires": [
+            [
+                "2ae9555726c58d4a"
+            ]
+        ]
+    },
+    {
+        "id": "2ae9555726c58d4a",
+        "type": "template",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>ToDo</title>\n\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                <form>\n                    <div class=\"input-group input-group-lg\">\n                        <input type=\"text\" class=\"form-control\" placeholder=\"Yapılacaklar\">\n                        <button class=\"btn btn-outline-secondary\" type=\"reset\">Temizle</button>\n                        <button class=\"btn btn-outline-primary px-5\" type=\"submit\">Ekle</button>\n                    </div>\n                </form>\n                <div class=\"card mt-2 overflow-hidden\">\n                    <div class=\"card-body p-0\">\n                        <div class=\"table-responsive\">\n                            <table class=\"table table-hover m-0\">\n                                <thead class=\"table-dark\">\n                                    <tr>\n                                        <th colspan=\"2\">İş</th>\n                                    </tr>\n                                </thead>\n                                <tbody>\n                                    <tr>\n                                        <td>Yoğurt al</td>\n                                        <td align=\"right\">\n                                            <div class=\"btn-group\">\n                                                <button type=\"button\" class=\"btn btn-info\">Düzenle</button>\n                                                <button type=\"button\" class=\"btn btn-secondary\">Hatırlatıcı</button>\n                                                <button type=\"button\" class=\"btn btn-success\">Tamamla</button>\n                                                <button type=\"button\" class=\"btn btn-danger\">Sil</button>\n                                            </div>\n                                        </td>\n                                    </tr>\n                                    <tr>\n                                        <td>Yoğurt al</td>\n                                        <td align=\"right\">\n                                            <div class=\"btn-group\">\n                                                <button type=\"button\" class=\"btn btn-warning\">Aç</button>\n                                                <button type=\"button\" class=\"btn btn-secondary\">Hatırlatıcı</button>\n                                            </div>\n                                        </td>\n                                    </tr>\n                                </tbody>\n                            </table>\n\n                        </div>\n                    </div>\n                </div>\n\n\n            </div>\n        </div>\n    </div>\n    <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
+        "output": "str",
+        "x": 380,
+        "y": 220,
+        "wires": [
+            [
+                "5f3b77fa64a6ca14"
+            ]
+        ]
+    },
+    {
+        "id": "5f3b77fa64a6ca14",
+        "type": "http response",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 570,
+        "y": 220,
+        "wires": []
+    }
+]
