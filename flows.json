@@ -16,9 +16,9 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>ToDo</title>\n\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                    <h4>{{message}}</h4>\n                </div>\n                {{/error}}\n                <form action=\"/opt/add\" method=\"POST\">\n                    <div class=\"input-group input-group-lg\">\n                        <input required type=\"text\" name=\"name\" class=\"form-control {{#error}}border-danger{{/error}}\"  placeholder=\"Dosyalar teslim edilecek...\">\n                        <button class=\"btn btn-outline-secondary\" type=\"reset\">Temizle</button>\n                        <button class=\"btn btn-outline-primary px-5\" type=\"submit\">Ekle</button>\n                    </div>\n                </form>\n                <div class=\"card mt-2 overflow-hidden\">\n                    <div class=\"card-body p-0\">\n                        <div class=\"table-responsive\">\n                            <table class=\"table table-hover m-0\">\n                                <thead class=\"table-dark\">\n                                    <tr>\n                                        <th colspan=\"2\">Yapılacaklar listesi</th>\n                                    </tr>\n                                </thead>\n                                <tbody>\n                                    {{#payload}}\n                                    <tr valign=\"middle\">\n                                        <td>\n                                            {{#done}}\n                                            <div class=\"text-muted\"><del>{{name}}</del></div>\n                                            {{/done}}\n                                            {{^done}}\n                                            <div>{{name}}</div>\n                                            {{/done}}\n                                            <div class=\"badge bg-secondary \"><i class=\"bi bi-calendar2-date \"></i>&nbsp;&nbsp;{{dateTime}}</small></div>\n                                        </td>\n                                        <td align=\"right\">\n                                            <div class=\"btn-group\">\n                                                <form method=\"POST\">\n                                                    <input type=\"hidden\" name=\"id\" value=\"{{id}}\"/>\n                                                {{#done}}\n                                                    <button type=\"submit\" formaction=\"/opt/open\" class=\"btn btn-warning\"><i class=\"bi bi-arrow-clockwise\"></i></button>\n                                                {{/done}}\n                                                {{^done}}\n                                                    <a href=\"/schedule/{{id}}\" type=\"submit\" class=\"btn btn-secondary\"><i class=\"bi bi-alarm-fill\"></i></a>\n                                                    <a  href=\"/edit/{{id}}\"  class=\"btn btn-info\"><i class=\"bi bi-pencil-square\"></i></a>\n                                                    <button type=\"submit\" formaction=\"/opt/complete\" class=\"btn btn-success\"><i class=\"bi bi-check-square\"></i></button>\n                                                {{/done}}\n                                                    <button type=\"submit\" formaction=\"/opt/trash\" class=\"btn btn-danger\"><i class=\"bi bi-trash\"></i></button>\n                                                </form>\n                                            </div>\n                                        </td>\n                                    </tr>\n                                    {{/payload}}\n                                    {{^payload}}\n                                    <tr>\n                                        <td colspan=\"2\" class=\"text-mute text-center\">Henüz giriş yapılmadı...</td>\n                                    </tr>\n                                    {{/payload}}\n                                </tbody>\n                            </table>\n\n                        </div>\n                    </div>\n                </div>\n\n\n            </div>\n        </div>\n    </div>\n    <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
+        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>ToDo</title>\n\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                    <h4>{{message}}</h4>\n                </div>\n                {{/error}}\n                <form action=\"/opt/add\" method=\"POST\">\n                    <div class=\"input-group input-group-lg\">\n                        <input required type=\"text\" name=\"name\" class=\"form-control {{#error}}border-danger{{/error}}\"  placeholder=\"Dosyalar teslim edilecek...\">\n                        <button class=\"btn btn-outline-secondary\" type=\"reset\">Temizle</button>\n                        <button class=\"btn btn-outline-primary px-5\" type=\"submit\">Ekle</button>\n                    </div>\n                </form>\n                <div class=\"card mt-2 overflow-hidden\">\n                    <div class=\"card-body p-0\">\n                        <div class=\"table-responsive\">\n                            <table class=\"table table-hover m-0\">\n                                <thead class=\"table-dark\">\n                                    <tr>\n                                        <th colspan=\"2\">Yapılacaklar listesi</th>\n                                    </tr>\n                                </thead>\n                                <tbody>\n                                    {{#payload}}\n                                    <tr valign=\"middle\">\n                                        <td>\n                                            {{#done}}\n                                            <div class=\"text-muted\"><del>{{name}}</del></div>\n                                            {{/done}}\n                                            {{^done}}\n                                            <div>{{name}}</div>\n                                            {{/done}}\n                                            <div class=\"badge bg-secondary \">\n                                                <i class=\"bi bi-calendar2-date \"></i>&nbsp;&nbsp;{{dateTime}}</small>\n                                            </div>\n                                        </td>\n                                        <td align=\"right\">\n                                            <div class=\"btn-group\">\n                                                <form method=\"POST\">\n                                                    <input type=\"hidden\" name=\"id\" value=\"{{id}}\"/>\n                                                {{#done}}\n                                                    <button type=\"submit\" formaction=\"/opt/open\" class=\"btn btn-warning\"><i class=\"bi bi-arrow-clockwise\"></i></button>\n                                                    {{/done}}\n                                                    {{^done}}\n                                                    <a href=\"/schedule/{{id}}\" type=\"submit\"\n                                                        class=\"btn btn-secondary\"><i class=\"bi bi-alarm-fill\"></i></a>\n                                                    <a href=\"/edit/{{id}}\"\n                                                        class=\"btn btn-info\"><i class=\"bi bi-pencil-square\"></i></a>\n                                                    <button type=\"submit\" formaction=\"/opt/complete\" class=\"btn btn-success\"><i class=\"bi bi-check-square\"></i></button>\n                                                    {{/done}}\n                                                    <button type=\"submit\" formaction=\"/opt/trash\" class=\"btn btn-danger\"><i class=\"bi bi-trash\"></i></button>\n                                                </form>\n                                            </div>\n                                        </td>\n                                    </tr>\n                                    {{/payload}}\n                                    {{^payload}}\n                                    <tr>\n                                        <td colspan=\"2\" class=\"text-mute text-center\">Henüz giriş yapılmadı...</td>\n                                    </tr>\n                                    {{/payload}}\n                                </tbody>\n                            </table>\n\n                        </div>\n                    </div>\n                </div>\n\n\n            </div>\n        </div>\n    </div>\n    <div class=\"position-fixed\">\n        <a href=\"/user-list\"\n            class=\"btn btn-primary position-fixed top-0 end-0 m-4 z-3 d-flex align-items-center justify-content-center rounded-1 p-0 shadow\"\n            style=\"width:56px;height:56px;\" aria-label=\"Kullanıcılar\">\n            <i class=\"bi bi-person-fill fs-4\"></i>\n        </a>\n    </div>\n    <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
         "output": "str",
-        "x": 560,
+        "x": 540,
         "y": 220,
         "wires": [
             [
@@ -33,7 +33,7 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 810,
+        "x": 750,
         "y": 220,
         "wires": []
     },
@@ -42,14 +42,14 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "DB",
-        "func": "// Flush DB\nglobal.set (\"DB\", {\n    todo: []\n})",
+        "func": "// Flush DB\nglobal.set (\"DB\", {\n    todo: [],\n    user: []\n})",
         "outputs": 0,
         "timeout": 0,
         "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\n\nconst DB = global.get(\"DB\") || {\n    todo: []\n}\n\n/*\ntodo db şeması\n    id: NOW\n    name: \"\"\n    done: true|false\n    stamp: {\n    createdAt: NOW,\n    ip: IP,\n    user: \"\",\n    email: \"\"\n    }\n*/\n\nglobal.set(\"DB\", DB)",
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\n\nconst DB = global.get(\"DB\") || {\n    todo: [],\n    user: []\n}\n\n/*\ntodo db şeması\n    id: NOW\n    name: \"\"\n    done: true|false\n    stamp: {\n    createdAt: NOW,\n    ip: IP,\n    user: \"\",\n    email: \"\"\n    },\n    schedule: {\n    formdata: {\n        id: \"\"\n        datetime: \"ISODate\"\n    },\n    options: {\n        crontiMethod: \"onIntevalTime\",\n        crontiArgs: [ISODate,ISODate]\n    }\n\n    }\n    date: \"GG.AA.YYYY\"\n    time: \"SS.DD.NN\"\n*/\n\n\n/*\nUser db şeması\n    id: NOW\n    displayName: \"\"\n    active: true|false\n    username: \"\"\n    password: \"HASH\"\n    stamp: {\n    createdAt: NOW,\n    ip: IP,\n    user: \"\",\n    email: \"\"\n    }\ndate: \"GG.AA.YYYY\"\ntime: \"SS.DD.NN\"\n*/\n\nglobal.set(\"DB\", DB)",
         "finalize": "",
         "libs": [],
-        "x": 370,
+        "x": 290,
         "y": 100,
         "wires": []
     },
@@ -74,7 +74,7 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 220,
+        "x": 140,
         "y": 100,
         "wires": [
             [
@@ -94,7 +94,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 370,
+        "x": 330,
         "y": 220,
         "wires": [
             [
@@ -113,7 +113,7 @@
             "2713f0cacf4e39f6",
             "22dd74058ceaa141"
         ],
-        "x": 205,
+        "x": 215,
         "y": 180,
         "wires": [
             [
@@ -131,7 +131,7 @@
         "upload": false,
         "skipBodyParsing": false,
         "swaggerDoc": "",
-        "x": 220,
+        "x": 140,
         "y": 460,
         "wires": [
             [
@@ -148,7 +148,7 @@
         "headers": {
             "location": "/"
         },
-        "x": 800,
+        "x": 740,
         "y": 420,
         "wires": []
     },
@@ -157,14 +157,14 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.todo.opt()",
-        "func": "const DB  = global.get(\"DB\") || { todo: [] };\nlet   todo = DB.todo;\n\nconst nowDate = new Date();\nconst now     = nowDate.getTime();\nconst type    = msg.req?.params?.type;\n\nif (type === \"add\") {\n  todo.push({\n    id: now,\n    name: (msg.payload.name || \"\").trim(),\n    done: false,\n    stamp: { createdAt: now, ip: msg.req.ip, user: \"\", email: \"\" },\n    dateTime: nowDate.toLocaleString(\"tr-TR\", { hour12: false })\n  });\n  DB.todo = todo; global.set(\"DB\", DB);\n  return [ msg, null, null ];\n}\n\nconst index = todo.findIndex(x => String(x.id) === String(msg.payload.id));\nif (index === -1) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [ null, msg, null ];\n}\n\nif (type === \"trash\") {\n  todo.splice(index, 1);\n  DB.todo = todo; global.set(\"DB\", DB);\n  return [ msg, null, null ];\n}\n\nif (type === \"schedule\") {\n  // 1) DB'ye yazılacak tarih\n  const when = msg.payload.schedule?.datetime || \"\";     // \"YYYY-MM-DDTHH:mm\"\n  const whenWithSec = when.length === 16 ? when + \":00\" : when;\n\n  const scheduleOptions = {\n    crontiMethod: \"onDate\",\n    crontiArgs:   [ whenWithSec ]\n  };\n\n  todo[index].schedule = {\n    datetime: when,\n    epoch: msg.payload.schedule.epoch,\n    options: scheduleOptions\n  };\n\n  todo[index].stamp    = { createdAt: now, ip: msg.req.ip, user: \"\", email: \"\" };\n  todo[index].dateTime = nowDate.toLocaleString(\"tr-TR\", { hour12: false });\n\n  DB.todo = todo;\n  global.set(\"DB\", DB);\n\n  const crontiMsg = {\n    topic: `todo:${todo[index].id}`,\n    payload: scheduleOptions\n  };\n\n  return [ msg, null, crontiMsg ];\n}\n\n\nif (type === \"update\") {\n  if (todo[index].done) {\n    msg.error = { message: \"Tamamlanmış işler güncellenemez\" };\n    return [ null, msg, null ];\n  }\n  const newVal  = (msg.payload.name || \"\").trim();\n  const origVal = (msg.payload.orig || \"\").trim();\n  if (newVal === origVal) {\n    msg.error = { message: \"Herhangi bir güncelleme yapmadınız.\" };\n    return [ null, msg, null ];\n  }\n  todo[index].name = newVal;\n}\nelse if (type === \"complete\") {\n  todo[index].done = true;\n}\nelse if (type === \"open\") {\n  todo[index].done = false;\n}\n\ntodo[index].stamp    = { createdAt: now, ip: msg.req.ip, user: \"\", email: \"\" };\ntodo[index].dateTime = nowDate.toLocaleString(\"tr-TR\", { hour12: false });\n\nDB.todo = todo; global.set(\"DB\", DB);\nreturn [ msg, null, null ];\n",
+        "func": "const DB  = global.get(\"DB\") || { todo: [] };\nlet   todo = DB.todo;\n\nconst nowDate = new Date();\nconst now     = nowDate.getTime();\nconst type    = msg.req?.params?.type;\n\nif (type === \"add\") {\n  todo.push({\n    id: now,\n    name: (msg.payload.name || \"\").trim(),\n    done: false,\n    stamp: { createdAt: now, ip: msg.req.ip, user: \"\", email: \"\" },\n    dateTime: nowDate.toLocaleString(\"tr-TR\", { hour12: false })\n  });\n  DB.todo = todo; global.set(\"DB\", DB);\n  return [ msg, null, null ];\n}\n\nconst index = todo.findIndex(x => String(x.id) === String(msg.payload.id));\nif (index === -1) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [ null, msg, null ];\n}\n\nif (type === \"trash\") {\n  todo.splice(index, 1);\n  DB.todo = todo; global.set(\"DB\", DB);\n  return [ msg, null, null ];\n}\n\nif (type === \"schedule\") {\n  const when = msg.payload.schedule?.datetime || \"\";\n  const whenWithSec = when.length === 16 ? when + \":00\" : when;\n\n  let scheduleOptions = {\n    crontiMethod: \"onDate\",\n    crontiArgs: [whenWithSec, whenWithSec]\n  };\n\n  todo[index].schedule = {\n    formData: msg.payload,     \n    options: scheduleOptions\n  };\n\n  todo[index].stamp = { createdAt: now, ip: msg.req.ip, user: \"\", email: \"\" };\n  todo[index].dateTime = nowDate.toLocaleString(\"tr-TR\", { hour12: false });\n\n  DB.todo = todo; global.set(\"DB\", DB);\n\n  msg.payload = scheduleOptions;                 \n  msg.todo = todo[index];                     \n  msg.topic = `todo:${todo[index].id}`;       \n\n  return [msg, null, msg];\n}\n\n\n\n\n\nif (type === \"update\") {\n  if (todo[index].done) {\n    msg.error = { message: \"Tamamlanmış işler güncellenemez\" };\n    return [ null, msg, null ];\n  }\n  const newVal  = (msg.payload.name || \"\").trim();\n  const origVal = (msg.payload.orig || \"\").trim();\n  if (newVal === origVal) {\n    msg.error = { message: \"Herhangi bir güncelleme yapmadınız.\" };\n    return [ null, msg, null ];\n  }\n  todo[index].name = newVal;\n}\nelse if (type === \"complete\") {\n  todo[index].done = true;\n}\nelse if (type === \"open\") {\n  todo[index].done = false;\n}\n\ntodo[index].stamp    = { createdAt: now, ip: msg.req.ip, user: \"\", email: \"\" };\ntodo[index].dateTime = nowDate.toLocaleString(\"tr-TR\", { hour12: false });\n\nDB.todo = todo; global.set(\"DB\", DB);\nreturn [ msg, null, null ];\n",
         "outputs": 3,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 550,
+        "x": 510,
         "y": 460,
         "wires": [
             [
@@ -188,14 +188,14 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "validation",
-        "func": "const typeLookup = {\n    trash: {\n        text: \"Silme\",\n        requireArgs: [\"id\"]\n    },\n    complete: {\n        text: \"Tamamlama\",\n        requireArgs: [\"id\"]\n    },\n    open: {\n        text: \"Açma\",\n        requireArgs: [\"id\"]\n    },\n    add: {\n        text: \"Ekleme\",\n        requireArgs: [\"name\"]\n    },\n    update: {\n        text: \"Güncelle\",\n        requireArgs: [\"id\", \"name\", \"orig\"]\n    },\n    schedule : {\n        text: \"Hatırlatıcı\",\n        requireArgs: [\"id\", \"datetime\"]\n    }\n}\n\nif (!Object.keys(typeLookup).includes(msg.req.params.type)) {\n    msg.error = {\n        message: `${msg.req.params.type} geçersiz bir parametre değeridir.`\n    }\n    return [null, msg]\n}\n\nif (!typeLookup[msg.req.params.type].requireArgs.every(arg => msg.payload[arg])) {\n    msg.error = {\n        message: `${typeLookup[msg.req.params.type].text} istediğiniz elemanın ${typeLookup[msg.req.params.type].requireArgs} bilgisi olmalı`\n    }\n    return [null, msg]\n}\n\nif (msg.req.params.type === \"update\") {\n    const newVal = (msg.payload.name || \"\").trim();\n    const origVal = (msg.payload.orig || \"\").trim();\n    if (newVal === origVal) {\n        msg.error = {\n            message: \"Herhangi bir güncelleme yapmadınız.\"\n        };\n        return [null, msg];\n}\n}\nif (msg.req.params.type === \"schedule\") {\n  const newDt  = (msg.payload.datetime || \"\").trim();\n  const origDt = (msg.payload.origDt   || \"\").trim(); // opsiyonel\n\n  const okFmt = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$/.test(newDt);\n  const ms = Date.parse(newDt);\n\n  if (!okFmt || Number.isNaN(ms)) {\n    msg.error = { message: \"Geçersiz tarih/saat. 'YYYY-AA-GGTHH:mm' giriniz.\" };\n    return [null, msg];\n  }\n  if (ms < Date.now()) {\n    msg.error = { message: \"Geçmiş bir zamana planlanamaz.\" };\n    return [null, msg];\n  }\n  if (origDt && newDt === origDt) {\n    msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n    return [null, msg];\n  }\n\n  msg.payload.schedule = { datetime: newDt, epoch: ms };\n}\n\nreturn msg;",
+        "func": "const typeLookup = {\n    trash: {\n        text: \"Silme\",\n        requireArgs: [\"id\"]\n    },\n    complete: {\n        text: \"Tamamlama\",\n        requireArgs: [\"id\"]\n    },\n    open: {\n        text: \"Açma\",\n        requireArgs: [\"id\"]\n    },\n    add: {\n        text: \"Ekleme\",\n        requireArgs: [\"name\"]\n    },\n    update: {\n        text: \"Güncelle\",\n        requireArgs: [\"id\", \"name\", \"orig\"]\n    },\n    schedule: {\n        text: \"Hatırlatıcı\",\n        requireArgs: [\"id\", \"datetime\"]\n    }\n}\n\nif (!Object.keys(typeLookup).includes(msg.req.params.type)) {\n    msg.error = {\n        message: `${msg.req.params.type} geçersiz bir parametre değeridir.`\n    }\n    return [null, msg]\n}\n\nif (!typeLookup[msg.req.params.type].requireArgs.every(arg => msg.payload[arg])) {\n    msg.error = {\n        message: `${typeLookup[msg.req.params.type].text} istediğiniz elemanın ${typeLookup[msg.req.params.type].requireArgs} bilgisi olmalı`\n    }\n    return [null, msg]\n}\n\nif (msg.req.params.type === \"update\") {\n    const newVal = (msg.payload.name || \"\").trim();\n    const origVal = (msg.payload.orig || \"\").trim();\n    if (newVal === origVal) {\n        msg.error = {\n            message: \"Herhangi bir güncelleme yapmadınız.\"\n        };\n        return [null, msg];\n    }\n}\nif (msg.req.params.type === \"schedule\") {\n    const newDt = (msg.payload.datetime || \"\").trim();\n    const origDt = (msg.payload.origDt || \"\").trim();\n    const newNote = (msg.payload.note || \"\").trim();\n    const origNote = (msg.payload.origNote || \"\").trim();\n\n    const okFmt = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$/.test(newDt);\n    const ms = Date.parse(newDt);\n\n    if (!okFmt || Number.isNaN(ms)) {\n        msg.error = { message: \"Geçersiz tarih/saat. 'YYYY-AA-GGTHH:mm' giriniz.\" };\n        return [null, msg];\n    }\n    if (ms < Date.now()) {\n        msg.error = { message: \"Geçmiş bir zamana planlanamaz.\" };\n        return [null, msg];\n    }\n    if (origDt && newDt === origDt) {\n        msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n        return [null, msg];\n    }\n\n    msg.payload.schedule = { datetime: newDt, epoch: ms };\n}\n\nreturn msg;",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 380,
+        "x": 320,
         "y": 460,
         "wires": [
             [
@@ -219,7 +219,7 @@
         "links": [
             "c5f4d0120c89df7e"
         ],
-        "x": 475,
+        "x": 415,
         "y": 500,
         "wires": []
     },
@@ -232,7 +232,7 @@
         "links": [
             "c5f4d0120c89df7e"
         ],
-        "x": 705,
+        "x": 645,
         "y": 460,
         "wires": []
     },
@@ -246,7 +246,7 @@
         "upload": false,
         "skipBodyParsing": false,
         "swaggerDoc": "",
-        "x": 190,
+        "x": 110,
         "y": 220,
         "wires": [
             [
@@ -264,7 +264,7 @@
         "upload": false,
         "skipBodyParsing": false,
         "swaggerDoc": "",
-        "x": 210,
+        "x": 130,
         "y": 280,
         "wires": [
             [
@@ -284,7 +284,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 410,
+        "x": 330,
         "y": 280,
         "wires": [
             [
@@ -310,7 +310,7 @@
         "syntax": "mustache",
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>ToDo</title>\n\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                    <h4>{{message}}</h4>\n                </div>\n                {{/error}}\n                <form action=\"/opt/update\" method=\"POST\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}\">\n                    <input type=\"hidden\" name=\"orig\" value=\"{{payload.name}}\">\n                    <div class=\"mb-3\">\n                        <input required type=\"text\" name=\"name\" value=\"{{payload.name}}\" \n                               class=\"form-control form-control-lg {{#error}}border-danger{{/error}} {{^error}}border-info{{/error}}\"  \n                               placeholder=\"Dosyalar teslim edilecek...\">\n                    </div>\n                    <div class=\"d-flex justify-content-end gap-2\">\n                        <a class=\"btn btn-outline-warning\" href=\"/\">Vazgeç</a>\n                        <button class=\"btn btn-outline-secondary\" \n                                onclick=\"document.querySelector('[name=name]').value = ''\">Temizle</button>\n                        <button id=\"btnUpdate\" class=\"btn btn-outline-success px-5\" type=\"submit\" disabled>Güncelle</button>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n\n    <script>\n    (function(){\n        const nameEl = document.querySelector('[name=name]');\n        const origEl = document.querySelector('[name=orig]');\n        const btn    = document.getElementById('btnUpdate');\n\n        function toggle(){\n            const changed = (nameEl.value || '').trim() !== (origEl.value || '').trim();\n            btn.disabled = !changed;\n        }\n        document.addEventListener('DOMContentLoaded', toggle);\n        nameEl.addEventListener('input', toggle);\n    })();\n    </script>\n\n    <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n</html>\n",
         "output": "str",
-        "x": 620,
+        "x": 540,
         "y": 280,
         "wires": [
             [
@@ -327,7 +327,7 @@
         "links": [
             "c5f4d0120c89df7e"
         ],
-        "x": 545,
+        "x": 465,
         "y": 320,
         "wires": []
     },
@@ -338,18 +338,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 810,
+        "x": 750,
         "y": 280,
-        "wires": []
-    },
-    {
-        "id": "91c4b71892acd686",
-        "type": "comment",
-        "z": "651af9bb9a46e4b0",
-        "name": "e posta",
-        "info": "",
-        "x": 650,
-        "y": 540,
         "wires": []
     },
     {
@@ -362,7 +352,7 @@
         "upload": false,
         "skipBodyParsing": false,
         "swaggerDoc": "",
-        "x": 221.1999969482422,
+        "x": 141.1999969482422,
         "y": 360.1999816894531,
         "wires": [
             [
@@ -375,14 +365,14 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.todo.findTwo()",
-        "func": "const DB = global.get(\"DB\");\n\nconst item = DB.todo.find(x => x.id == msg.req.params.id);\n\nif (!item) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, msg];\n}\nif (item.done) {\n  msg.error = { message: \"Tamamlanmış işler için hatırlatıcı kurulamaz\" };\n  return [null, msg];\n}\n\nfunction fmtLocal(dt){\n  const p = n => String(n).padStart(2,'0');\n  return `${dt.getFullYear()}-${p(dt.getMonth()+1)}-${p(dt.getDate())}T${p(dt.getHours())}:${p(dt.getMinutes())}`;\n}\n\nconst now   = new Date();\nconst uiNow = fmtLocal(now);\nconst uiDt  = item.schedule?.datetime || uiNow;\n\nmsg.payload = {\n  id: item.id,\n  name: item.name,\n  schedule: {\n    datetime: uiDt, // input value + origDt kaynağı\n    min: uiNow      // input min\n  }\n};\n\nreturn msg;\n",
+        "func": "const DB = global.get(\"DB\");\n\nconst item = DB.todo.find(x => x.id == msg.req.params.id);\n\nif (!item) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, msg];\n}\nif (item.done) {\n  msg.error = { message: \"Tamamlanmış işler için hatırlatıcı kurulamaz\" };\n  return [null, msg];\n}\n\nfunction fmtLocal(dt){\n  const p = n => String(n).padStart(2,'0');\n  return `${dt.getFullYear()}-${p(dt.getMonth()+1)}-${p(dt.getDate())}T${p(dt.getHours())}:${p(dt.getMinutes())}`;\n}\n\nconst now   = new Date();\nconst uiNow = fmtLocal(now);\nconst uiDt  = item.schedule?.datetime || uiNow;\nconst uiNote = item.schedule?.formData?.note || \"\";\n\nmsg.payload = {\n  id: item.id,\n  name: item.name,\n  schedule: {\n    datetime: uiDt, \n    min: uiNow,\n    note: uiNote      \n  }\n};\n\nreturn msg;\n",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 410,
+        "x": 350,
         "y": 360,
         "wires": [
             [
@@ -406,10 +396,10 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>ToDo</title>\n\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                    <h4>{{message}}</h4>\n                </div>\n                {{/error}}\n                <form action=\"/opt/schedule\" method=\"POST\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}\">\n                    <input type=\"hidden\" name=\"orig\" value=\"{{payload.name}}\">\n                    <input type=\"hidden\" name=\"origDt\" value=\"{{payload.schedule.datetime}}\">\n                    <div class=\"mb-3\">\n                        <input required type=\"datetime-local\" name=\"datetime\"\n                        value=\"{{payload.schedule.datetime}}\"\n                        min=\"{{payload.schedule.min}}\"\n                        class=\"form-control form-control-lg {{#error}}border-danger{{/error}} {{^error}}border-info{{/error}}\">\n                    </div>\n\n\n                    <div class=\"d-flex justify-content-end gap-2\">\n                        <a class=\"btn btn-outline-warning\" href=\"/\">Vazgeç</a>\n                        <button class=\"btn btn-outline-secondary\" id=\"btnClear\" type=\"button\">Temizle</button>\n                        <button id=\"btnUpdate\" class=\"btn btn-outline-success px-5\" type=\"submit\" disabled>Planla</button>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n\n    <script>\n        (function () {\n  const dtEl = document.querySelector('[name=datetime]');\n  const origEl = document.querySelector('[name=origDt]');\n  const btn = document.getElementById('btnUpdate');\n  const clear = document.getElementById('btnClear');\n\n  function toggle() {\n    const curr = (dtEl.value || '').trim();\n    const orig = (origEl.value || '').trim();\n    btn.disabled = (curr === '' || curr === orig);\n  }\n\n  document.addEventListener('DOMContentLoaded', () => {\n    if (!dtEl.value) {\n      const d = new Date(), p = n => String(n).padStart(2,'0');\n      const now = `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;\n      dtEl.value = now;\n      dtEl.min = now;\n    }\n    toggle();\n  });\n\n  dtEl.addEventListener('input', toggle);\n  clear.addEventListener('click', function(){ dtEl.value=''; toggle(); });\n})();\n    </script>\n\n\n\n    <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
+        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>ToDo</title>\n\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                    <h4>{{message}}</h4>\n                </div>\n                {{/error}}\n                <form action=\"/opt/schedule\" method=\"POST\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}\">\n                    <input type=\"hidden\" name=\"orig\" value=\"{{payload.name}}\">\n                    <input type=\"hidden\" name=\"origDt\" value=\"{{payload.schedule.datetime}}\">\n                    <input type=\"hidden\" name=\"origNote\" value=\"{{payload.schedule.note}}\">\n                    <div class=\"mb-3\">\n                        <input required type=\"datetime-local\" name=\"datetime\"\n                        value=\"{{payload.schedule.datetime}}\"\n                        min=\"{{payload.schedule.min}}\"\n                        class=\"form-control form-control-lg {{#error}}border-danger{{/error}} {{^error}}border-info{{/error}}\">\n                    </div>\n                    <div class=\"mb-3\">\n                        <textarea name=\"note\" rows=\"3\"\n                        class=\"form-control form-control-lg {{#error}}border-danger{{/error}} {{^error}}border-info{{/error}}\"\n                        placeholder=\"Bu görevle ilgili kısa not...\">{{payload.schedule.note}}</textarea>\n                    </div>\n                    <div class=\"d-flex justify-content-end gap-2\">\n                        <a class=\"btn btn-outline-warning\" href=\"/\">Vazgeç</a>\n                        <button class=\"btn btn-outline-secondary\" id=\"btnClear\" type=\"button\">Temizle</button>\n                        <button id=\"btnUpdate\" class=\"btn btn-outline-success px-5\" type=\"submit\" disabled>Planla</button>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n\n    <script>\n        (function () {\n  const dtEl = document.querySelector('[name=datetime]');\n  const origEl = document.querySelector('[name=origDt]');\n  const noteEl   = document.querySelector('[name=note]');        \n  const origNtEl = document.querySelector('[name=origNote]');    \n  const btn = document.getElementById('btnUpdate');\n  const clear = document.getElementById('btnClear');\n\n  function toggle() {\n    const curr = (dtEl.value || '').trim();\n    const orig = (origEl.value || '').trim();\n    btn.disabled = (curr === '' || curr === orig);\n  }\n\n  document.addEventListener('DOMContentLoaded', () => {\n    if (!dtEl.value) {\n      const d = new Date(), p = n => String(n).padStart(2,'0');\n      const now = `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;\n      dtEl.value = now;\n      dtEl.min = now;\n    }\n    toggle();\n  });\n\n  dtEl.addEventListener('input', toggle);\n  noteEl.addEventListener('input', toggle);\n  clear.addEventListener('click', function(){ dtEl.value=''; toggle(); noteEl.value = ''; });\n})();\n    </script>\n\n\n\n    <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
         "output": "str",
-        "x": 611.1999969482422,
-        "y": 360.1999816894531,
+        "x": 540,
+        "y": 360,
         "wires": [
             [
                 "c001fccb8fb4cf85"
@@ -425,7 +415,7 @@
         "links": [
             "c5f4d0120c89df7e"
         ],
-        "x": 545,
+        "x": 465,
         "y": 400,
         "wires": []
     },
@@ -436,7 +426,7 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 810,
+        "x": 750,
         "y": 360,
         "wires": []
     },
@@ -465,10 +455,12 @@
         "crontiArgs": "[]",
         "inputs": 1,
         "hasButton": false,
-        "x": 800,
+        "x": 740,
         "y": 480,
         "wires": [
-            []
+            [
+                "d6134361a15b1330"
+            ]
         ]
     },
     {
@@ -492,7 +484,7 @@
         "topic": "",
         "payload": "DB.todo",
         "payloadType": "global",
-        "x": 620,
+        "x": 500,
         "y": 100,
         "wires": [
             [
@@ -501,58 +493,27 @@
         ]
     },
     {
-        "id": "f810d839f98b85b9",
-        "type": "crontinject",
-        "z": "651af9bb9a46e4b0",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "crontiMethod": "",
-        "crontiArgs": "[]",
-        "inputs": 1,
-        "hasButton": false,
-        "x": 1000,
-        "y": 100,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "eca529bb067ce280",
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "schedule",
-        "func": "msg.payload.forEach(x => x.schedule && node.send({ payload: x.schedule.options}))",
+        "func": "const list = msg.payload || [];\nlist.forEach(x => {\n  if (x.schedule?.options) {\n    node.send({\n      topic:   `todo:${x.id}`,        \n      payload: x.schedule.options     \n    });\n  }\n});\nreturn null;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 820,
+        "x": 680,
         "y": 100,
         "wires": [
             [
-                "f810d839f98b85b9"
+                "dcacbd7ada1430a0"
             ]
         ]
     },
     {
-        "id": "2fea47965f91e9b8",
+        "id": "6deb06d96837b126",
         "type": "e-mail",
         "z": "651af9bb9a46e4b0",
         "server": "smtp-relay.brevo.com",
@@ -562,43 +523,34 @@
         "token": "oauth2Response.access_token",
         "secure": false,
         "tls": true,
-        "name": "talhaormekaya@gmail.com",
+        "name": "",
         "dname": "",
-        "x": 840,
-        "y": 600,
+        "x": 1370,
+        "y": 480,
         "wires": []
     },
     {
-        "id": "5c61f1d1ad768215",
-        "type": "inject",
+        "id": "0b9f34182300bc33",
+        "type": "function",
         "z": "651af9bb9a46e4b0",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 380,
-        "y": 600,
+        "name": "header",
+        "func": "const DB = global.get(\"DB\") || { todo: [] };\n\nif (!msg.todo) {\n  const m = (msg.topic || \"\").match(/^todo:(\\d+)/);\n  if (m) {\n    const id = m[1];\n    msg.todo = DB.todo.find(t => String(t.id) === id);\n  }\n}\nif (!msg.todo) return null; \n\nmsg.from  = \"Hatırlatıcı <talhaormekaya@gmail.com>\";       \nmsg.to    = msg.todo?.stamp?.email || \"talhaormekaya@gmail.com\";\nmsg.topic = `Hatırlatma: ${msg.todo?.name || \"Görev\"}`;\n\nconst i = DB.todo.findIndex(t => String(t.id) === String(msg.todo.id));\nif (i >= 0 && DB.todo[i].schedule) {\n  delete DB.todo[i].schedule;                                 \n  DB.todo[i].dateTime = new Date().toLocaleString(\"tr-TR\",{hour12:false});\n  DB.todo[i].stamp    = { createdAt: Date.now(), ip:\"\", user:\"\", email:\"\" };\n  global.set(\"DB\", DB);\n}\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 480,
         "wires": [
             [
-                "81bf3db83166984a"
+                "1e3410a2c0801097"
             ]
         ]
     },
     {
-        "id": "81bf3db83166984a",
+        "id": "1e3410a2c0801097",
         "type": "template",
         "z": "651af9bb9a46e4b0",
         "name": "",
@@ -606,14 +558,278 @@
         "fieldType": "msg",
         "format": "handlebars",
         "syntax": "mustache",
-        "template": "<p>Merhaba,</p>\n<p></p>\nHatırlatıcı çalıştı\n<p></p>",
+        "template": "<p>{{todo.name}} işi için hatırlatma.</p>\n\n{{#todo.schedule.formData.note}}\n  <p style=\"white-space:pre-wrap;\"><strong>Not:</strong> {{todo.schedule.formData.note}}</p>\n{{/todo.schedule.formData.note}}\n",
         "output": "str",
-        "x": 580,
-        "y": 600,
+        "x": 1220,
+        "y": 480,
         "wires": [
             [
-                "2fea47965f91e9b8"
+                "6deb06d96837b126"
             ]
+        ]
+    },
+    {
+        "id": "18dc3105a4edec0c",
+        "type": "link in",
+        "z": "651af9bb9a46e4b0",
+        "name": "link in 2",
+        "links": [
+            "dcacbd7ada1430a0"
+        ],
+        "x": 645,
+        "y": 520,
+        "wires": [
+            [
+                "463e1db29a4e8833"
+            ]
+        ]
+    },
+    {
+        "id": "dcacbd7ada1430a0",
+        "type": "link out",
+        "z": "651af9bb9a46e4b0",
+        "name": "link out 3",
+        "mode": "link",
+        "links": [
+            "18dc3105a4edec0c"
+        ],
+        "x": 785,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "d6134361a15b1330",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "OnlyFires",
+        "func": "if (msg.schedule && (msg.schedule.list || msg.schedule.self)) {\n  return null; // kayıt onayı → mail gönderme\n}\n\nif (typeof msg.payload === \"object\" &&\n    (msg.payload.crontiMethod || msg.payload.crontiArgs)) {\n  return null;\n}\nconst isRealFire =\n  typeof msg.payload === \"number\" ||\n  (msg.payload && Object.prototype.toString.call(msg.payload) === \"[object Date]\");\n\nreturn isRealFire ? msg : null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 900,
+        "y": 480,
+        "wires": [
+            [
+                "0b9f34182300bc33"
+            ]
+        ]
+    },
+    {
+        "id": "90f7036bef489ba2",
+        "type": "template",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Kullanıcı listesi</title>\n\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                    <h4>{{message}}</h4>\n                </div>\n                {{/error}}\n                <form action=\"/user-opt/add\" method=\"POST\">\n                    <div class=\"input-group input-group-lg\">\n                        <input required type=\"text\" name=\"username\" class=\"form-control {{#error}}border-danger{{/error}}\"  placeholder=\"Kullanıcı adı \">\n                        <input required type=\"text\" name=\"password\" class=\"form-control {{#error}}border-danger{{/error}}\"  placeholder=\"Parola \">\n                        <button class=\"btn btn-outline-secondary\" type=\"reset\">Temizle</button>\n                        <button class=\"btn btn-outline-primary px-5\" type=\"submit\">Ekle</button>\n                    </div>\n                </form>\n                <div class=\"card mt-2 overflow-hidden\">\n                    <div class=\"card-body p-0\">\n                        <div class=\"table-responsive\">\n                            <table class=\"table table-hover m-0\">\n                                <thead class=\"table-dark\">\n                                    <tr>\n                                        <th colspan=\"2\">Kullanıcı Adı</th>\n                                        <th colspan=\"2\">Durum</th>\n                                    </tr>\n                                </thead>\n                                <tbody>\n                                    {{#payload}}\n                                    <tr valign=\"middle\">\n                                        <td>\n                                            {{#active}}\n                                            <div>{{username}}</div>\n                                            {{/active}}\n                                            {{^active}}\n                                            <div class=\"text-muted\"><del>{{username}}</del></div>\n                                            {{/active}}\n                                            <div class=\"badge bg-secondary \">\n                                                <i class=\"bi bi-calendar2-date \"></i>&nbsp;&nbsp;{{dateTime}}</small>\n                                            </div>\n                                        </td>\n                                        <td align=\"right\">\n                                            <div class=\"btn-group\">\n                                                <a href=\"/user-edit/{{id}}\"\n                                                    class=\"btn btn-danger\"><i class=\"bi bi-pencil-square\"></i></a>\n                                            </div>\n                                        </td>\n                                    </tr>\n                                    {{/payload}}\n                                    {{^payload}}\n                                    <tr>\n                                        <td colspan=\"2\" class=\"text-mute text-center\">Henüz hiç kullanıcı\n                                            tanımlanmadı...</td>\n                                    </tr>\n                                    {{/payload}}\n                                </tbody>\n                            </table>\n\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"position-fixed\">\n        <a href=\"/\"\n            class=\"btn btn-lg btn-secondary position-fixed top-0 end-0 m-4 z-3 d-flex align-items-center justify-content-center rounded-1 p-0 shadow\"\n            style=\"width:56px;height:56px;\" aria-label=\"Kullanıcılar\">\n            <i class=\"bi bi-card-checklist fs-4\"></i>\n        </a>\n    </div>\n    <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
+        "output": "str",
+        "x": 540,
+        "y": 580,
+        "wires": [
+            [
+                "ec5abb8df0da65db"
+            ]
+        ]
+    },
+    {
+        "id": "ec5abb8df0da65db",
+        "type": "http response",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 750,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "4801fcc29ebde45c",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "db.user.find()",
+        "func": "const DB =global.get(\"DB\")\n\nmsg.payload = DB.user?.sort((a,b) => b.stamp.createdAt - a.stamp.createdAt)\n\nreturn msg",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 580,
+        "wires": [
+            [
+                "90f7036bef489ba2"
+            ]
+        ]
+    },
+    {
+        "id": "4ca887471ba0d4a5",
+        "type": "http in",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "url": "/user-list",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 580,
+        "wires": [
+            [
+                "4801fcc29ebde45c"
+            ]
+        ]
+    },
+    {
+        "id": "cecc1be4c4bb0aa4",
+        "type": "http in",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "url": "/user-opt/:type",
+        "method": "post",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 150,
+        "y": 660,
+        "wires": [
+            [
+                "7083b2826db710fa"
+            ]
+        ]
+    },
+    {
+        "id": "8f757371b383fe24",
+        "type": "http response",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "statusCode": "302",
+        "headers": {
+            "location": "/user-list"
+        },
+        "x": 740,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "97440a5695968cc4",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "db.user.opt()",
+        "func": "// db.user.opt()\nconst DB  = global.get(\"DB\") || { user: [] };\nlet   user = DB.user ;\n\nconst nowDate = new Date();\nconst now     = nowDate.getTime();\nconst type    = msg.req?.params?.type;\n\n// ADD\nif (type === \"add\") {\n  user.push({\n    id: now,\n    username: (msg.payload.username || \"\").trim(),\n    password: (msg.payload.password || \"\").trim(), // istersen burada hash’le\n    active: true,\n    stamp: { createdAt: now, ip: msg.req.ip, user: \"\", email: \"\" },\n    dateTime: nowDate.toLocaleString(\"tr-TR\", { hour12: false })\n  });\n  DB.user = user; global.set(\"DB\", DB);\n  return [ msg, null ];\n}\n\n// id ile kullanıcıyı bul\nconst index = user.findIndex(x => String(x.id) === String(msg.payload.id));\nif (index === -1) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [ null, msg ];\n}\n\nswitch (type) {\n  case \"update\": {\n    const newU  = (msg.payload.username || \"\").trim();\n    const origU = (msg.payload.origUsername || \"\").trim();\n    if (newU !== origU) user[index].username = newU;\n\n    // Parola girilmişse değiştir\n    const newP = (msg.payload.password || \"\").trim();\n    if (newP) user[index].password = newP;\n\n    break;\n  }\n  case \"activate\":\n    user[index].active = true;\n    break;\n\n  case \"deactivate\":\n    user[index].active = false;\n    break;\n\n  default:\n    msg.error = { message: `${type} desteklenmiyor.` };\n    return [ null, msg ];\n}\n\nuser[index].stamp    = { createdAt: now, ip: msg.req.ip, user: \"\", email: \"\" };\nuser[index].dateTime = nowDate.toLocaleString(\"tr-TR\", { hour12: false });\n\nDB.user = user; global.set(\"DB\", DB);\nreturn [ msg, null ];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 660,
+        "wires": [
+            [
+                "8f757371b383fe24"
+            ],
+            [
+                "68b150d9072e014b"
+            ]
+        ],
+        "outputLabels": [
+            "Success",
+            "Error"
+        ]
+    },
+    {
+        "id": "7083b2826db710fa",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "validation",
+        "func": "// validation (user)\nconst typeLookup = {\n    add: {\n        text: \"Ekleme\",\n        requireArgs: [\"username\", \"password\"]\n    },\n    update: {\n        text: \"Güncelle\",\n        requireArgs: [\"id\", \"username\", \"origUsername\"]\n    },\n    activate: {\n        text: \"Aktifleştirme\",\n        requireArgs: [\"id\"]\n    },\n    deactivate: {\n        text: \"Pasifleştirme\",\n        requireArgs: [\"id\"]\n    }\n};\n\nconst type = msg.req.params.type;\nif (!typeLookup[type]) {\n    msg.error = { message: `${type} geçersiz bir parametre değeridir.` };\n    return [null, msg];\n}\n\nif (!typeLookup[type].requireArgs.every(a => (msg.payload[a] ?? \"\").toString().trim() !== \"\")) {\n    msg.error = { message: `${typeLookup[type].text} için ${typeLookup[type].requireArgs.join(\", \")} zorunlu.` };\n    return [null, msg];\n}\n\n// update özel kontrol\nif (type === \"update\") {\n    const newU = (msg.payload.username || \"\").trim();\n    const origU = (msg.payload.origUsername || \"\").trim();\n    if (newU === origU && !msg.payload.password) {\n        msg.error = { message: \"Herhangi bir güncelleme yapmadınız.\" };\n        return [null, msg];\n    }\n}\n\nreturn msg;\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 660,
+        "wires": [
+            [
+                "97440a5695968cc4"
+            ],
+            [
+                "7817b550669eb8a2"
+            ]
+        ],
+        "outputLabels": [
+            "Valid",
+            "Invalid"
+        ]
+    },
+    {
+        "id": "126ead5b72b171f3",
+        "type": "link in",
+        "z": "651af9bb9a46e4b0",
+        "name": "link in 4",
+        "links": [
+            "7817b550669eb8a2",
+            "68b150d9072e014b"
+        ],
+        "x": 215,
+        "y": 540,
+        "wires": [
+            [
+                "4801fcc29ebde45c"
+            ]
+        ]
+    },
+    {
+        "id": "7817b550669eb8a2",
+        "type": "link out",
+        "z": "651af9bb9a46e4b0",
+        "name": "link out 4",
+        "mode": "link",
+        "links": [
+            "126ead5b72b171f3"
+        ],
+        "x": 445,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "68b150d9072e014b",
+        "type": "link out",
+        "z": "651af9bb9a46e4b0",
+        "name": "link out 5",
+        "mode": "link",
+        "links": [
+            "126ead5b72b171f3"
+        ],
+        "x": 615,
+        "y": 700,
+        "wires": []
+    },
+    {
+        "id": "158f6cdbc523a790",
+        "type": "bcrypt",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "action": "encrypt",
+        "field": "payload",
+        "hash": "payload",
+        "target": "payload",
+        "assignment": "replace",
+        "match": "match",
+        "outputs": 1,
+        "rounds": 10,
+        "x": 750,
+        "y": 720,
+        "wires": [
+            []
         ]
     }
 ]
