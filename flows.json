@@ -16,7 +16,7 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>ToDo</title>\n\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                    <h4>{{message}}</h4>\n                </div>\n                {{/error}}\n                <form action=\"/opt/add\" method=\"POST\">\n                    <div class=\"input-group input-group-lg\">\n                        <input required type=\"text\" name=\"name\" class=\"form-control {{#error}}border-danger{{/error}}\"  placeholder=\"Dosyalar teslim edilecek...\">\n                        <button class=\"btn btn-outline-secondary\" type=\"reset\">Temizle</button>\n                        <button class=\"btn btn-outline-primary px-5\" type=\"submit\">Ekle</button>\n                    </div>\n                </form>\n                <div class=\"card mt-2 overflow-hidden\">\n                    <div class=\"card-body p-0\">\n                        <div class=\"table-responsive\">\n                            <table class=\"table table-hover m-0\">\n                                <thead class=\"table-dark\">\n                                    <tr>\n                                        <th colspan=\"2\">Yapılacaklar listesi</th>\n                                    </tr>\n                                </thead>\n                                <tbody>\n                                    {{#payload}}\n                                    <tr valign=\"middle\">\n                                        <td>\n                                            {{#done}}\n                                            <div class=\"text-muted\"><del>{{name}}</del></div>\n                                            {{/done}}\n                                            {{^done}}\n                                            <div>{{name}}</div>\n                                            {{/done}}\n                                            <div class=\"badge bg-secondary \">\n                                                <i class=\"bi bi-calendar2-date \"></i>&nbsp;&nbsp;{{dateTime}}</small>\n                                            </div>\n                                        </td>\n                                        <td align=\"right\">\n                                            <div class=\"btn-group\">\n                                                <form method=\"POST\">\n                                                    <input type=\"hidden\" name=\"id\" value=\"{{id}}\"/>\n                                                {{#done}}\n                                                    <button type=\"submit\" formaction=\"/opt/open\" class=\"btn btn-warning\"><i class=\"bi bi-arrow-clockwise\"></i></button>\n                                                    {{/done}}\n                                                    {{^done}}\n                                                    <a href=\"/schedule/{{id}}\" type=\"submit\"\n                                                        class=\"btn btn-secondary\"><i class=\"bi bi-alarm-fill\"></i></a>\n                                                    <a href=\"/edit/{{id}}\"\n                                                        class=\"btn btn-info\"><i class=\"bi bi-pencil-square\"></i></a>\n                                                    <button type=\"submit\" formaction=\"/opt/complete\" class=\"btn btn-success\"><i class=\"bi bi-check-square\"></i></button>\n                                                    {{/done}}\n                                                    <button type=\"submit\" formaction=\"/opt/trash\" class=\"btn btn-danger\"><i class=\"bi bi-trash\"></i></button>\n                                                </form>\n                                            </div>\n                                        </td>\n                                    </tr>\n                                    {{/payload}}\n                                    {{^payload}}\n                                    <tr>\n                                        <td colspan=\"2\" class=\"text-mute text-center\">Henüz giriş yapılmadı...</td>\n                                    </tr>\n                                    {{/payload}}\n                                </tbody>\n                            </table>\n\n                        </div>\n                    </div>\n                </div>\n\n\n            </div>\n        </div>\n    </div>\n    <div class=\"position-fixed\">\n        <a href=\"/user-list\"\n            class=\"btn btn-primary position-fixed top-0 end-0 m-4 z-3 d-flex align-items-center justify-content-center rounded-1 p-0 shadow\"\n            style=\"width:56px;height:56px;\" aria-label=\"Kullanıcılar\">\n            <i class=\"bi bi-person-fill fs-4\"></i>\n        </a>\n    </div>\n    <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
+        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n  <title>Yapılacaklar Listesi</title>\n\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\"/>\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\"/>\n</head>\n<body class=\"bg-light\">\n\n  <!-- NAVBAR: solda sadece metin, sağda mavi kısayol (buton) -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Yapılacaklar Listesi</span>\n      <!-- mavi kısayol: Admin Panel'e gider -->\n      <a href=\"/user-list\"\n         class=\"btn btn-primary ms-auto d-flex align-items-center justify-content-center rounded-1 p-0 shadow\"\n         style=\"width:48px;height:48px;\" aria-label=\"Admin Panel\">\n        <i class=\"bi bi-person-fill fs-4\"></i>\n      </a>\n    </div>\n  </nav>\n\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-8 offset-md-2\">\n\n        {{#error}}\n        <div class=\"alert alert-danger\">\n          <h4 class=\"m-0\">{{message}}</h4>\n        </div>\n        {{/error}}\n\n        <!-- Ekleme formu -->\n        <form action=\"/opt/add\" method=\"POST\" class=\"mb-3\">\n          <div class=\"input-group input-group-lg\">\n            <input required type=\"text\" name=\"name\"\n                   class=\"form-control {{#error}}border-danger{{/error}}\"\n                   placeholder=\"Dosyalar teslim edilecek...\">\n            <button class=\"btn btn-outline-secondary\" type=\"reset\">Temizle</button>\n            <button class=\"btn btn-outline-primary px-5\" type=\"submit\">Ekle</button>\n          </div>\n        </form>\n\n        <!-- Liste Kartı -->\n        <div class=\"card overflow-hidden\">\n          <div class=\"card-body p-0\">\n            <div class=\"table-responsive\">\n              <table class=\"table table-hover m-0\">\n                <thead class=\"table-dark\">\n                  <tr>\n                    <th colspan=\"2\">Yapılacaklar Listesi</th>\n                  </tr>\n                </thead>\n                <tbody>\n                  {{#payload}}\n                  <tr class=\"align-middle\">\n                    <td>\n                      {{#done}}\n                        <div class=\"text-muted\"><del>{{name}}</del></div>\n                      {{/done}}\n                      {{^done}}\n                        <div>{{name}}</div>\n                      {{/done}}\n                      <span class=\"badge bg-secondary\">\n                        <i class=\"bi bi-calendar2-date\"></i>&nbsp;{{dateTime}}\n                      </span>\n                    </td>\n                    <td class=\"text-end\">\n                      <div class=\"btn-group\">\n                        <form method=\"POST\" class=\"m-0\">\n                          <input type=\"hidden\" name=\"id\" value=\"{{id}}\"/>\n\n                          {{#done}}\n                            <button type=\"submit\" formaction=\"/opt/open\" class=\"btn btn-warning\" title=\"Yeniden aç\">\n                              <i class=\"bi bi-arrow-clockwise\"></i>\n                            </button>\n                          {{/done}}\n\n                          {{^done}}\n                            <a href=\"/schedule/{{id}}\" class=\"btn btn-secondary\" title=\"Zamanla\">\n                              <i class=\"bi bi-alarm-fill\"></i>\n                            </a>\n                            <a href=\"/edit/{{id}}\" class=\"btn btn-info\" title=\"Düzenle\">\n                              <i class=\"bi bi-pencil-square\"></i>\n                            </a>\n                            <button type=\"submit\" formaction=\"/opt/complete\" class=\"btn btn-success\" title=\"Tamamla\">\n                              <i class=\"bi bi-check-square\"></i>\n                            </button>\n                          {{/done}}\n\n                          <button type=\"submit\" formaction=\"/opt/trash\" class=\"btn btn-danger\" title=\"Sil\">\n                            <i class=\"bi bi-trash\"></i>\n                          </button>\n                        </form>\n                      </div>\n                    </td>\n                  </tr>\n                  {{/payload}}\n\n                  {{^payload}}\n                  <tr>\n                    <td colspan=\"2\" class=\"text-muted text-center py-4\">Henüz giriş yapılmadı...</td>\n                  </tr>\n                  {{/payload}}\n                </tbody>\n              </table>\n            </div>\n          </div>\n        </div>\n\n      </div>\n    </div>\n  </div>\n\n  <!-- Artık dışarıda sabit mavi kısayol YOK; navbar içine taşındı -->\n  <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n</html>\n",
         "output": "str",
         "x": 540,
         "y": 220,
@@ -46,7 +46,7 @@
         "outputs": 0,
         "timeout": 0,
         "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\n\nconst DB = global.get(\"DB\") || {\n    todo: [],\n    user: []\n}\n\n/*\ntodo db şeması\n    id: NOW\n    name: \"\"\n    done: true|false\n    stamp: {\n    createdAt: NOW,\n    ip: IP,\n    user: \"\",\n    email: \"\"\n    },\n    schedule: {\n    formdata: {\n        id: \"\"\n        datetime: \"ISODate\"\n    },\n    options: {\n        crontiMethod: \"onIntevalTime\",\n        crontiArgs: [ISODate,ISODate]\n    }\n\n    }\n    date: \"GG.AA.YYYY\"\n    time: \"SS.DD.NN\"\n*/\n\n\n/*\nUser db şeması\n    id: NOW\n    displayName: \"\"\n    active: true|false\n    username: \"\"\n    password: \"HASH\"\n    stamp: {\n    createdAt: NOW,\n    ip: IP,\n    user: \"\",\n    email: \"\"\n    }\ndate: \"GG.AA.YYYY\"\ntime: \"SS.DD.NN\"\n*/\n\nglobal.set(\"DB\", DB)",
+        "initialize": "// Code added here will be run once\n// whenever the node is started.\n\nconst DB = global.get(\"DB\") || {\n    todo: [],\n    user: []\n}\n\n/*\ntodo db şeması\n    id: NOW\n    name: \"\"\n    done: true|false\n    stamp: {\n    createdAt: NOW,\n    ip: IP,\n    user: \"\",\n    email: \"\"\n    },\n    schedule: {\n    formdata: {\n        id: \"\"\n        datetime: \"ISODate\"\n    },\n    options: {\n        crontiMethod: \"onIntevalTime\",\n        crontiArgs: [ISODate,ISODate]\n    }\n\n    }\n    date: \"GG.AA.YYYY\"\n    time: \"SS.DD.NN\"\n*/\n\n\n/*\nUser db şeması\n    id: NOW\n    displayName: \"\"\n    active: true|false\n    username: \"\"\n    password: \"HASH\"\n    email:\n    stamp: {\n    createdAt: NOW,\n    ip: IP,\n    user: \"\",\n    email: \"\"\n    }\ndate: \"GG.AA.YYYY\"\ntime: \"SS.DD.NN\"\n*/\n\nglobal.set(\"DB\", DB)",
         "finalize": "",
         "libs": [],
         "x": 290,
@@ -113,7 +113,7 @@
             "2713f0cacf4e39f6",
             "22dd74058ceaa141"
         ],
-        "x": 215,
+        "x": 225,
         "y": 180,
         "wires": [
             [
@@ -327,7 +327,7 @@
         "links": [
             "c5f4d0120c89df7e"
         ],
-        "x": 465,
+        "x": 455,
         "y": 320,
         "wires": []
     },
@@ -415,7 +415,7 @@
         "links": [
             "c5f4d0120c89df7e"
         ],
-        "x": 465,
+        "x": 475,
         "y": 400,
         "wires": []
     },
@@ -626,7 +626,7 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Kullanıcı listesi</title>\n\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                    <h4>{{message}}</h4>\n                </div>\n                {{/error}}\n                <form action=\"/user-opt/add\" method=\"POST\">\n                    <div class=\"input-group input-group-lg\">\n                        <input required type=\"text\" name=\"username\" class=\"form-control {{#error}}border-danger{{/error}}\"  placeholder=\"Kullanıcı adı \">\n                        <input required type=\"text\" name=\"password\" class=\"form-control {{#error}}border-danger{{/error}}\"  placeholder=\"Parola \">\n                        <button class=\"btn btn-outline-secondary\" type=\"reset\">Temizle</button>\n                        <button class=\"btn btn-outline-primary px-5\" type=\"submit\">Ekle</button>\n                    </div>\n                </form>\n                <div class=\"card mt-2 overflow-hidden\">\n                    <div class=\"card-body p-0\">\n                        <div class=\"table-responsive\">\n                            <table class=\"table table-hover m-0\">\n                                <thead class=\"table-dark\">\n                                    <tr>\n                                        <th colspan=\"2\">Kullanıcı Adı</th>\n                                        <th colspan=\"2\">Durum</th>\n                                    </tr>\n                                </thead>\n                                <tbody>\n                                    {{#payload}}\n                                    <tr valign=\"middle\">\n                                        <td>\n                                            {{#active}}\n                                            <div>{{username}}</div>\n                                            {{/active}}\n                                            {{^active}}\n                                            <div class=\"text-muted\"><del>{{username}}</del></div>\n                                            {{/active}}\n                                            <div class=\"badge bg-secondary \">\n                                                <i class=\"bi bi-calendar2-date \"></i>&nbsp;&nbsp;{{dateTime}}</small>\n                                            </div>\n                                        </td>\n                                        <td align=\"right\">\n                                            <div class=\"btn-group\">\n                                                <a href=\"/user-edit/{{id}}\"\n                                                    class=\"btn btn-danger\"><i class=\"bi bi-pencil-square\"></i></a>\n                                            </div>\n                                        </td>\n                                    </tr>\n                                    {{/payload}}\n                                    {{^payload}}\n                                    <tr>\n                                        <td colspan=\"2\" class=\"text-mute text-center\">Henüz hiç kullanıcı\n                                            tanımlanmadı...</td>\n                                    </tr>\n                                    {{/payload}}\n                                </tbody>\n                            </table>\n\n                        </div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n    <div class=\"position-fixed\">\n        <a href=\"/\"\n            class=\"btn btn-lg btn-secondary position-fixed top-0 end-0 m-4 z-3 d-flex align-items-center justify-content-center rounded-1 p-0 shadow\"\n            style=\"width:56px;height:56px;\" aria-label=\"Kullanıcılar\">\n            <i class=\"bi bi-card-checklist fs-4\"></i>\n        </a>\n    </div>\n    <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
+        "template": "<!doctype html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Admin Panel — Kullanıcı Listesi</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n</head>\n\n<body class=\"bg-light\">\n  <!-- NAVBAR -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Admin Panel</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/\">Ana Sayfa</a>\n    </div>\n  </nav>\n\n  <main class=\"container\">\n\n    {{#error}}\n    <div class=\"alert alert-danger d-flex align-items-center\" role=\"alert\">\n      <div class=\"me-2\">⚠️</div>\n      <div>{{message}}</div>\n    </div>\n    {{/error}}\n\n    <!-- Ekleme Formu -->\n    <div class=\"card shadow-sm mb-4\">\n      <div class=\"card-header bg-white\">\n        <h5 class=\"mb-0\">Kullanıcı Ekle</h5>\n      </div>\n      <div class=\"card-body\">\n        <form action=\"/user-opt/add\" method=\"post\" novalidate>\n          <div class=\"row g-3\">\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">Kullanıcı Adı</label>\n              <input name=\"username\" required\n                     class=\"form-control {{#error.fields.username}}is-invalid{{/error.fields.username}}\"\n                     placeholder=\"Kullanıcı Adı\" value=\"{{body.username}}\">\n              {{#error.fields.username}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.username}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">İsim Soyisim</label>\n              <input name=\"displayName\"\n                     class=\"form-control {{#error.fields.displayName}}is-invalid{{/error.fields.displayName}}\"\n                     placeholder=\"Ad Soyad\" value=\"{{body.displayName}}\">\n              {{#error.fields.displayName}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.displayName}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">E-posta</label>\n              <input name=\"email\" type=\"email\" required\n                     class=\"form-control {{#error.fields.email}}is-invalid{{/error.fields.email}}\"\n                     placeholder=\"ad@domain.com\" value=\"{{body.email}}\">\n              {{#error.fields.email}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.email}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">Parola</label>\n              <input name=\"password\" type=\"password\" minlength=\"8\"\n                     class=\"form-control {{#error.fields.password}}is-invalid{{/error.fields.password}}\"\n                     placeholder=\"En az 8 karakter\">\n              {{#error.fields.password}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.password}}\n            </div>\n\n            <div class=\"col-md-8 d-flex align-items-end gap-2\">\n              <button class=\"btn btn-primary\" type=\"submit\">Ekle</button>\n              <a class=\"btn btn-light\" href=\"/user-list\">Vazgeç</a>\n              <a class=\"btn btn-outline-secondary\" href=\"/user-list\">Yenile</a>\n            </div>\n          </div>\n        </form>\n      </div>\n    </div>\n    <!-- Liste -->\n    <div class=\"card shadow-sm\">\n      <div class=\"card-header bg-white d-flex align-items-center justify-content-between\">\n        <h5 class=\"mb-0\">Kullanıcılar</h5>\n        <span class=\"text-muted small\">{{payload.length}} kayıt</span>\n      </div>\n      <div class=\"table-responsive\">\n        <table class=\"table table-hover align-middle mb-0\">\n          <thead class=\"table-light\">\n            <tr>\n              <th>ID</th>\n              <th>Kullanıcı</th>\n              <th>İsim</th>\n              <th>E-posta</th>\n              <th>Durum</th>\n              <th>Kayıt</th>\n              <th>Rol</th> <!-- YENİ -->\n              <th class=\"text-end\">İşlemler</th>\n            </tr>\n          </thead>\n          <tbody>\n            {{#payload}}\n            <tr>\n              <td class=\"text-muted\">{{id}}{{_id}}</td>\n              <td>{{username}}</td>\n              <td>{{displayName}}</td>\n              <td>{{email}}</td>\n              <td>\n                {{#isActive}}<span class=\"badge text-bg-success\">Aktif</span>{{/isActive}}\n                {{^isActive}}\n                  {{#active}}<span class=\"badge text-bg-success\">Aktif</span>{{/active}}\n                  {{^active}}<span class=\"badge text-bg-secondary\">Pasif</span>{{/active}}\n                {{/isActive}}\n              </td>\n              <td><span class=\"text-muted small\">{{createdAtText}}</span></td>\n              <td>\n                {{#isAdmin}}\n                  <span class=\"badge text-bg-danger\">admin</span>\n                {{/isAdmin}}\n                {{^isAdmin}}\n                  <span class=\"badge text-bg-secondary\">user</span>\n                {{/isAdmin}}\n              </td>\n              <td class=\"text-end\">\n                <a class=\"btn btn-sm btn-outline-primary me-1\" href=\"/user-edit/{{id}}{{_id}}\">Düzenle</a>\n\n                {{#isActive}}\n                  <form class=\"d-inline\" action=\"/user-opt/deactivate\" method=\"post\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{id}}{{_id}}\">\n                    <button class=\"btn btn-sm btn-outline-danger\" type=\"submit\">Pasifleştir</button>\n                  </form>\n                {{/isActive}}\n\n                {{^isActive}}\n                  {{#active}}\n                    <form class=\"d-inline\" action=\"/user-opt/deactivate\" method=\"post\">\n                      <input type=\"hidden\" name=\"id\" value=\"{{id}}{{_id}}\">\n                      <button class=\"btn btn-sm btn-outline-danger\" type=\"submit\">Pasifleştir</button>\n                    </form>\n                  {{/active}}\n                  {{^active}}\n                    <form class=\"d-inline\" action=\"/user-opt/activate\" method=\"post\">\n                      <input type=\"hidden\" name=\"id\" value=\"{{id}}{{_id}}\">\n                      <button class=\"btn btn-sm btn-outline-success\" type=\"submit\">Aktifleştir</button>\n                    </form>\n                  {{/active}}\n                {{/isActive}}\n              </td>\n            </tr>\n            {{/payload}}\n\n            {{^payload}}\n            <tr>\n              <td colspan=\"8\" class=\"text-center text-muted py-4\">Kayıt yok.</td>\n            </tr>\n            {{/payload}}\n          </tbody>\n        </table>\n      </div>\n    </div>\n    <footer class=\"text-center text-muted small my-4\">© {{year}} Admin</footer>\n  </main>\n\n  <script>\n    document.addEventListener('DOMContentLoaded', () => {\n      const el = document.querySelector('footer');\n      if (el && el.innerHTML.includes('{{year}}')) {\n        el.innerHTML = el.innerHTML.replace('{{year}}', new Date().getFullYear());\n      }\n    });\n  </script>\n</body>\n</html>\n",
         "output": "str",
         "x": 540,
         "y": 580,
@@ -652,7 +652,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.user.find()",
-        "func": "const DB =global.get(\"DB\")\n\nmsg.payload = DB.user?.sort((a,b) => b.stamp.createdAt - a.stamp.createdAt)\n\nreturn msg",
+        "func": "// db.user.find() — en yeni en üstte, createdAtText + isAdmin hazırla\nconst DB = global.get(\"DB\") || { user: [] };\nconst rows = Array.isArray(DB.user) ? DB.user.slice() : [];\n\n// DESC: order → createdAt → id\nrows.sort((a, b) => {\n  const ao = a.order ?? a.createdAt ?? 0;\n  const bo = b.order ?? b.createdAt ?? 0;\n  if (ao !== bo) return bo - ao;\n  const aid = (a.id ?? a._id ?? \"\").toString();\n  const bid = (b.id ?? b._id ?? \"\").toString();\n  return bid.localeCompare(aid);\n});\n\nconst fmt = (ts) => {\n  if (!ts) return \"-\";\n  const d = new Date(Number(ts));\n  return isNaN(d.getTime()) ? \"-\" :\n    d.toLocaleString(\"tr-TR\", { dateStyle: \"short\", timeStyle: \"short\" });\n};\n\nmsg.payload = rows.map(r => {\n  const roles = Array.isArray(r.roles) ? r.roles : (r.role ? [r.role] : []);\n  const norm  = roles.map(s => String(s).toLowerCase().trim());\n  return {\n    ...r,\n    roles: Array.from(new Set(norm)).length ? Array.from(new Set(norm)) : [\"user\"],\n    isAdmin: norm.includes(\"admin\"),\n    createdAtText: fmt(r.createdAt)\n  };\n});\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -696,7 +696,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 150,
-        "y": 660,
+        "y": 680,
         "wires": [
             [
                 "7083b2826db710fa"
@@ -712,8 +712,8 @@
         "headers": {
             "location": "/user-list"
         },
-        "x": 740,
-        "y": 660,
+        "x": 900,
+        "y": 680,
         "wires": []
     },
     {
@@ -721,15 +721,15 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.user.opt()",
-        "func": "// db.user.opt()\nconst DB  = global.get(\"DB\") || { user: [] };\nlet   user = DB.user ;\n\nconst nowDate = new Date();\nconst now     = nowDate.getTime();\nconst type    = msg.req?.params?.type;\n\n// ADD\nif (type === \"add\") {\n  user.push({\n    id: now,\n    username: (msg.payload.username || \"\").trim(),\n    password: (msg.payload.password || \"\").trim(), // istersen burada hash’le\n    active: true,\n    stamp: { createdAt: now, ip: msg.req.ip, user: \"\", email: \"\" },\n    dateTime: nowDate.toLocaleString(\"tr-TR\", { hour12: false })\n  });\n  DB.user = user; global.set(\"DB\", DB);\n  return [ msg, null ];\n}\n\n// id ile kullanıcıyı bul\nconst index = user.findIndex(x => String(x.id) === String(msg.payload.id));\nif (index === -1) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [ null, msg ];\n}\n\nswitch (type) {\n  case \"update\": {\n    const newU  = (msg.payload.username || \"\").trim();\n    const origU = (msg.payload.origUsername || \"\").trim();\n    if (newU !== origU) user[index].username = newU;\n\n    // Parola girilmişse değiştir\n    const newP = (msg.payload.password || \"\").trim();\n    if (newP) user[index].password = newP;\n\n    break;\n  }\n  case \"activate\":\n    user[index].active = true;\n    break;\n\n  case \"deactivate\":\n    user[index].active = false;\n    break;\n\n  default:\n    msg.error = { message: `${type} desteklenmiyor.` };\n    return [ null, msg ];\n}\n\nuser[index].stamp    = { createdAt: now, ip: msg.req.ip, user: \"\", email: \"\" };\nuser[index].dateTime = nowDate.toLocaleString(\"tr-TR\", { hour12: false });\n\nDB.user = user; global.set(\"DB\", DB);\nreturn [ msg, null ];\n",
+        "func": "const DB = global.get(\"DB\") || { user: [] };\nconst user = DB.user;\n\nconst nowDate = new Date();\nconst now = nowDate.getTime();\nconst type = msg.req?.params?.type ?? \"\";\n\n// yardımcı: truthy -> boolean\nfunction toBool(v) {\n  const s = String(v).toLowerCase();\n  return (s === \"true\" || s === \"1\" || s === \"on\");\n}\n\nif (type === \"add\") {\n\n  const isFirstUser =\n    !Array.isArray(user) || user.length === 0;\n\n  const rec = {\n    id: now,\n    username: (msg.payload.username || \"\").trim(),\n    password: (msg.payload.password || \"\").trim(), // (bcrypt) hash bu alana upstream'de yazılmış olabilir\n    displayName: (msg.payload.displayName || \"\").trim(),\n    email: (msg.payload.email || \"\").trim(),\n    active: true,\n\n    // 2) İlk kullanıcı admin + user, diğerleri sadece user\n    roles: isFirstUser ? [\"admin\", \"user\"] : [\"user\"],\n\n    // sıralama/tarih (sadece add)\n    createdAt: now,\n    order: now,\n\n    // iz bilgileri\n    stamp: { createdAt: now, ip: msg.req?.ip, user: \"\", email: \"\" },\n    dateTime: nowDate.toLocaleString(\"tr-TR\", { hour12: false })\n  };\n\n  user.push(rec);\n  DB.user = user; global.set(\"DB\", DB);\n  return [msg, null];\n}\n\n// ---- add dışı işlemler ----\nconst idx = user.findIndex(x => String(x.id ?? x._id) === String(msg.payload.id));\nif (idx === -1) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, msg];\n}\n\n// Güvenlik/temizlik: dışarıdan bu alanlar gelirse yok say\ndelete msg.payload.createdAt;\ndelete msg.payload.order;\ndelete msg.payload.roles; // rolleri sadece checkbox mekanizması ile yöneteceğiz\n\nswitch (type) {\n  case \"update\": {\n    // İsim\n    const newDN = (msg.payload.displayName || \"\").trim();\n    if (newDN && newDN !== user[idx].displayName) user[idx].displayName = newDN;\n\n    // E-posta\n    const newEmail = (msg.payload.email || \"\").trim();\n    if (newEmail && newEmail !== user[idx].email) user[idx].email = newEmail;\n\n    // Parola (bcrypt hash upstream'den geliyor olabilir)\n    const newP = (msg.payload.password || \"\").trim();\n    if (newP && newP !== user[idx].password) user[idx].password = newP;\n\n    // Aktif/Pasif (opsiyonel)\n    if (typeof msg.payload.active !== \"undefined\") {\n      const boolActive = toBool(msg.payload.active);\n      if (boolActive !== user[idx].active) user[idx].active = boolActive;\n    }\n\n    // 🔹 ROL — Admin checkbox (isAdmin_present + isAdmin)\n    if (\"isAdmin_present\" in msg.payload) {\n      const wantAdmin = toBool(msg.payload.isAdmin);\n\n      let roles = Array.isArray(user[idx].roles) ? [...user[idx].roles] : [];\n      // normalize + tekilleştir\n      roles = roles.map(r => String(r).toLowerCase().trim());\n      roles = [...new Set(roles)];\n\n      // \"user\" her zaman bulunsun\n      if (!roles.includes(\"user\")) roles.unshift(\"user\");\n\n      // admin ekle/çıkar\n      if (wantAdmin && !roles.includes(\"admin\")) roles.push(\"admin\");\n      if (!wantAdmin && roles.includes(\"admin\")) roles = roles.filter(r => r !== \"admin\");\n\n      user[idx].roles = roles;\n\n      // temizlik\n      delete msg.payload.isAdmin_present;\n      delete msg.payload.isAdmin;\n    }\n\n    break;\n  }\n\n  case \"activate\":\n    user[idx].active = true;\n    break;\n\n  case \"deactivate\":\n    user[idx].active = false;\n    break;\n\n  default:\n    msg.error = { message: `${type} desteklenmiyor.` };\n    return [null, msg];\n}\n\n// iz/stamp güncelle\nuser[idx].stamp = { createdAt: now, ip: msg.req?.ip, user: \"\", email: \"\" };\nuser[idx].dateTime = nowDate.toLocaleString(\"tr-TR\", { hour12: false });\n\n// kaydet\nDB.user = user; global.set(\"DB\", DB);\nreturn [msg, null];",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 510,
-        "y": 660,
+        "x": 730,
+        "y": 680,
         "wires": [
             [
                 "8f757371b383fe24"
@@ -748,18 +748,18 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "validation",
-        "func": "// validation (user)\nconst typeLookup = {\n    add: {\n        text: \"Ekleme\",\n        requireArgs: [\"username\", \"password\"]\n    },\n    update: {\n        text: \"Güncelle\",\n        requireArgs: [\"id\", \"username\", \"origUsername\"]\n    },\n    activate: {\n        text: \"Aktifleştirme\",\n        requireArgs: [\"id\"]\n    },\n    deactivate: {\n        text: \"Pasifleştirme\",\n        requireArgs: [\"id\"]\n    }\n};\n\nconst type = msg.req.params.type;\nif (!typeLookup[type]) {\n    msg.error = { message: `${type} geçersiz bir parametre değeridir.` };\n    return [null, msg];\n}\n\nif (!typeLookup[type].requireArgs.every(a => (msg.payload[a] ?? \"\").toString().trim() !== \"\")) {\n    msg.error = { message: `${typeLookup[type].text} için ${typeLookup[type].requireArgs.join(\", \")} zorunlu.` };\n    return [null, msg];\n}\n\n// update özel kontrol\nif (type === \"update\") {\n    const newU = (msg.payload.username || \"\").trim();\n    const origU = (msg.payload.origUsername || \"\").trim();\n    if (newU === origU && !msg.payload.password) {\n        msg.error = { message: \"Herhangi bir güncelleme yapmadınız.\" };\n        return [null, msg];\n    }\n}\n\nreturn msg;\n",
+        "func": "const typeLookup = {\n    add: {\n        text: \"Ekleme\",\n        requireArgs: [\"username\", \"password\",\"email\"]\n    },\n    update: {\n        text: \"Güncelle\",\n        requireArgs: [\"id\", \"email\"]\n    },\n    activate: {\n        text: \"Aktifleştirme\",\n        requireArgs: [\"id\"]\n    },\n    deactivate: {\n        text: \"Pasifleştirme\",\n        requireArgs: [\"id\"]\n    }\n};\n\nconst type = msg.req?.params?.type;\nfunction fail(message, fields = {}) {\n  \n  const b = { ...(msg.payload || {}) };\n  delete b.password;\n\n  msg.error = { message, fields };\n  msg.body = b;\n  return [null, msg];                \n}\n\n\nif (!typeLookup[type]) return fail(`${type} geçersiz bir parametre değeridir.`);\n\n\nconst ok = typeLookup[type].requireArgs.every(a => ((msg.payload?.[a] ?? \"\") + \"\").trim() !== \"\");\nif (!ok) return fail(`${typeLookup[type].text} için ${typeLookup[type].requireArgs.join(\", \")} zorunlu.`);\n\nmsg.payload.username = (msg.payload.username ?? \"\").trim();\nmsg.payload.displayName = (msg.payload.displayName ?? \"\").trim();\nmsg.payload.email = (msg.payload.email ?? \"\").trim();\nmsg.payload.id = (msg.payload.id ?? \"\").toString().trim();\n\nconst pass = (msg.payload.password ?? \"\").trim();\nconst email = msg.payload.email;\nconst emailRe = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\n\nconst fe = {}; \nif (type === \"add\") {\n  if (pass.length < 8) fe.password = \"En az 8 karakter.\";\n  if (!emailRe.test(email)) fe.email = \"Geçerli e-posta girin.\";\n}\nif (type === \"update\") {\n  if (pass && pass.length < 8) fe.password = \"Parola girilecekse en az 8 karakter.\";\n  if (email && !emailRe.test(email)) fe.email = \"Geçerli e-posta girin.\";\n  if (!msg.payload.id) fe.id = \"id zorunlu.\";\n}\nif (type === \"activate\" || type === \"deactivate\") {\n  if (!msg.payload.id) fe.id = \"id zorunlu.\";\n}\nif (Object.keys(fe).length) return fail(\"Lütfen form hatalarını düzeltin.\", fe);\n\nif (type === \"update\" && !pass) delete msg.payload.password;\n\nreturn [msg, null];",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
-        "y": 660,
+        "x": 320,
+        "y": 680,
         "wires": [
             [
-                "97440a5695968cc4"
+                "fc9042b8d1523bc0"
             ],
             [
                 "7817b550669eb8a2"
@@ -777,9 +777,10 @@
         "name": "link in 4",
         "links": [
             "7817b550669eb8a2",
-            "68b150d9072e014b"
+            "68b150d9072e014b",
+            "18d52f7ab428eef7"
         ],
-        "x": 215,
+        "x": 225,
         "y": 540,
         "wires": [
             [
@@ -796,8 +797,8 @@
         "links": [
             "126ead5b72b171f3"
         ],
-        "x": 445,
-        "y": 700,
+        "x": 415,
+        "y": 720,
         "wires": []
     },
     {
@@ -809,8 +810,8 @@
         "links": [
             "126ead5b72b171f3"
         ],
-        "x": 615,
-        "y": 700,
+        "x": 835,
+        "y": 720,
         "wires": []
     },
     {
@@ -819,17 +820,138 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "action": "encrypt",
-        "field": "payload",
+        "field": "payload.password",
         "hash": "payload",
-        "target": "payload",
-        "assignment": "replace",
+        "target": "payload.password",
+        "assignment": "assign",
         "match": "match",
         "outputs": 1,
         "rounds": 10,
-        "x": 750,
-        "y": 720,
+        "x": 610,
+        "y": 640,
         "wires": [
-            []
+            [
+                "97440a5695968cc4"
+            ]
+        ]
+    },
+    {
+        "id": "314b400985be68da",
+        "type": "http in",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "url": "/user-edit/:id",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 780,
+        "wires": [
+            [
+                "7c83cb4a19389f12"
+            ]
+        ]
+    },
+    {
+        "id": "7c83cb4a19389f12",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "db.user.findOne()",
+        "func": "const DB = global.get(\"DB\") || { user: [] };\nconst id = msg.req?.params?.id;\nconst rows = Array.isArray(DB.user) ? DB.user : [];\n\nconst rec = rows.find(r => String(r.id ?? r._id) === String(id));\nif (!rec) {\n  msg.error = { message: \"Kayıt bulunamadı.\" };\n  msg.payload = {};\n  return msg;\n}\n\nconst roles = Array.isArray(rec.roles) ? rec.roles : (rec.role ? [rec.role] : []);\nconst norm = roles.map(s => String(s).toLowerCase().trim());\nrec.roles = norm.length ? Array.from(new Set(norm)) : [\"user\"];\nrec.isAdmin = rec.roles.includes(\"admin\");\n\nmsg.payload = rec;\nreturn msg;\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 370,
+        "y": 780,
+        "wires": [
+            [
+                "1251f822538e5dd8"
+            ],
+            [
+                "18d52f7ab428eef7"
+            ]
+        ],
+        "outputLabels": [
+            "Success",
+            "Error"
+        ]
+    },
+    {
+        "id": "1251f822538e5dd8",
+        "type": "template",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "html",
+        "syntax": "mustache",
+        "template": "<!doctype html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Admin Panel — Kullanıcı Düzenle</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <!-- Bootstrap -->\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n</head>\n\n<body class=\"bg-light\">\n  <!-- NAVBAR: solda büyük metin, sağda metin link -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Admin Panel — Düzenleme Sayfası</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/user-list\">Admin Panel</a>\n    </div>\n  </nav>\n\n  <main class=\"container\">\n    {{#error}}\n    <div class=\"alert alert-danger d-flex align-items-center\" role=\"alert\">\n      <div class=\"me-2\">⚠️</div><div>{{message}}</div>\n    </div>\n    {{/error}}\n\n    <div class=\"card shadow-sm\">\n      <div class=\"card-header bg-white\">\n        <h5 class=\"mb-0\">Kullanıcı Düzenle</h5>\n      </div>\n      <div class=\"card-body\">\n        <form action=\"/user-opt/update\" method=\"post\" novalidate>\n          <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}{{payload._id}}\">\n\n          <div class=\"row g-3\">\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">Kullanıcı adı</label>\n              <input name=\"username\" readonly\n                     class=\"form-control {{#error.fields.username}}is-invalid{{/error.fields.username}}\"\n                     placeholder=\"kullanici\" value=\"{{payload.username}}\">\n              {{#error.fields.username}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.username}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">İsim Soyisim</label>\n              <input id=\"displayName\"\n                     name=\"displayName\"\n                     data-initial=\"{{payload.displayName}}\"\n                     class=\"form-control {{#error.fields.displayName}}is-invalid{{/error.fields.displayName}}\"\n                     placeholder=\"Ad Soyad\" value=\"{{payload.displayName}}\">\n              {{#error.fields.displayName}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.displayName}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">E-posta</label>\n              <input name=\"email\" type=\"email\" required readonly\n                     class=\"form-control {{#error.fields.email}}is-invalid{{/error.fields.email}}\"\n                     placeholder=\"ad@domain.com\" value=\"{{payload.email}}\">\n              {{#error.fields.email}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.email}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">Yeni şifre (opsiyonel)</label>\n              <input id=\"password\" name=\"password\" type=\"password\" minlength=\"8\"\n                     class=\"form-control {{#error.fields.password}}is-invalid{{/error.fields.password}}\"\n                     placeholder=\"Yeni parola\">\n              {{#error.fields.password}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.password}}\n            </div>\n            {{#viewer.isAdmin}}\n            <!-- Admin yetkisi -->\n            <div class=\"col-12\">\n              <div class=\"form-check\">\n                <!-- Alanın gönderildiğini backend'e belli etmek için -->\n                <input type=\"hidden\" name=\"isAdmin_present\" value=\"1\">\n                <input class=\"form-check-input\" type=\"checkbox\" id=\"cbAdmin\"\n                       name=\"isAdmin\" value=\"true\"\n                       {{#payload.isAdmin}}checked{{/payload.isAdmin}}>\n                <label class=\"form-check-label\" for=\"cbAdmin\">Admin yetkisi ver</label>\n              </div>\n            </div>\n            {{/viewer.isAdmin}}\n            \n            <!-- Aktif / Pasif -->\n            <div class=\"col-12\">\n              <div class=\"form-check form-check-inline\">\n                <input class=\"form-check-input\" id=\"r1\" type=\"radio\" name=\"active\" value=\"true\"\n                       {{#payload.isActive}}checked{{/payload.isActive}}\n                       {{#payload.active}}checked{{/payload.active}}>\n                <label class=\"form-check-label\" for=\"r1\">Aktif</label>\n              </div>\n              <div class=\"form-check form-check-inline\">\n                <input class=\"form-check-input\" id=\"r2\" type=\"radio\" name=\"active\" value=\"false\"\n                       {{^payload.isActive}}{{^payload.active}}checked{{/payload.active}}{{/payload.isActive}}>\n                <label class=\"form-check-label\" for=\"r2\">Pasif</label>\n              </div>\n            </div>\n\n            <div class=\"col-12 d-flex justify-content-end gap-2\">\n              <a class=\"btn btn-warning\" href=\"/user-list\">Vazgeç</a>\n              <button id=\"btnUpdate\" class=\"btn btn-secondary\" type=\"submit\" disabled>Güncelle</button>\n            </div>\n          </div>\n        </form>\n      </div>\n    </div>\n\n    <footer class=\"text-center text-muted small my-4\">© {{year}} Admin</footer>\n  </main>\n\n  <!-- Değişiklik olmadan Güncelle açılamasın -->\n  <script>\n  document.addEventListener('DOMContentLoaded', () => {\n    const btn    = document.getElementById('btnUpdate');      // Güncelle\n    const dnEl   = document.getElementById('displayName');    // İsim Soyisim\n    const pwEl   = document.getElementById('password');       // Yeni şifre\n    const cb     = document.getElementById('cbAdmin');        // Admin checkbox\n    const radios = document.querySelectorAll('input[name=\"active\"]'); // Aktif/Pasif\n\n    if (!btn || !dnEl || !pwEl) return;\n\n    const initialDN     = (dnEl.dataset.initial || '').trim();\n    const initialAdmin  = !!cb?.checked;\n    const initialActive = (document.querySelector('input[name=\"active\"]:checked')?.value ?? '');\n\n    function checkCanSubmit() {\n      const dn = dnEl.value.trim();\n      const pw = pwEl.value;\n\n      const dnChanged    = dn !== initialDN;\n      const pwChanged    = pw.trim().length > 0;\n      const pwValid      = !pwChanged || pw.trim().length >= 8;\n      const roleChanged  = cb ? (cb.checked !== initialAdmin) : false;\n      const currentActive= (document.querySelector('input[name=\"active\"]:checked')?.value ?? '');\n      const activeChanged= currentActive !== initialActive;\n\n      // Kısa şifre görsel uyarısı\n      pwEl.classList.toggle('is-invalid', pwChanged && !pwValid);\n\n      const can = (dnChanged || pwChanged || roleChanged || activeChanged) && pwValid;\n\n      btn.disabled = !can;\n      btn.classList.toggle('btn-success', can);\n      btn.classList.toggle('btn-secondary', !can);\n    }\n\n    dnEl.addEventListener('input', checkCanSubmit);\n    pwEl.addEventListener('input', checkCanSubmit);\n    cb?.addEventListener('change', checkCanSubmit);\n    radios.forEach(r => r.addEventListener('change', checkCanSubmit));\n\n    checkCanSubmit();\n  });\n  </script>\n\n  <script>\n    // Yıl bilgisi\n    document.addEventListener('DOMContentLoaded', () => {\n      const el = document.querySelector('footer');\n      if (el && el.innerHTML.includes('{{year}}')) {\n        el.innerHTML = el.innerHTML.replace('{{year}}', new Date().getFullYear());\n      }\n    });\n  </script>\n</body>\n</html>\n",
+        "output": "str",
+        "x": 580,
+        "y": 780,
+        "wires": [
+            [
+                "f8653907910821de"
+            ]
+        ]
+    },
+    {
+        "id": "f8653907910821de",
+        "type": "http response",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 750,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "18d52f7ab428eef7",
+        "type": "link out",
+        "z": "651af9bb9a46e4b0",
+        "name": "link out 6",
+        "mode": "link",
+        "links": [
+            "126ead5b72b171f3"
+        ],
+        "x": 495,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "fc9042b8d1523bc0",
+        "type": "switch",
+        "z": "651af9bb9a46e4b0",
+        "name": "hash-or-skip",
+        "property": "payload.password",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "jsonata_exp",
+                "v": "$exists(payload.password) and $length($trim(payload.password)) > 0",
+                "vt": "jsonata"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 490,
+        "y": 680,
+        "wires": [
+            [
+                "158f6cdbc523a790"
+            ],
+            [
+                "97440a5695968cc4"
+            ]
         ]
     }
 ]
