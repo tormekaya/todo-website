@@ -14,6 +14,8 @@
     "bcrypt": "^6.0.0",
     "node-red": "^4.1.0",
     "node-red-contrib-bcrypt": "~0.1.6",
+    "node-red-contrib-jwt": "~0.1.0",
+    "node-red-contrib-mongodb4": "~3.1.1",
     "node-red-node-email": "~3.1.0"
   }
 }
