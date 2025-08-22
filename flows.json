@@ -108,7 +108,7 @@
             "HS256"
         ],
         "jwkurl": "",
-        "secret": "12345678",
+        "secret": "147852369",
         "key": "",
         "signvar": "token",
         "storetoken": "token",
@@ -143,7 +143,7 @@
         "type": "function",
         "z": "9357c048778312fb",
         "name": "function 3",
-        "func": "// OUT1: devam (verify-bypass'a gidecek)\n// OUT2: 302 /login (redirect)\n\nconst urlPath = (msg.req?.originalUrl || \"/\").split(\"?\")[0];\nconst method  = msg.req?.method || \"GET\";\nconst t = msg.req?.cookies?.token;\n\n// Herkese açık sayfalar\nconst isPublic =\n  /^\\/login\\b/.test(urlPath) ||\n  /^\\/register\\b/.test(urlPath) ||\n  /^\\/favicon\\.ico$/.test(urlPath) ||\n  /^\\/assets\\//.test(urlPath);\n\n// Kayıt formu POST'u (register'dan)\nconst DB = global.get(\"DB\") || {};\nconst isFirstUser = !Array.isArray(DB.user) || DB.user.length === 0;\nconst fromRegister = (msg.req?.headers?.referer || \"\").includes(\"/register\");\nconst allowSignupPost = urlPath === \"/user-opt/add\" && method === \"POST\" && (isFirstUser || fromRegister);\n\nif (isPublic || allowSignupPost) {\n  // verify'ı atlayacağımızı işaretle\n  msg.auth = { skip: true };\n  return [msg, null];     // OUT1\n}\n\nif (!t) {\n  msg.statusCode = 302;\n  msg.headers = { Location: \"/login?next=\" + encodeURIComponent(msg.req?.originalUrl || \"/\") };\n  msg.payload = \"\";\n  return [null, msg];     // OUT2 → http (302)\n}\n\nmsg.token = t;\nreturn [msg, null];       // OUT1 → verify-bypass\n",
+        "func": "// OUT1: devam (verify-bypass'a gidecek)\n// OUT2: 302 /login (redirect)\n\nconst urlPath = (msg.req?.originalUrl || \"/\").split(\"?\")[0];\nconst method  = msg.req?.method || \"GET\";\nconst t = msg.req?.cookies?.token;\n\n// Herkese açık sayfalar\n// Herkese açık sayfalar\nconst isPublic =\n  /^\\/login\\b/.test(urlPath) ||\n  /^\\/register\\b/.test(urlPath) ||\n  /^\\/favicon\\.ico$/.test(urlPath) ||\n  /^\\/assets\\//.test(urlPath) ||\n  /^\\/css\\//.test(urlPath) ||      \n  /^\\/js\\//.test(urlPath)  ||      \n  /^\\/font(s)?\\//.test(urlPath) || \n  /^\\/img\\//.test(urlPath);        \n\n\n// Kayıt formu POST'u (register'dan)\nconst DB = global.get(\"DB\") || {};\nconst isFirstUser = !Array.isArray(DB.user) || DB.user.length === 0;\nconst fromRegister = (msg.req?.headers?.referer || \"\").includes(\"/register\");\nconst allowSignupPost = urlPath === \"/user-opt/add\" && method === \"POST\" && (isFirstUser || fromRegister);\n\nif (isPublic || allowSignupPost) {\n  // verify'ı atlayacağımızı işaretle\n  msg.auth = { skip: true };\n  return [msg, null];     // OUT1\n}\n\nif (!t) {\n  msg.statusCode = 302;\n  msg.headers = { Location: \"/login?next=\" + encodeURIComponent(msg.req?.originalUrl || \"/\") };\n  msg.payload = \"\";\n  return [null, msg];     // OUT2 → http (302)\n}\n\nmsg.token = t;\nreturn [msg, null];       // OUT1 → verify-bypass\n",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -242,7 +242,7 @@
         "syntax": "mustache",
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Yapılacaklar Listesi</title>\n\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\" />\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\" />\n</head>\n\n<body class=\"bg-light\">\n\n  <!-- NAVBAR: solda sadece metin, sağda mavi kısayol (buton) -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Yapılacaklar Listesi</span>\n      <!-- mavi kısayol: Admin Panel'e gider -->\n      {{#user.isAdmin}}\n      <a href=\"/user-list\"\n        class=\"btn btn-primary ms-auto d-flex align-items-center justify-content-center rounded-1 p-0 shadow\"\n        style=\"width:48px;height:48px;\" aria-label=\"Admin Panel\">\n        <i class=\"bi bi-person-fill fs-4\"></i>\n      </a>\n      {{/user.isAdmin}}\n    </div>\n  </nav>\n\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-8 offset-md-2\">\n\n        {{#error}}\n        <div class=\"alert alert-danger\">\n          <h4 class=\"m-0\">{{message}}</h4>\n        </div>\n        {{/error}}\n\n        <!-- Ekleme formu -->\n        <form action=\"/opt/add\" method=\"POST\" class=\"mb-3\">\n          <div class=\"input-group input-group-lg\">\n            <input required type=\"text\" name=\"name\"\n                   class=\"form-control {{#error}}border-danger{{/error}}\"\n                   placeholder=\"Dosyalar teslim edilecek...\">\n            <button class=\"btn btn-outline-secondary\" type=\"reset\">Temizle</button>\n            <button class=\"btn btn-outline-primary px-5\" type=\"submit\">Ekle</button>\n          </div>\n        </form>\n\n        <!-- Liste Kartı -->\n        <div class=\"card overflow-hidden\">\n          <div class=\"card-body p-0\">\n            <div class=\"table-responsive\">\n              <table class=\"table table-hover m-0\">\n                <thead class=\"table-dark\">\n                  <tr>\n                    <th colspan=\"2\">Yapılacaklar Listesi</th>\n                  </tr>\n                </thead>\n                <tbody>\n                  {{#payload}}\n                  <tr class=\"align-middle\">\n                    <td>\n                      {{#done}}\n                      <div class=\"text-muted\"><del>{{name}}</del></div>\n                      {{/done}}\n                      {{^done}}\n                      <div>{{name}}</div>\n                      {{/done}}\n                      <span class=\"badge bg-secondary\">\n                        <i class=\"bi bi-calendar2-date\"></i>&nbsp;{{dateTime}}\n                      </span>\n                      {{#user.isAdmin}}\n                      <span class=\"badge bg-dark \">\n                        <i class=\"bi bi-person-fill\"></i>&nbsp;{{stamp.username}}\n                      </span>\n                      {{/user.isAdmin}}\n                    </td>\n                    <td class=\"text-end\">\n                      <div class=\"btn-group\">\n                        <form method=\"POST\" class=\"m-0\">\n                          <input type=\"hidden\" name=\"id\" value=\"{{id}}\"/>\n\n                          {{#done}}\n                          <button type=\"submit\" formaction=\"/opt/open\" class=\"btn btn-warning\" title=\"Yeniden aç\">\n                              <i class=\"bi bi-arrow-clockwise\"></i>\n                            </button>\n                          {{/done}}\n\n                          {{^done}}\n                          <a href=\"/schedule/{{id}}\" class=\"btn btn-secondary\" title=\"Zamanla\">\n                            <i class=\"bi bi-alarm-fill\"></i>\n                          </a>\n                          <a href=\"/edit/{{id}}\" class=\"btn btn-info\" title=\"Düzenle\">\n                            <i class=\"bi bi-pencil-square\"></i>\n                          </a>\n                          <button type=\"submit\" formaction=\"/opt/complete\" class=\"btn btn-success\" title=\"Tamamla\">\n                              <i class=\"bi bi-check-square\"></i>\n                            </button>\n                          {{/done}}\n\n                          <button type=\"submit\" formaction=\"/opt/trash\" class=\"btn btn-danger\" title=\"Sil\">\n                            <i class=\"bi bi-trash\"></i>\n                          </button>\n                        </form>\n                      </div>\n                    </td>\n                  </tr>\n                  {{/payload}}\n\n                  {{^payload}}\n                  <tr>\n                    <td colspan=\"2\" class=\"text-muted text-center py-4\">Henüz giriş yapılmadı...</td>\n                  </tr>\n                  {{/payload}}\n                </tbody>\n              </table>\n            </div>\n          </div>\n        </div>\n\n      </div>\n    </div>\n  </div>\n  <!-- Sağ alt kullanıcı/çıkış alanı -->\n  <div class=\"position-fixed bottom-0 end-0 m-4\" style=\"z-index:1080\">\n    {{#user}}\n    <div class=\"btn-group dropup shadow\">\n      <button type=\"button\" class=\"btn btn-light border\">\n          {{#user.displayName}}{{user.displayName}}{{/user.displayName}}\n          {{^user.displayName}}{{user.username}}{{/user.displayName}}\n          {{#user.email}}{{user.email}}{{/user.email}}\n          {{^user.email}}{{user.email}}{{/user.email}}\n        </button>\n      <a href=\"/logout\" class=\"btn btn-danger\" title=\"Çıkış\">\n        <i class=\"bi bi-power\"></i>\n      </a>\n    </div>\n    {{/user}}\n\n    {{^user}}\n    <a href=\"/login\" class=\"btn btn-outline-primary shadow\">\n      <i class=\"bi bi-person\"></i> Giriş\n    </a>\n    {{/user}}\n  </div>\n\n  <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
         "output": "str",
-        "x": 720,
+        "x": 780,
         "y": 220,
         "wires": [
             [
@@ -257,72 +257,27 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 890,
+        "x": 930,
         "y": 220,
         "wires": []
-    },
-    {
-        "id": "25b78ffc1849119c",
-        "type": "function",
-        "z": "651af9bb9a46e4b0",
-        "name": "DB",
-        "func": "// Flush DB\nglobal.set(\"DB\", {\n  todo: [],\n  user: [\n    (function () {\n      // 19.08.2025 14:00:00 (Türkiye saati) → JS için geçerli ISO ile epoch\n      const createdAt = new Date(\"2025-08-19T14:00:00+03:00\").getTime();\n\n      return {\n        id: 1000,\n        username: \"admin\",\n        // SENİN VERDİĞİN HASH\n        password: \"$2a$10$cjbqr12umrp5Y9PrUj6yOeh5p0hirVp6CsULm/GyYQZLH6ZNyre.O\",\n        displayName: \"Sistem Yöneticisi\",\n        email: \"admin@site.local\",\n        roles: [\"admin\"],\n        active: true,\n\n        // Sıralama/tarih alanları MUTLAKA sayı (epoch) olsun\n        createdAt,                                   // listelemede Number(ts) ile parse ediliyor\n\n        // İz bilgileri\n        stamp: {\n          createdAt,\n          ip: \"127.0.0.1\",\n          username: \"admin\",\n          email: \"admin@site.local\",\n        },\n\n        // Ekranda gösterim için yerel format (geçerli tarih stringi üretir)\n        dateTime: new Date(createdAt).toLocaleString(\"tr-TR\", { hour12: false }),\n      };\n    })(),\n  ],\n});\n",
-        "outputs": 0,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "// Code added here will be run once\n// whenever the node is started.\n\nconst DB = global.get(\"DB\") || {\n    todo: [],\n    user: []\n}\n\n\n/*\ntodo db şeması\n    id: NOW\n    name: \"\"\n    done: true|false\n    stamp: {\n    createdAt: NOW,\n    ip: IP,\n    user: \"\",\n    email: \"\"\n    },\n    schedule: {\n    formdata: {\n        id: \"\"\n        datetime: \"ISODate\"\n    },\n    options: {\n        crontiMethod: \"onIntevalTime\",\n        crontiArgs: [ISODate,ISODate]\n    }\n\n    }\n    date: \"GG.AA.YYYY\"\n    time: \"SS.DD.NN\"\n*/\n\n\n/*\nUser db şeması\n    id: NOW\n    displayName: \"\"\n    active: true|false\n    username: \"\"\n    password: \"HASH\"\n    email:\n    stamp: {\n    createdAt: NOW,\n    ip: IP,\n    user: \"\",\n    email: \"\"\n    }\ndate: \"GG.AA.YYYY\"\ntime: \"SS.DD.NN\"\n*/\n\nglobal.set(\"DB\", DB)",
-        "finalize": "",
-        "libs": [],
-        "x": 290,
-        "y": 100,
-        "wires": []
-    },
-    {
-        "id": "8a9c6c7f989384ed",
-        "type": "inject",
-        "z": "651af9bb9a46e4b0",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 140,
-        "y": 100,
-        "wires": [
-            [
-                "25b78ffc1849119c"
-            ]
-        ]
     },
     {
         "id": "9e7745c31875caa6",
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.todo.find()",
-        "func": "const DB =global.get(\"DB\")\nconst isAdmin = Array.isArray(msg.user?.roles) && msg.user.roles.includes(\"admin\");\nmsg.payload = DB.todo.filter(x => isAdmin || x.stamp.username === msg.user?.username).sort((a,b) => b.stamp.createdAt - a.stamp.createdAt);\nreturn msg;",
+        "func": "/*\nlet query = msg.user.roles.includes(\"admin\")\n  ? {}\n  : { \"stamp.username\": msg.user.username };\n\nmsg.payload = [\n  { $match: query },\n  { $sort: { \"stamp.createdAt\": -1 } },\n  {\n    $addFields: {\n      hasAdmin: {\n        $cond: [{ $eq: [\"$roles\", \"admin\"] }, true, false]\n      }\n    }\n  }\n];\n\nreturn msg;\n*/\nlet query = msg.user.roles.includes(\"admin\")\n      ? {}\n      : { \"stamp.username\": msg.user.username };\n\n    msg.payload = query; // Sadece sorgu nesnesini gönderiyoruz\n\n    return msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 510,
+        "x": 470,
         "y": 220,
         "wires": [
             [
-                "2ae9555726c58d4a"
+                "7b383705f4aaec1f"
             ]
         ]
     },
@@ -356,7 +311,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 140,
-        "y": 460,
+        "y": 580,
         "wires": [
             [
                 "f55ef5f0d076fe2f"
@@ -372,8 +327,8 @@
         "headers": {
             "location": "/"
         },
-        "x": 900,
-        "y": 420,
+        "x": 1340,
+        "y": 540,
         "wires": []
     },
     {
@@ -381,29 +336,25 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.todo.opt()",
-        "func": "const DB  = global.get(\"DB\") || { todo: [] };\nlet   todo = DB.todo;\n\nconst nowDate = new Date();\nconst now     = nowDate.getTime();\nconst type    = msg.req?.params?.type;\n\nif (type === \"add\") {\n  todo.push({\n    id: now,\n    name: (msg.payload.name || \"\").trim(),\n    done: false,\n    stamp: { \n      createdAt: now,\n      ip: msg.req.ip,\n      username: msg.user.username || \"\",\n      email: msg.user.email || \"\"\n    },\n    dateTime: nowDate.toLocaleString(\"tr-TR\", { hour12: false })\n  });\n  DB.todo = todo; \n  global.set(\"DB\", DB);\n  return [ msg, null, null ];\n}\n\nconst index = todo.findIndex(x => String(x.id) === String(msg.payload.id));\nif (index === -1) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [ null, msg, null ];\n}\n\nif (todo[index].stamp.username !== msg.user.username && !msg.user.roles.includes(\"admin\")) {\n    msg.error = {\n        message: \"Yetkisiz erişim.\"\n    }\n    return [null, msg]\n}\n\n\nif (type === \"trash\") {\n  todo.splice(index, 1);\n  DB.todo = todo; \n  global.set(\"DB\", DB);\n  return [ msg, null, null ];\n}\n\nif (type === \"schedule\") {\n  const when = msg.payload.schedule?.datetime || \"\";\n  const whenWithSec = when.length === 16 ? when + \":00\" : when;\n\n  let scheduleOptions = {\n    crontiMethod: \"onDate\",\n    crontiArgs: [whenWithSec, whenWithSec]\n  };\n\n  todo[index].schedule = { \n    formData: msg.payload,     \n    options: scheduleOptions\n  };\n\n  todo[index].stamp = { \n    createdAt: now, \n    ip: msg.req.ip, \n    username: msg.user.username || \"\", \n    email: msg.user.email || \"\" \n  };\n  \n  todo[index].dateTime = nowDate.toLocaleString(\"tr-TR\", { hour12: false });\n\n  DB.todo = todo; \n  global.set(\"DB\", DB);\n\n  msg.payload = scheduleOptions;                 \n  msg.todo    = todo[index];                     \n  msg.topic   = `todo:${todo[index].id}`;       \n\n  return [ msg, null, msg ];\n}\n\nif (type === \"update\") {\n  if (todo[index].done) {\n    msg.error = { message: \"Tamamlanmış işler güncellenemez\" };\n    return [ null, msg, null ];\n  }\n\n  const newVal  = (msg.payload.name || \"\").trim();\n  const origVal = (msg.payload.orig || \"\").trim();\n\n  if (newVal === origVal) {\n    msg.error = { message: \"Herhangi bir güncelleme yapmadınız.\" };\n    return [ null, msg, null ];\n  }\n\n  todo[index].name = newVal;\n}\nelse if (type === \"complete\") {\n  todo[index].done = true;\n}\nelse if (type === \"open\") {\n  todo[index].done = false;\n}\n\ntodo[index].stamp = { \n  ...(todo[index].stamp || {}),\n  createdAt: now, \n  ip: msg.req.ip \n};\n\ntodo[index].dateTime = nowDate.toLocaleString(\"tr-TR\", { hour12: false });\n\nDB.todo = todo; \nglobal.set(\"DB\", DB);\n\nreturn [ msg, null, null ];\n",
-        "outputs": 3,
+        "func": "const nowDate = new Date();\nconst now = nowDate.getTime();\nconst type = msg.req?.params?.type;\n\nmsg.formData = msg.payload \n\nif (type === \"add\") {\n  msg.payload = {\n    id: now,\n    name: (msg.formData.name || \"\").trim(),\n    done: false,\n    stamp: {\n      createdAt: now,\n      ip: msg.req.ip,\n      username: msg.user.username || \"\",\n      email: msg.user.email || \"\"\n    },\n    dateTime: nowDate.toLocaleString(\"tr-TR\", { hour12: false })\n  }\n  return msg\n}\n\n  msg.payload = {\n    id: msg.formData.id\n  }\n\nreturn [null, msg];\n",
+        "outputs": 2,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 670,
-        "y": 460,
+        "y": 580,
         "wires": [
             [
-                "91308c72ec45a46b"
+                "93d181d58a920cd0"
             ],
             [
-                "8646b06022669592"
-            ],
-            [
-                "463e1db29a4e8833"
+                "57fe0dbd56855d23"
             ]
         ],
         "outputLabels": [
             "Success",
-            "Error",
             ""
         ]
     },
@@ -420,7 +371,7 @@
         "finalize": "",
         "libs": [],
         "x": 500,
-        "y": 460,
+        "y": 580,
         "wires": [
             [
                 "f8a16a36a9c0bb02"
@@ -444,7 +395,7 @@
             "c5f4d0120c89df7e"
         ],
         "x": 595,
-        "y": 500,
+        "y": 620,
         "wires": []
     },
     {
@@ -456,8 +407,8 @@
         "links": [
             "c5f4d0120c89df7e"
         ],
-        "x": 805,
-        "y": 460,
+        "x": 1125,
+        "y": 600,
         "wires": []
     },
     {
@@ -489,7 +440,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 280,
+        "y": 320,
         "wires": [
             [
                 "4a66cc4d80aa2897"
@@ -501,26 +452,22 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.todo.findOne()",
-        "func": "const DB = global.get(\"DB\")\n\nmsg.payload = DB.todo.find(x => x.id == msg.req.params.id && (x.stamp.username === msg.user.username || msg.user.roles.includes(\"admin\")))\n\nif (!msg.payload) {\n    msg.error = {\n        message: \"id ile eşleşen bir kayıt bulunamadı\"\n    }\n    return [null, msg]\n}\nif (msg.payload.done) {\n    msg.error = {\n        message: \"Tamamlanmış işler güncellenemez\"\n    }\n    return [null, msg]\n}\n\nreturn msg",
-        "outputs": 2,
+        "func": "msg.payload = {\n    id: msg.req.params.id\n}\n\nif(!msg.user.roles.includes(\"admin\")) msg.payload[\"stamp.username\"] = msg.user.username\n\n\nreturn msg",
+        "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 510,
-        "y": 280,
+        "y": 320,
         "wires": [
             [
-                "b38fb814b875aebb"
-            ],
-            [
-                "2713f0cacf4e39f6"
+                "4ebc1649e8305f46"
             ]
         ],
         "outputLabels": [
-            "Success",
-            "Error"
+            "Success"
         ]
     },
     {
@@ -534,8 +481,8 @@
         "syntax": "mustache",
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>ToDo</title>\n\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                    <h4>{{message}}</h4>\n                </div>\n                {{/error}}\n                <form action=\"/opt/update\" method=\"POST\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}\">\n                    <input type=\"hidden\" name=\"orig\" value=\"{{payload.name}}\">\n                    <div class=\"mb-3\">\n                        <input required type=\"text\" name=\"name\" value=\"{{payload.name}}\" \n                               class=\"form-control form-control-lg {{#error}}border-danger{{/error}} {{^error}}border-info{{/error}}\"  \n                               placeholder=\"Dosyalar teslim edilecek...\">\n                    </div>\n                    <div class=\"d-flex justify-content-end gap-2\">\n                        <a class=\"btn btn-outline-warning\" href=\"/\">Vazgeç</a>\n                        <button class=\"btn btn-outline-secondary\" \n                                onclick=\"document.querySelector('[name=name]').value = ''\">Temizle</button>\n                        <button id=\"btnUpdate\" class=\"btn btn-outline-success px-5\" type=\"submit\" disabled>Güncelle</button>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n\n    <script>\n    (function(){\n        const nameEl = document.querySelector('[name=name]');\n        const origEl = document.querySelector('[name=orig]');\n        const btn    = document.getElementById('btnUpdate');\n\n        function toggle(){\n            const changed = (nameEl.value || '').trim() !== (origEl.value || '').trim();\n            btn.disabled = !changed;\n        }\n        document.addEventListener('DOMContentLoaded', toggle);\n        nameEl.addEventListener('input', toggle);\n    })();\n    </script>\n\n    <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n</html>\n",
         "output": "str",
-        "x": 720,
-        "y": 280,
+        "x": 1020,
+        "y": 320,
         "wires": [
             [
                 "16deb591861247c0"
@@ -551,8 +498,8 @@
         "links": [
             "c5f4d0120c89df7e"
         ],
-        "x": 635,
-        "y": 320,
+        "x": 965,
+        "y": 360,
         "wires": []
     },
     {
@@ -562,8 +509,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 890,
-        "y": 280,
+        "x": 1170,
+        "y": 320,
         "wires": []
     },
     {
@@ -577,7 +524,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 140,
-        "y": 360,
+        "y": 440,
         "wires": [
             [
                 "2cbcf6d6ae4cab8b"
@@ -589,26 +536,22 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.todo.findTwo()",
-        "func": "const DB = global.get(\"DB\");\n\nconst item = DB.todo.find(x => x.id == msg.req.params.id && x.stamp.username === msg.user.username || msg.user.roles.includes(\"admin\"));\n\nif (!item) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, msg];\n}\nif (item.done) {\n  msg.error = { message: \"Tamamlanmış işler için hatırlatıcı kurulamaz\" };\n  return [null, msg];\n}\n\nfunction fmtLocal(dt){\n  const p = n => String(n).padStart(2,'0');\n  return `${dt.getFullYear()}-${p(dt.getMonth()+1)}-${p(dt.getDate())}T${p(dt.getHours())}:${p(dt.getMinutes())}`;\n}\n\nconst now   = new Date();\nconst uiNow = fmtLocal(now);\nconst uiDt  = item.schedule?.datetime || uiNow;\nconst uiNote = item.schedule?.formData?.note || \"\";\n\nmsg.payload = {\n  id: item.id,\n  name: item.name,\n  schedule: {\n    datetime: uiDt, \n    min: uiNow,\n    note: uiNote      \n  }\n};\n\nreturn msg;\n",
-        "outputs": 2,
+        "func": "msg.payload = {\n    id: msg.req.params.id\n}\n\nif(!msg.user.roles.includes(\"admin\")) msg.payload[\"stamp.username\"] = msg.user.username\n\n\nreturn msg;\n",
+        "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 510,
-        "y": 360,
+        "y": 440,
         "wires": [
             [
-                "a35e8f26138c2a60"
-            ],
-            [
-                "22dd74058ceaa141"
+                "8af76568d2754a77"
             ]
         ],
         "outputLabels": [
-            "Success",
-            "Error"
+            "Success"
         ]
     },
     {
@@ -622,8 +565,8 @@
         "syntax": "mustache",
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>ToDo</title>\n\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                    <h4>{{message}}</h4>\n                </div>\n                {{/error}}\n                <form action=\"/opt/schedule\" method=\"POST\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}\">\n                    <input type=\"hidden\" name=\"orig\" value=\"{{payload.name}}\">\n                    <input type=\"hidden\" name=\"origDt\" value=\"{{payload.schedule.datetime}}\">\n                    <input type=\"hidden\" name=\"origNote\" value=\"{{payload.schedule.note}}\">\n                    <div class=\"mb-3\">\n                        <input required type=\"datetime-local\" name=\"datetime\"\n                        value=\"{{payload.schedule.datetime}}\"\n                        min=\"{{payload.schedule.min}}\"\n                        class=\"form-control form-control-lg {{#error}}border-danger{{/error}} {{^error}}border-info{{/error}}\">\n                    </div>\n                    <div class=\"mb-3\">\n                        <textarea name=\"note\" rows=\"3\"\n                        class=\"form-control form-control-lg {{#error}}border-danger{{/error}} {{^error}}border-info{{/error}}\"\n                        placeholder=\"Bu görevle ilgili kısa not...\">{{payload.schedule.note}}</textarea>\n                    </div>\n                    <div class=\"d-flex justify-content-end gap-2\">\n                        <a class=\"btn btn-outline-warning\" href=\"/\">Vazgeç</a>\n                        <button class=\"btn btn-outline-secondary\" id=\"btnClear\" type=\"button\">Temizle</button>\n                        <button id=\"btnUpdate\" class=\"btn btn-outline-success px-5\" type=\"submit\" disabled>Planla</button>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n\n    <script>\n        (function () {\n  const dtEl = document.querySelector('[name=datetime]');\n  const origEl = document.querySelector('[name=origDt]');\n  const noteEl   = document.querySelector('[name=note]');        \n  const origNtEl = document.querySelector('[name=origNote]');    \n  const btn = document.getElementById('btnUpdate');\n  const clear = document.getElementById('btnClear');\n\n  function toggle() {\n    const curr = (dtEl.value || '').trim();\n    const orig = (origEl.value || '').trim();\n    btn.disabled = (curr === '' || curr === orig);\n  }\n\n  document.addEventListener('DOMContentLoaded', () => {\n    if (!dtEl.value) {\n      const d = new Date(), p = n => String(n).padStart(2,'0');\n      const now = `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;\n      dtEl.value = now;\n      dtEl.min = now;\n    }\n    toggle();\n  });\n\n  dtEl.addEventListener('input', toggle);\n  noteEl.addEventListener('input', toggle);\n  clear.addEventListener('click', function(){ dtEl.value=''; toggle(); noteEl.value = ''; });\n})();\n    </script>\n\n\n\n    <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
         "output": "str",
-        "x": 700,
-        "y": 360,
+        "x": 1040,
+        "y": 440,
         "wires": [
             [
                 "c001fccb8fb4cf85"
@@ -639,8 +582,8 @@
         "links": [
             "c5f4d0120c89df7e"
         ],
-        "x": 635,
-        "y": 400,
+        "x": 975,
+        "y": 480,
         "wires": []
     },
     {
@@ -650,8 +593,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 910,
-        "y": 360,
+        "x": 1250,
+        "y": 440,
         "wires": []
     },
     {
@@ -679,8 +622,8 @@
         "crontiArgs": "[]",
         "inputs": 1,
         "hasButton": false,
-        "x": 900,
-        "y": 480,
+        "x": 740,
+        "y": 720,
         "wires": [
             [
                 "d6134361a15b1330"
@@ -706,33 +649,13 @@
         "once": true,
         "onceDelay": 0.1,
         "topic": "",
-        "payload": "DB.todo",
-        "payloadType": "global",
-        "x": 500,
-        "y": 100,
+        "payload": "{}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 120,
         "wires": [
             [
-                "eca529bb067ce280"
-            ]
-        ]
-    },
-    {
-        "id": "eca529bb067ce280",
-        "type": "function",
-        "z": "651af9bb9a46e4b0",
-        "name": "schedule",
-        "func": "const list = msg.payload || [];\nlist.forEach(x => {\n  if (x.schedule?.options) {\n    node.send({\n      topic:   `todo:${x.id}`,        \n      payload: x.schedule.options     \n    });\n  }\n});\nreturn null;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 680,
-        "y": 100,
-        "wires": [
-            [
-                "dcacbd7ada1430a0"
+                "4957ed9e50014e41"
             ]
         ]
     },
@@ -749,8 +672,8 @@
         "tls": true,
         "name": "",
         "dname": "",
-        "x": 1530,
-        "y": 480,
+        "x": 1370,
+        "y": 700,
         "wires": []
     },
     {
@@ -758,18 +681,21 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "header",
-        "func": "const DB = global.get(\"DB\") || { todo: [] };\n\nif (!msg.todo) {\n  const m = (msg.topic || \"\").match(/^todo:(\\d+)/);\n  if (m) {\n    const id = m[1];\n    msg.todo = DB.todo.find(t => String(t.id) === id);\n  }\n}\nif (!msg.todo) return null; \n\nmsg.from  = \"Hatırlatıcı <talhaormekaya@gmail.com>\";       \nmsg.to    = msg.todo?.stamp?.email || \"talhaormekaya@gmail.com\";\nmsg.topic = `Hatırlatma: ${msg.todo?.name || \"Görev\"}`;\n\nconst i = DB.todo.findIndex(t => String(t.id) === String(msg.todo.id));\nif (i >= 0 && DB.todo[i].schedule) {\n  delete DB.todo[i].schedule;                                 \n  DB.todo[i].dateTime = new Date().toLocaleString(\"tr-TR\",{hour12:false});\n  DB.todo[i].stamp    = { createdAt: Date.now(), ip:\"\", user:\"\", email:\"\" };\n  global.set(\"DB\", DB);\n}\n\nreturn msg;\n",
-        "outputs": 1,
+        "func": "const DB = global.get(\"DB\") || { todo: [] };\n\nif (!msg.todo) {\n  const m = (msg.topic || \"\").match(/^todo:(\\d+)/);\n  if (m) {\n    const id = m[1];\n    msg.todo = DB.todo.find(t => String(t.id) === id);\n  }\n}\nif (!msg.todo) return null; \n\nif(msg.schedule){\n  msg.payload = [\n    {\n    _id: msg.formData.id\n    },\n    {\n      $set: {\n        schedule: msg.response\n      }\n    }\n  ]\n  return [null, msg]\n}\n\nmsg.from  = \"Hatırlatıcı <talhaormekaya@gmail.com>\";       \nmsg.to    = msg.todo?.stamp?.email || \"talhaormekaya@gmail.com\";\nmsg.topic = `Hatırlatma: ${msg.todo?.name || \"Görev\"}`;\n\nconst i = DB.todo.findIndex(t => String(t.id) === String(msg.todo.id));\nif (i >= 0 && DB.todo[i].schedule) {\n  delete DB.todo[i].schedule;                                 \n  DB.todo[i].dateTime = new Date().toLocaleString(\"tr-TR\",{hour12:false});\n  DB.todo[i].stamp    = { createdAt: Date.now(), ip:\"\", user:\"\", email:\"\" };\n  global.set(\"DB\", DB);\n}\n\nreturn msg;\n",
+        "outputs": 2,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1220,
-        "y": 480,
+        "x": 1060,
+        "y": 720,
         "wires": [
             [
                 "1e3410a2c0801097"
+            ],
+            [
+                "7ca247c16df46b79"
             ]
         ]
     },
@@ -784,8 +710,8 @@
         "syntax": "mustache",
         "template": "<p>{{todo.name}} işi için hatırlatma.</p>\n\n{{#todo.schedule.formData.note}}\n  <p style=\"white-space:pre-wrap;\"><strong>Not:</strong> {{todo.schedule.formData.note}}</p>\n{{/todo.schedule.formData.note}}\n",
         "output": "str",
-        "x": 1380,
-        "y": 480,
+        "x": 1220,
+        "y": 700,
         "wires": [
             [
                 "6deb06d96837b126"
@@ -798,12 +724,14 @@
         "z": "651af9bb9a46e4b0",
         "name": "link in 2",
         "links": [
+            "7148ede4c5df0a6c",
             "dcacbd7ada1430a0"
         ],
-        "x": 795,
-        "y": 520,
+        "x": 635,
+        "y": 740,
         "wires": [
             [
+                "eb1d05226c4958f4",
                 "463e1db29a4e8833"
             ]
         ]
@@ -817,8 +745,8 @@
         "links": [
             "18dc3105a4edec0c"
         ],
-        "x": 785,
-        "y": 100,
+        "x": 885,
+        "y": 120,
         "wires": []
     },
     {
@@ -833,8 +761,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1060,
-        "y": 480,
+        "x": 900,
+        "y": 720,
         "wires": [
             [
                 "0b9f34182300bc33"
@@ -850,10 +778,10 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!doctype html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Admin Panel — Kullanıcı Listesi</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n</head>\n\n<body class=\"bg-light\">\n  <!-- NAVBAR -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Admin Panel</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/\">Ana Sayfa</a>\n    </div>\n  </nav>\n\n  <main class=\"container\">\n\n    {{#error}}\n    <div class=\"alert alert-danger d-flex align-items-center\" role=\"alert\">\n      <div class=\"me-2\">⚠️</div>\n      <div>{{message}}</div>\n    </div>\n    {{/error}}\n\n    <!-- Ekleme Formu -->\n    <div class=\"card shadow-sm mb-4\">\n      <div class=\"card-header bg-white\">\n        <h5 class=\"mb-0\">Kullanıcı Ekle</h5>\n      </div>\n      <div class=\"card-body\">\n        <form action=\"/user-opt/add\" method=\"post\" >\n          <div class=\"row g-3\">\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">Kullanıcı Adı</label>\n              <input name=\"username\" required\n                     pattern=\"^[a-zA-Z0-9._]{3,32}$\"\n                     class=\"form-control {{#error.fields.username}}is-invalid{{/error.fields.username}}\"\n                     placeholder=\"Kullanıcı Adı\" value=\"{{body.username}}\">\n              {{#error.fields.username}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.username}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">İsim Soyisim</label>\n              <input name=\"displayName\"\n                     class=\"form-control {{#error.fields.displayName}}is-invalid{{/error.fields.displayName}}\"\n                     placeholder=\"Ad Soyad\" value=\"{{body.displayName}}\">\n              {{#error.fields.displayName}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.displayName}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">E-posta</label>\n              <input name=\"email\" type=\"email\" required\n                     class=\"form-control {{#error.fields.email}}is-invalid{{/error.fields.email}}\"\n                     placeholder=\"ad@domain.com\" value=\"{{body.email}}\">\n              {{#error.fields.email}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.email}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">Parola</label>\n              <input name=\"password\" type=\"password\" required minlength=\"8\"\n                     class=\"form-control {{#error.fields.password}}is-invalid{{/error.fields.password}}\"\n                     placeholder=\"En az 8 karakter\">\n              {{#error.fields.password}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.password}}\n            </div>\n\n            <div class=\"col-md-8 d-flex align-items-end gap-2\">\n              <button class=\"btn btn-primary\" type=\"submit\">Ekle</button>\n              <a class=\"btn btn-light\" href=\"/user-list\">Vazgeç</a>\n              <a class=\"btn btn-outline-secondary\" href=\"/user-list\">Yenile</a>\n            </div>\n          </div>\n        </form>\n      </div>\n    </div>\n    <!-- Liste -->\n    <div class=\"card shadow-sm\">\n      <div class=\"card-header bg-white d-flex align-items-center justify-content-between\">\n        <h5 class=\"mb-0\">Kullanıcılar</h5>\n        <span class=\"text-muted small\">{{payload.length}} kayıt</span>\n      </div>\n      <div class=\"table-responsive\">\n        <table class=\"table table-hover align-middle mb-0\">\n          <thead class=\"table-light\">\n            <tr>\n              <th>ID</th>\n              <th>Kullanıcı</th>\n              <th>İsim</th>\n              <th>E-posta</th>\n              <th>Durum</th>\n              <th>Kayıt</th>\n              <th>Rol</th> <!-- YENİ -->\n              <th class=\"text-end\">İşlemler</th>\n            </tr>\n          </thead>\n          <tbody>\n            {{#payload}}\n            <tr>\n              <td class=\"text-muted\">{{id}}{{_id}}</td>\n              <td>{{username}}</td>\n              <td>{{displayName}}</td>\n              <td>{{email}}</td>\n              <td>\n                {{#isActive}}<span class=\"badge text-bg-success\">Aktif</span>{{/isActive}}\n                {{^isActive}}\n                  {{#active}}<span class=\"badge text-bg-success\">Aktif</span>{{/active}}\n                  {{^active}}<span class=\"badge text-bg-secondary\">Pasif</span>{{/active}}\n                {{/isActive}}\n              </td>\n              <td><span class=\"text-muted small\">{{createdAtText}}</span></td>\n              <td>\n                {{#isAdmin}}\n                  <span class=\"badge text-bg-danger\">admin</span>\n                {{/isAdmin}}\n                {{^isAdmin}}\n                  <span class=\"badge text-bg-secondary\">user</span>\n                {{/isAdmin}}\n              </td>\n              <td class=\"text-end\">\n                <a class=\"btn btn-sm btn-outline-primary me-1\" href=\"/user-edit/{{id}}{{_id}}\">Düzenle</a>\n\n                {{#isActive}}\n                  <form class=\"d-inline\" action=\"/user-opt/deactivate\" method=\"post\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{id}}{{_id}}\">\n                    <button class=\"btn btn-sm btn-outline-danger\" type=\"submit\">Pasifleştir</button>\n                  </form>\n                {{/isActive}}\n\n                {{^isActive}}\n                  {{#active}}\n                    <form class=\"d-inline\" action=\"/user-opt/deactivate\" method=\"post\">\n                      <input type=\"hidden\" name=\"id\" value=\"{{id}}{{_id}}\">\n                      <button class=\"btn btn-sm btn-outline-danger\" type=\"submit\">Pasifleştir</button>\n                    </form>\n                  {{/active}}\n                  {{^active}}\n                    <form class=\"d-inline\" action=\"/user-opt/activate\" method=\"post\">\n                      <input type=\"hidden\" name=\"id\" value=\"{{id}}{{_id}}\">\n                      <button class=\"btn btn-sm btn-outline-success\" type=\"submit\">Aktifleştir</button>\n                    </form>\n                  {{/active}}\n                {{/isActive}}\n              </td>\n            </tr>\n            {{/payload}}\n\n            {{^payload}}\n            <tr>\n              <td colspan=\"8\" class=\"text-center text-muted py-4\">Kayıt yok.</td>\n            </tr>\n            {{/payload}}\n          </tbody>\n        </table>\n      </div>\n    </div>\n    <footer class=\"text-center text-muted small my-4\">© {{year}} Admin</footer>\n  </main>\n\n  <script>\n    document.addEventListener('DOMContentLoaded', () => {\n      const el = document.querySelector('footer');\n      if (el && el.innerHTML.includes('{{year}}')) {\n        el.innerHTML = el.innerHTML.replace('{{year}}', new Date().getFullYear());\n      }\n    });\n  </script>\n</body>\n</html>\n",
+        "template": "<!doctype html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Admin Panel — Kullanıcı Listesi</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n</head>\n\n<body class=\"bg-light\">\n  <!-- NAVBAR -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Admin Panel</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/\">Ana Sayfa</a>\n    </div>\n  </nav>\n\n  <main class=\"container\">\n\n    {{#error}}\n    <div class=\"alert alert-danger d-flex align-items-center\" role=\"alert\">\n      <div class=\"me-2\">⚠️</div>\n      <div>{{message}}</div>\n    </div>\n    {{/error}}\n\n    <!-- Ekleme Formu -->\n    <div class=\"card shadow-sm mb-4\">\n      <div class=\"card-header bg-white\">\n        <h5 class=\"mb-0\">Kullanıcı Ekle</h5>\n      </div>\n      <div class=\"card-body\">\n        <form action=\"/user-opt/add\" method=\"post\" >\n          <div class=\"row g-3\">\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">Kullanıcı Adı</label>\n              <input name=\"username\" required\n                     pattern=\"^[a-zA-Z0-9._]{3,32}$\"\n                     class=\"form-control {{#error.fields.username}}is-invalid{{/error.fields.username}}\"\n                     placeholder=\"Kullanıcı Adı\" value=\"{{body.username}}\">\n              {{#error.fields.username}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.username}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">İsim Soyisim</label>\n              <input name=\"displayName\"\n                     class=\"form-control {{#error.fields.displayName}}is-invalid{{/error.fields.displayName}}\"\n                     placeholder=\"Ad Soyad\" value=\"{{body.displayName}}\">\n              {{#error.fields.displayName}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.displayName}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">E-posta</label>\n              <input name=\"email\" type=\"email\" required\n                     class=\"form-control {{#error.fields.email}}is-invalid{{/error.fields.email}}\"\n                     placeholder=\"ad@domain.com\" value=\"{{body.email}}\">\n              {{#error.fields.email}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.email}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">Parola</label>\n              <input name=\"password\" type=\"password\" required minlength=\"8\"\n                     class=\"form-control {{#error.fields.password}}is-invalid{{/error.fields.password}}\"\n                     placeholder=\"En az 8 karakter\">\n              {{#error.fields.password}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.password}}\n            </div>\n\n            <div class=\"col-md-8 d-flex align-items-end gap-2\">\n              <button class=\"btn btn-primary\" type=\"submit\">Ekle</button>\n              <a class=\"btn btn-light\" href=\"/user-list\">Vazgeç</a>\n              <a class=\"btn btn-outline-secondary\" href=\"/user-list\">Yenile</a>\n            </div>\n          </div>\n        </form>\n      </div>\n    </div>\n    <!-- Liste -->\n    <div class=\"card shadow-sm\">\n      <div class=\"card-header bg-white d-flex align-items-center justify-content-between\">\n        <h5 class=\"mb-0\">Kullanıcılar</h5>\n        <span class=\"text-muted small\">{{payload.length}} kayıt</span>\n      </div>\n      <div class=\"table-responsive\">\n        <table class=\"table table-hover align-middle mb-0\">\n          <thead class=\"table-light\">\n            <tr>\n              <th>ID</th>\n              <th>Kullanıcı</th>\n              <th>İsim</th>\n              <th>E-posta</th>\n              <th>Durum</th>\n              <th>Kayıt</th>\n              <th>Rol</th> <!-- YENİ -->\n              <th class=\"text-end\">İşlemler</th>\n            </tr>\n          </thead>\n          <tbody>\n            {{#payload}}\n            <tr>\n              <td class=\"text-muted\">{{display_short_created_at_id}}</td>\n              <td>{{username}}</td>\n              <td>{{displayName}}</td>\n              <td>{{email}}</td>\n              <td>\n                {{#isActive}}<span class=\"badge text-bg-success\">Aktif</span>{{/isActive}}\n                {{^isActive}}\n                  {{#active}}<span class=\"badge text-bg-success\">Aktif</span>{{/active}}\n                  {{^active}}<span class=\"badge text-bg-secondary\">Pasif</span>{{/active}}\n                {{/isActive}}\n              </td>\n              <td><span class=\"text-muted small\">{{createdAtText}}</span></td>\n              <td>\n                {{#isAdmin}}\n                  <span class=\"badge text-bg-danger\">admin</span>\n                {{/isAdmin}}\n                {{^isAdmin}}\n                  <span class=\"badge text-bg-secondary\">user</span>\n                {{/isAdmin}}\n              </td>\n              <td class=\"text-end\">\n                <a class=\"btn btn-sm btn-outline-primary me-1\" href=\"/user-edit/{{id}}{{_id}}\">Düzenle</a>\n\n                {{#isActive}}\n                  <form class=\"d-inline\" action=\"/user-opt/deactivate\" method=\"post\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{id}}{{_id}}\">\n                    <button class=\"btn btn-sm btn-outline-danger\" type=\"submit\">Pasifleştir</button>\n                  </form>\n                {{/isActive}}\n\n                {{^isActive}}\n                  {{#active}}\n                    <form class=\"d-inline\" action=\"/user-opt/deactivate\" method=\"post\">\n                      <input type=\"hidden\" name=\"id\" value=\"{{id}}{{_id}}\">\n                      <button class=\"btn btn-sm btn-outline-danger\" type=\"submit\">Pasifleştir</button>\n                    </form>\n                  {{/active}}\n                  {{^active}}\n                    <form class=\"d-inline\" action=\"/user-opt/activate\" method=\"post\">\n                      <input type=\"hidden\" name=\"id\" value=\"{{id}}{{_id}}\">\n                      <button class=\"btn btn-sm btn-outline-success\" type=\"submit\">Aktifleştir</button>\n                    </form>\n                  {{/active}}\n                {{/isActive}}\n              </td>\n            </tr>\n            {{/payload}}\n\n            {{^payload}}\n            <tr>\n              <td colspan=\"8\" class=\"text-center text-muted py-4\">Kayıt yok.</td>\n            </tr>\n            {{/payload}}\n          </tbody>\n        </table>\n      </div>\n    </div>\n    <footer class=\"text-center text-muted small my-4\">© {{year}} Admin</footer>\n  </main>\n\n  <script>\n    document.addEventListener('DOMContentLoaded', () => {\n      const el = document.querySelector('footer');\n      if (el && el.innerHTML.includes('{{year}}')) {\n        el.innerHTML = el.innerHTML.replace('{{year}}', new Date().getFullYear());\n      }\n    });\n  </script>\n</body>\n</html>\n",
         "output": "str",
-        "x": 880,
-        "y": 580,
+        "x": 1180,
+        "y": 880,
         "wires": [
             [
                 "ec5abb8df0da65db"
@@ -867,8 +795,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 1090,
-        "y": 580,
+        "x": 1330,
+        "y": 880,
         "wires": []
     },
     {
@@ -876,7 +804,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.user.find()",
-        "func": "// db.user.find() — en yeni en üstte, createdAtText + isAdmin hazırla\nconst DB = global.get(\"DB\") || { user: [] };\nconst rows = Array.isArray(DB.user) ? DB.user.slice() : [];\n\n// DESC: order → createdAt → id\nrows.sort((a, b) => {\n  const ao = a.order ?? a.createdAt ?? 0;\n  const bo = b.order ?? b.createdAt ?? 0;\n  if (ao !== bo) return bo - ao;\n  const aid = (a.id ?? a._id ?? \"\").toString();\n  const bid = (b.id ?? b._id ?? \"\").toString();\n  return bid.localeCompare(aid);\n});\n\nconst fmt = (ts) => {\n  if (!ts) return \"-\";\n  const d = new Date(Number(ts));\n  return isNaN(d.getTime()) ? \"-\" :\n    d.toLocaleString(\"tr-TR\", { dateStyle: \"short\", timeStyle: \"short\" });\n};\n\nmsg.payload = rows.map(r => {\n  const roles = Array.isArray(r.roles) ? r.roles : (r.role ? [r.role] : []);\n  const norm  = roles.map(s => String(s).toLowerCase().trim());\n  return {\n    ...r,\n    roles: Array.from(new Set(norm)).length ? Array.from(new Set(norm)) : [\"user\"],\n    isAdmin: norm.includes(\"admin\"),\n    createdAtText: fmt(r.createdAt)\n  };\n});\n\nreturn msg;\n",
+        "func": "/*\nmsg.payload = [\n  { $match: {} },\n  { $sort: { \"stamp.createdAt\": -1 } },\n  { $addFields: {\n      isAdmin: { $in: [\"admin\", { $ifNull: [\"$roles\", []] }] },\n      isActive: { $ifNull: [\"$active\", true] },\n      createdAtText: {\n        $dateToString: {\n          date: { $toDate: \"$createdAt\" },\n          format: \"%d.%m.%Y %H:%M:%S\",\n          timezone: \"Europe/Istanbul\"\n        }\n      }\n  } }\n];\nreturn msg;\n*/\n\nmsg.payload = {}; // Tüm kullanıcıları bulmak için boş sorgu\nmsg.sort = { \"stamp.createdAt\": -1 }; // Oluşturulma tarihine göre tersten sırala\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -884,10 +812,10 @@
         "finalize": "",
         "libs": [],
         "x": 670,
-        "y": 580,
+        "y": 880,
         "wires": [
             [
-                "90f7036bef489ba2"
+                "f99da836ba8f456d"
             ]
         ]
     },
@@ -902,7 +830,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 580,
+        "y": 880,
         "wires": [
             [
                 "608bec346261cb04"
@@ -920,7 +848,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 150,
-        "y": 680,
+        "y": 1040,
         "wires": [
             [
                 "8a33b0e666b5995f"
@@ -932,7 +860,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.user.opt()",
-        "func": "const DB = global.get(\"DB\") || { user: [] };\nconst user = DB.user;\n\nconst nowDate = new Date();\nconst now = nowDate.getTime();\nconst type = msg.req?.params?.type ?? \"\";\n\n// yardımcı: truthy -> boolean\nfunction toBool(v) {\n  const s = String(v).toLowerCase();\n  return (s === \"true\" || s === \"1\" || s === \"on\");\n}\n\nif (type === \"add\") {\n\n  const isFirstUser =\n    !Array.isArray(user) || user.length === 0;\n\n  const rec = {\n    id: now,\n    username: (msg.payload.username || \"\").trim(),\n    password: (msg.payload.password || \"\").trim(), // (bcrypt) hash bu alana upstream'de yazılmış olabilir\n    displayName: (msg.payload.displayName || \"\").trim(),\n    email: (msg.payload.email || \"\").trim(),\n    roles: [\"user\"],\n    active: true,\n\n    // sıralama/tarih (sadece add)\n    createdAt: now,\n    order: now,\n\n    // iz bilgileri\n    stamp: {\n      createdAt: now,\n      ip: msg.req?.ip,\n      username: (msg.payload.username || \"\").trim(),\n      email: (msg.payload.email || \"\").trim()\n    },\n\n    dateTime: nowDate.toLocaleString(\"tr-TR\", { hour12: false })\n  };\n\n  user.push(rec);\n  DB.user = user; global.set(\"DB\", DB);\n  return [msg, null];\n}\n\n// ---- add dışı işlemler ----\nconst idx = user.findIndex(x => String(x.id ?? x._id) === String(msg.payload.id));\nif (idx === -1) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, msg];\n}\n\n// Güvenlik/temizlik: dışarıdan bu alanlar gelirse yok say\ndelete msg.payload.createdAt;\ndelete msg.payload.order;\ndelete msg.payload.roles; // rolleri sadece checkbox mekanizması ile yöneteceğiz\n\nswitch (type) {\n  case \"update\": {\n    // İsim\n    const newDN = (msg.payload.displayName || \"\").trim();\n    if (newDN && newDN !== user[idx].displayName) user[idx].displayName = newDN;\n\n    // E-posta\n    const newEmail = (msg.payload.email || \"\").trim();\n    if (newEmail && newEmail !== user[idx].email) user[idx].email = newEmail;\n\n    // Parola (bcrypt hash upstream'den geliyor olabilir)\n    const newP = (msg.payload.password || \"\").trim();\n    if (newP && newP !== user[idx].password) user[idx].password = newP;\n\n    // Aktif/Pasif (opsiyonel)\n    if (typeof msg.payload.active !== \"undefined\") {\n      const boolActive = toBool(msg.payload.active);\n      if (boolActive !== user[idx].active) user[idx].active = boolActive;\n    }\n\n    // 🔹 ROL — Admin checkbox (isAdmin_present + isAdmin)\n    if (\"isAdmin_present\" in msg.payload) {\n      const wantAdmin = toBool(msg.payload.isAdmin);\n\n      let roles = Array.isArray(user[idx].roles) ? [...user[idx].roles] : [];\n      // normalize + tekilleştir\n      roles = roles.map(r => String(r).toLowerCase().trim());\n      roles = [...new Set(roles)];\n\n      // \"user\" her zaman bulunsun\n      if (!roles.includes(\"user\")) roles.unshift(\"user\");\n\n      // admin ekle/çıkar\n      if (wantAdmin && !roles.includes(\"admin\")) roles.push(\"admin\");\n      if (!wantAdmin && roles.includes(\"admin\")) roles = roles.filter(r => r !== \"admin\");\n\n      user[idx].roles = roles;\n\n      // temizlik\n      delete msg.payload.isAdmin_present;\n      delete msg.payload.isAdmin;\n    }\n\n    break;\n  }\n\n  case \"activate\":\n    user[idx].active = true;\n    break;\n\n  case \"deactivate\":\n    user[idx].active = false;\n    break;\n\n  default:\n    msg.error = { message: `${type} desteklenmiyor.` };\n    return [null, msg];\n}\n\n// iz/stamp güncelle\nuser[idx].stamp = { createdAt: now, ip: msg.req?.ip, username: msg.user.username || \"\", email: msg.user.email || \"\" };\nuser[idx].dateTime = nowDate.toLocaleString(\"tr-TR\", { hour12: false });\n\n// kaydet\nDB.user = user; global.set(\"DB\", DB);\nreturn [msg, null];",
+        "func": "const nowDate = new Date();\nconst now = nowDate.getTime();\nconst type = msg.req?.params?.type ?? \"\";\n\nmsg.formData = msg.payload; \n\nif (type === \"add\") {\n  const userDoc = {\n    username: (msg.formData.username || \"\").trim(),\n    password: (msg.formData.password || \"\").trim(),\n    displayName: (msg.formData.displayName || \"\").trim(),\n    email: (msg.formData.email || \"\").trim(),\n    roles: [\"user\"],\n    active: true,\n\n    createdAt: now,\n    order: now,\n    stamp: {\n      createdAt: now,\n      ip: msg.req?.ip,\n      username: (msg.formData.username || \"\").trim(),\n      email: (msg.formData.email || \"\").trim()\n    },\n    dateTime: nowDate.toLocaleString(\"tr-TR\", { hour12: false })\n  };\n\n  msg.payload = userDoc;\n\n  return [msg, null];\n}\n\nmsg.payload = { _id: String(msg.formData.id || \"\") };\nreturn [null, msg];\n",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -940,13 +868,13 @@
         "finalize": "",
         "libs": [],
         "x": 1110,
-        "y": 680,
+        "y": 1040,
         "wires": [
             [
-                "f3de723a0ab4e6a9"
+                "0d8a639157364107"
             ],
             [
-                "68b150d9072e014b"
+                "0c8fb0b08f44164f"
             ]
         ],
         "outputLabels": [
@@ -967,7 +895,7 @@
         "finalize": "",
         "libs": [],
         "x": 700,
-        "y": 680,
+        "y": 1040,
         "wires": [
             [
                 "fc9042b8d1523bc0"
@@ -992,7 +920,7 @@
             "14819198696d743b"
         ],
         "x": 565,
-        "y": 540,
+        "y": 840,
         "wires": [
             [
                 "4801fcc29ebde45c"
@@ -1009,7 +937,7 @@
             "8a6d783f9fac6a74"
         ],
         "x": 795,
-        "y": 720,
+        "y": 1080,
         "wires": []
     },
     {
@@ -1021,8 +949,8 @@
         "links": [
             "126ead5b72b171f3"
         ],
-        "x": 1215,
-        "y": 720,
+        "x": 1545,
+        "y": 1120,
         "wires": []
     },
     {
@@ -1039,7 +967,7 @@
         "outputs": 1,
         "rounds": 10,
         "x": 990,
-        "y": 640,
+        "y": 1000,
         "wires": [
             [
                 "97440a5695968cc4"
@@ -1057,7 +985,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 140,
-        "y": 780,
+        "y": 1180,
         "wires": [
             [
                 "333ba1b4a05495f7"
@@ -1069,21 +997,18 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.user.findOne()",
-        "func": "const DB = global.get(\"DB\") || { user: [] };\nconst id = msg.req?.params?.id;\nconst rows = Array.isArray(DB.user) ? DB.user : [];\n\nconst rec = rows.find(r => String(r.id ?? r._id) === String(id));\nif (!rec) {\n  msg.error = { message: \"Kayıt bulunamadı.\" };\n  msg.payload = {};\n  return msg;\n}\n\nconst roles = Array.isArray(rec.roles) ? rec.roles : (rec.role ? [rec.role] : []);\nconst norm = roles.map(s => String(s).toLowerCase().trim());\nrec.roles = norm.length ? Array.from(new Set(norm)) : [\"user\"];\nrec.isAdmin = rec.roles.includes(\"admin\");\n\nmsg.payload = rec;\n\nreturn msg;\n\n",
-        "outputs": 2,
+        "func": "msg.formData = msg.payload\n\nmsg.payload = {\n  _id: msg.formData.id || msg.req.params.id\n}\n\nreturn msg;\n\n",
+        "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 730,
-        "y": 780,
+        "y": 1180,
         "wires": [
             [
-                "1251f822538e5dd8"
-            ],
-            [
-                "18d52f7ab428eef7"
+                "049f6c44dff76dd4"
             ]
         ],
         "outputLabels": [
@@ -1100,10 +1025,10 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!doctype html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Admin Panel — Kullanıcı Düzenle</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <!-- Bootstrap -->\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n</head>\n\n<body class=\"bg-light\">\n  <!-- NAVBAR: solda büyük metin, sağda metin link -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Admin Panel — Düzenleme Sayfası</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/user-list\">Admin Panel</a>\n    </div>\n  </nav>\n\n  <main class=\"container\">\n    {{#error}}\n    <div class=\"alert alert-danger d-flex align-items-center\" role=\"alert\">\n      <div class=\"me-2\">⚠️</div><div>{{message}}</div>\n    </div>\n    {{/error}}\n\n    <div class=\"card shadow-sm\">\n      <div class=\"card-header bg-white\">\n        <h5 class=\"mb-0\">Kullanıcı Düzenle</h5>\n      </div>\n      <div class=\"card-body\">\n        <form action=\"/user-opt/update\" method=\"post\" novalidate>\n          <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}{{payload._id}}\">\n\n          <div class=\"row g-3\">\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">Kullanıcı adı</label>\n              <input name=\"username\" readonly\n                     class=\"form-control {{#error.fields.username}}is-invalid{{/error.fields.username}}\"\n                     placeholder=\"kullanici\" value=\"{{payload.username}}\">\n              {{#error.fields.username}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.username}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">İsim Soyisim</label>\n              <input id=\"displayName\"\n                     name=\"displayName\"\n                     data-initial=\"{{payload.displayName}}\"\n                     class=\"form-control {{#error.fields.displayName}}is-invalid{{/error.fields.displayName}}\"\n                     placeholder=\"Ad Soyad\" value=\"{{payload.displayName}}\">\n              {{#error.fields.displayName}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.displayName}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">E-posta</label>\n              <input name=\"email\" type=\"email\" required readonly\n                     class=\"form-control {{#error.fields.email}}is-invalid{{/error.fields.email}}\"\n                     placeholder=\"ad@domain.com\" value=\"{{payload.email}}\">\n              {{#error.fields.email}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.email}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">Yeni şifre (opsiyonel)</label>\n              <input id=\"password\" name=\"password\" type=\"password\" minlength=\"8\"\n                     class=\"form-control {{#error.fields.password}}is-invalid{{/error.fields.password}}\"\n                     placeholder=\"Yeni parola\">\n              {{#error.fields.password}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.password}}\n            </div>\n            {{#user.isAdmin}}\n            <!-- Admin yetkisi -->\n            <div class=\"col-12\">\n              <div class=\"form-check\">\n                <!-- Alanın gönderildiğini backend'e belli etmek için -->\n                <input type=\"hidden\" name=\"isAdmin_present\" value=\"1\">\n                <input class=\"form-check-input\" type=\"checkbox\" id=\"cbAdmin\"\n                       name=\"isAdmin\" value=\"true\"\n                       {{#payload.isAdmin}}checked{{/payload.isAdmin}}>\n                <label class=\"form-check-label\" for=\"cbAdmin\">Admin yetkisi ver</label>\n              </div>\n            </div>\n            {{/user.isAdmin}}\n            \n            <!-- Aktif / Pasif -->\n            <div class=\"col-12\">\n              <div class=\"form-check form-check-inline\">\n                <input class=\"form-check-input\" id=\"r1\" type=\"radio\" name=\"active\" value=\"true\"\n                       {{#payload.isActive}}checked{{/payload.isActive}}\n                       {{#payload.active}}checked{{/payload.active}}>\n                <label class=\"form-check-label\" for=\"r1\">Aktif</label>\n              </div>\n              <div class=\"form-check form-check-inline\">\n                <input class=\"form-check-input\" id=\"r2\" type=\"radio\" name=\"active\" value=\"false\"\n                       {{^payload.isActive}}{{^payload.active}}checked{{/payload.active}}{{/payload.isActive}}>\n                <label class=\"form-check-label\" for=\"r2\">Pasif</label>\n              </div>\n            </div>\n\n            <div class=\"col-12 d-flex justify-content-end gap-2\">\n              <a class=\"btn btn-warning\" href=\"/user-list\">Vazgeç</a>\n              <button id=\"btnUpdate\" class=\"btn btn-secondary\" type=\"submit\" disabled>Güncelle</button>\n            </div>\n          </div>\n        </form>\n      </div>\n    </div>\n\n    <footer class=\"text-center text-muted small my-4\">© {{year}} Admin</footer>\n  </main>\n\n  <!-- Değişiklik olmadan Güncelle açılamasın -->\n  <script>\n  document.addEventListener('DOMContentLoaded', () => {\n    const btn    = document.getElementById('btnUpdate');      // Güncelle\n    const dnEl   = document.getElementById('displayName');    // İsim Soyisim\n    const pwEl   = document.getElementById('password');       // Yeni şifre\n    const cb     = document.getElementById('cbAdmin');        // Admin checkbox\n    const radios = document.querySelectorAll('input[name=\"active\"]'); // Aktif/Pasif\n\n    if (!btn || !dnEl || !pwEl) return;\n\n    const initialDN     = (dnEl.dataset.initial || '').trim();\n    const initialAdmin  = !!cb?.checked;\n    const initialActive = (document.querySelector('input[name=\"active\"]:checked')?.value ?? '');\n\n    function checkCanSubmit() {\n      const dn = dnEl.value.trim();\n      const pw = pwEl.value;\n\n      const dnChanged    = dn !== initialDN;\n      const pwChanged    = pw.trim().length > 0;\n      const pwValid      = !pwChanged || pw.trim().length >= 8;\n      const roleChanged  = cb ? (cb.checked !== initialAdmin) : false;\n      const currentActive= (document.querySelector('input[name=\"active\"]:checked')?.value ?? '');\n      const activeChanged= currentActive !== initialActive;\n\n      // Kısa şifre görsel uyarısı\n      pwEl.classList.toggle('is-invalid', pwChanged && !pwValid);\n\n      const can = (dnChanged || pwChanged || roleChanged || activeChanged) && pwValid;\n\n      btn.disabled = !can;\n      btn.classList.toggle('btn-success', can);\n      btn.classList.toggle('btn-secondary', !can);\n    }\n\n    dnEl.addEventListener('input', checkCanSubmit);\n    pwEl.addEventListener('input', checkCanSubmit);\n    cb?.addEventListener('change', checkCanSubmit);\n    radios.forEach(r => r.addEventListener('change', checkCanSubmit));\n\n    checkCanSubmit();\n  });\n  </script>\n\n  <script>\n    // Yıl bilgisi\n    document.addEventListener('DOMContentLoaded', () => {\n      const el = document.querySelector('footer');\n      if (el && el.innerHTML.includes('{{year}}')) {\n        el.innerHTML = el.innerHTML.replace('{{year}}', new Date().getFullYear());\n      }\n    });\n  </script>\n</body>\n</html>\n",
+        "template": "<!doctype html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Admin Panel — Kullanıcı Düzenle</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <!-- Bootstrap -->\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n</head>\n\n<body class=\"bg-light\">\n  <!-- NAVBAR: solda büyük metin, sağda metin link -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Admin Panel — Düzenleme Sayfası</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/user-list\">Admin Panel</a>\n    </div>\n  </nav>\n\n  <main class=\"container\">\n    {{#error}}\n    <div class=\"alert alert-danger d-flex align-items-center\" role=\"alert\">\n      <div class=\"me-2\">⚠️</div><div>{{message}}</div>\n    </div>\n    {{/error}}\n\n    <div class=\"card shadow-sm\">\n      <div class=\"card-header bg-white\">\n        <h5 class=\"mb-0\">Kullanıcı Düzenle</h5>\n      </div>\n      <div class=\"card-body\">\n        <form action=\"/user-opt/update\" method=\"post\" novalidate>\n          <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}\">\n\n          <div class=\"row g-3\">\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">Kullanıcı adı</label>\n              <input name=\"username\" readonly\n                     class=\"form-control {{#error.fields.username}}is-invalid{{/error.fields.username}}\"\n                     placeholder=\"kullanici\" value=\"{{payload.username}}\">\n              {{#error.fields.username}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.username}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">İsim Soyisim</label>\n              <input id=\"displayName\"\n                     name=\"displayName\"\n                     data-initial=\"{{payload.displayName}}\"\n                     class=\"form-control {{#error.fields.displayName}}is-invalid{{/error.fields.displayName}}\"\n                     placeholder=\"Ad Soyad\" value=\"{{payload.displayName}}\">\n              {{#error.fields.displayName}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.displayName}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">E-posta</label>\n              <input name=\"email\" type=\"email\" required readonly\n                     class=\"form-control {{#error.fields.email}}is-invalid{{/error.fields.email}}\"\n                     placeholder=\"ad@domain.com\" value=\"{{payload.email}}\">\n              {{#error.fields.email}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.email}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">Yeni şifre (opsiyonel)</label>\n              <input id=\"password\" name=\"password\" type=\"password\" minlength=\"8\"\n                     class=\"form-control {{#error.fields.password}}is-invalid{{/error.fields.password}}\"\n                     placeholder=\"Yeni parola\">\n              {{#error.fields.password}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.password}}\n            </div>\n            {{#user.isAdmin}}\n            <!-- Admin yetkisi -->\n            <div class=\"col-12\">\n              <div class=\"form-check\">\n                <!-- Alanın gönderildiğini backend'e belli etmek için -->\n                <input type=\"hidden\" name=\"isAdmin_present\" value=\"1\">\n                <input class=\"form-check-input\" type=\"checkbox\" id=\"cbAdmin\"\n                       name=\"isAdmin\" value=\"true\"\n                       {{#payload.isAdmin}}checked{{/payload.isAdmin}}>\n                <label class=\"form-check-label\" for=\"cbAdmin\">Admin yetkisi ver</label>\n              </div>\n            </div>\n            {{/user.isAdmin}}\n            \n            <!-- Aktif / Pasif -->\n            <div class=\"col-12\">\n              <div class=\"form-check form-check-inline\">\n                <input class=\"form-check-input\" id=\"r1\" type=\"radio\" name=\"active\" value=\"true\"\n                       {{#payload.isActive}}checked{{/payload.isActive}}\n                       {{#payload.active}}checked{{/payload.active}}>\n                <label class=\"form-check-label\" for=\"r1\">Aktif</label>\n              </div>\n              <div class=\"form-check form-check-inline\">\n                <input class=\"form-check-input\" id=\"r2\" type=\"radio\" name=\"active\" value=\"false\"\n                       {{^payload.isActive}}{{^payload.active}}checked{{/payload.active}}{{/payload.isActive}}>\n                <label class=\"form-check-label\" for=\"r2\">Pasif</label>\n              </div>\n            </div>\n\n            <div class=\"col-12 d-flex justify-content-end gap-2\">\n              <a class=\"btn btn-warning\" href=\"/user-list\">Vazgeç</a>\n              <button id=\"btnUpdate\" class=\"btn btn-secondary\" type=\"submit\" disabled>Güncelle</button>\n            </div>\n          </div>\n        </form>\n      </div>\n    </div>\n\n    <footer class=\"text-center text-muted small my-4\">© {{year}} Admin</footer>\n  </main>\n\n  <!-- Değişiklik olmadan Güncelle açılamasın -->\n  <script>\n  document.addEventListener('DOMContentLoaded', () => {\n    const btn    = document.getElementById('btnUpdate');      // Güncelle\n    const dnEl   = document.getElementById('displayName');    // İsim Soyisim\n    const pwEl   = document.getElementById('password');       // Yeni şifre\n    const cb     = document.getElementById('cbAdmin');        // Admin checkbox\n    const radios = document.querySelectorAll('input[name=\"active\"]'); // Aktif/Pasif\n\n    if (!btn || !dnEl || !pwEl) return;\n\n    const initialDN     = (dnEl.dataset.initial || '').trim();\n    const initialAdmin  = !!cb?.checked;\n    const initialActive = (document.querySelector('input[name=\"active\"]:checked')?.value ?? '');\n\n    function checkCanSubmit() {\n      const dn = dnEl.value.trim();\n      const pw = pwEl.value;\n\n      const dnChanged    = dn !== initialDN;\n      const pwChanged    = pw.trim().length > 0;\n      const pwValid      = !pwChanged || pw.trim().length >= 8;\n      const roleChanged  = cb ? (cb.checked !== initialAdmin) : false;\n      const currentActive= (document.querySelector('input[name=\"active\"]:checked')?.value ?? '');\n      const activeChanged= currentActive !== initialActive;\n\n      // Kısa şifre görsel uyarısı\n      pwEl.classList.toggle('is-invalid', pwChanged && !pwValid);\n\n      const can = (dnChanged || pwChanged || roleChanged || activeChanged) && pwValid;\n\n      btn.disabled = !can;\n      btn.classList.toggle('btn-success', can);\n      btn.classList.toggle('btn-secondary', !can);\n    }\n\n    dnEl.addEventListener('input', checkCanSubmit);\n    pwEl.addEventListener('input', checkCanSubmit);\n    cb?.addEventListener('change', checkCanSubmit);\n    radios.forEach(r => r.addEventListener('change', checkCanSubmit));\n\n    checkCanSubmit();\n  });\n  </script>\n\n  <script>\n    // Yıl bilgisi\n    document.addEventListener('DOMContentLoaded', () => {\n      const el = document.querySelector('footer');\n      if (el && el.innerHTML.includes('{{year}}')) {\n        el.innerHTML = el.innerHTML.replace('{{year}}', new Date().getFullYear());\n      }\n    });\n  </script>\n</body>\n</html>\n",
         "output": "str",
-        "x": 940,
-        "y": 780,
+        "x": 1260,
+        "y": 1160,
         "wires": [
             [
                 "f8653907910821de"
@@ -1117,8 +1042,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 1110,
-        "y": 780,
+        "x": 1410,
+        "y": 1160,
         "wires": []
     },
     {
@@ -1130,8 +1055,8 @@
         "links": [
             "126ead5b72b171f3"
         ],
-        "x": 855,
-        "y": 820,
+        "x": 1215,
+        "y": 1220,
         "wires": []
     },
     {
@@ -1155,7 +1080,7 @@
         "repair": false,
         "outputs": 2,
         "x": 870,
-        "y": 680,
+        "y": 1040,
         "wires": [
             [
                 "158f6cdbc523a790"
@@ -1176,7 +1101,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 120,
-        "y": 920,
+        "y": 1360,
         "wires": [
             [
                 "8c7785adb445f91b"
@@ -1195,7 +1120,7 @@
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Giriş Yap</title>\n\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\" />\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\" />\n</head>\n\n<body>\n  <div class=\"container mt-5\">\n    <div class=\"row justify-content-center\">\n      <div class=\"col-md-6 col-lg-5\">\n        <div class=\"card shadow-sm\">\n          <div class=\"card-body\">\n            <h5 class=\"mb-3\">Giriş Yap</h5>\n            {{#error}}\n            <div class=\"alert alert-danger\">\n                  {{message}}\n            </div>\n            {{/error}}\n            <form id=\"loginForm\" action=\"/login\" method=\"post\" novalidate>\n              <div class=\"mb-3\">\n                <label for=\"identifier\" class=\"form-label\">Kullanıcı adı veya E‑posta</label>\n                <input\n                    type=\"text\"\n                    class=\"form-control\"\n                    id=\"identifier\"\n                    name=\"identifier\"\n                    placeholder=\"kullanıcıAdı veya mail@ornek.com\"\n                    minlength=\"3\"\n                    required\n                  >\n                <div class=\"invalid-feedback\">Kullanıcı adı veya e‑posta gir.</div>\n              </div>\n\n              <div class=\"mb-2\">\n                <label for=\"password\" class=\"form-label\">Şifre</label>\n                <div class=\"input-group\">\n                  <input type=\"password\" class=\"form-control\" id=\"password\" name=\"password\" placeholder=\"Şifre\" minlength=\"4\" required>\n                  <button class=\"btn btn-outline-secondary\" type=\"button\" id=\"togglePass\"><i class=\"bi bi-eye\"></i></button>\n                </div>\n                <div class=\"invalid-feedback\">Şifre zorunludur.</div>\n              </div>\n\n              <div class=\"d-flex align-items-center justify-content-between mt-3\">\n                <div class=\"form-check\">\n                  <input class=\"form-check-input\" type=\"checkbox\" id=\"remember\">\n                  <label class=\"form-check-label\" for=\"remember\">Beni hatırla</label>\n                </div>\n                <button id=\"submitBtn\" class=\"btn btn-danger\" type=\"submit\">\n      <span class=\"btn-text\">Login</span>\n      <span class=\"spinner-border spinner-border-sm d-none\" role=\"status\" aria-hidden=\"true\"></span>\n    </button>\n              </div>\n            </form>\n\n            <div id=\"loginAlert\" class=\"alert alert-danger mt-3 d-none\" role=\"alert\"></div>\n\n            <p class=\"mt-3 mb-0\">\n              Kayıtlı değil misin? <a href=\"/register\">Hesap oluştur</a>\n            </p>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n</body>\n\n</html>",
         "output": "str",
         "x": 440,
-        "y": 920,
+        "y": 1360,
         "wires": [
             [
                 "0f88d4f9899d9885"
@@ -1209,8 +1134,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 750,
-        "y": 920,
+        "x": 730,
+        "y": 1360,
         "wires": []
     },
     {
@@ -1224,7 +1149,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 1100,
+        "y": 1660,
         "wires": [
             [
                 "898343caa6e3f92c"
@@ -1241,7 +1166,7 @@
             "location": "/login"
         },
         "x": 760,
-        "y": 1100,
+        "y": 1660,
         "wires": []
     },
     {
@@ -1250,15 +1175,15 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "alg": "HS256",
-        "exp": "604800",
+        "exp": "604800000",
         "jwkurl": "",
         "jwkkid": "",
-        "secret": "12345678",
+        "secret": "147852369",
         "key": "",
         "signvar": "payload",
         "storetoken": "payload",
-        "x": 900,
-        "y": 1000,
+        "x": 1180,
+        "y": 1500,
         "wires": [
             [
                 "f59872569465a1b9"
@@ -1276,7 +1201,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 1000,
+        "y": 1520,
         "wires": [
             [
                 "bcf4da036ac5b43b"
@@ -1295,8 +1220,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 730,
-        "y": 1000,
+        "x": 1010,
+        "y": 1500,
         "wires": [
             [
                 "0f7d31954dc9a188"
@@ -1311,8 +1236,8 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "findUser",
-        "func": "// /login -> findUser\nconst p = msg.payload || {};\nconst identifier = (p.identifier || p.username || p.email || '').toString().trim();\nconst password   = (p.password || '').toString();\n\nif (!identifier || !password) {\n  msg.error = { message: \"Kullanıcı adı/e-posta ve şifre giriniz\" };\n  return [null, msg];\n}\n\nconst DB = global.get(\"DB\") || { user: [] };\nconst idLower = identifier.toLowerCase();\n\nmsg.user = (DB.user || []).find(u =>\n  String(u.username || '').toLowerCase() === idLower ||\n  String(u.email || '').toLowerCase()    === idLower\n);\n\nif (!msg.user) {\n  msg.error = { message: \"Kullanıcı adı/e-posta veya şifre hatalı\" };\n  return [null, msg];\n}\n\n// 🔹 Şifreyi bcrypt için tekrar payload'a koy\nmsg.payload = { password };\n\nreturn msg;\n",
-        "outputs": 2,
+        "func": "const p = msg.payload || {};\nconst identifier = (p.identifier || p.username || p.email || '').toString().trim();\nconst password   = (p.password || '').toString();\n\nmsg.formData = { identifier, password };\n\nif (!identifier || !password) {\n  msg.payload = { _id: \"__never__\" };\n  return msg;\n}\n\nmsg.payload = {\n  $and: [\n    { active: true },\n    { $or: [ { username: identifier }, { email: identifier } ] }\n  ]\n};\nreturn msg;\n\n",
+        "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
@@ -1324,13 +1249,10 @@
             }
         ],
         "x": 340,
-        "y": 1000,
+        "y": 1520,
         "wires": [
             [
-                "ed58fab8df11b349"
-            ],
-            [
-                "42db88840c0f57de"
+                "a1e33ed13fcde42a"
             ]
         ]
     },
@@ -1340,15 +1262,15 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "action": "verify",
-        "field": "payload.password",
+        "field": "formData.password",
         "hash": "user.password",
         "target": "payload",
         "assignment": "replace",
         "match": "match",
         "outputs": 1,
         "rounds": 10,
-        "x": 540,
-        "y": 1000,
+        "x": 840,
+        "y": 1500,
         "wires": [
             [
                 "e8c57f2b754850cc"
@@ -1364,8 +1286,8 @@
         "headers": {
             "location": "/"
         },
-        "x": 1260,
-        "y": 1000,
+        "x": 1520,
+        "y": 1500,
         "wires": []
     },
     {
@@ -1377,8 +1299,8 @@
         "links": [
             "3ecb9ddfd9c53584"
         ],
-        "x": 835,
-        "y": 1040,
+        "x": 1115,
+        "y": 1540,
         "wires": []
     },
     {
@@ -1391,7 +1313,7 @@
             "42db88840c0f57de"
         ],
         "x": 345,
-        "y": 880,
+        "y": 1320,
         "wires": [
             [
                 "8c7785adb445f91b"
@@ -1407,8 +1329,8 @@
         "links": [
             "3ecb9ddfd9c53584"
         ],
-        "x": 435,
-        "y": 1040,
+        "x": 775,
+        "y": 1560,
         "wires": []
     },
     {
@@ -1435,7 +1357,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 1220,
+        "y": 1760,
         "wires": [
             [
                 "8637acb46830d49a"
@@ -1450,7 +1372,7 @@
         "statusCode": "",
         "headers": {},
         "x": 750,
-        "y": 1220,
+        "y": 1760,
         "wires": []
     },
     {
@@ -1465,7 +1387,7 @@
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n  <title>Kayıt ol</title>\n\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\"/>\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\"/>\n</head>\n\n<body>\n<div class=\"container mt-5\">\n  <div class=\"row justify-content-center\">\n    <div class=\"col-md-7 col-lg-6\">\n      <div class=\"card shadow-sm\">\n        <div class=\"card-body\">\n          <h5 class=\"mb-3\">Hesap Oluştur</h5>\n          {{#error}}<div class=\"alert alert-danger d-flex align-items-center\" role=\"alert\">\n                    <div class=\"me-2\">⚠️</div><div>{{message}}</div>\n                    </div>\n          {{/error}}\n          <form id=\"registerForm\" action=\"/user-opt/add\" method=\"post\" novalidate>\n            <div class=\"mb-3\">\n              <label for=\"username\" class=\"form-label\">Kullanıcı Adı</label>\n              <input\n                type=\"text\"\n                id=\"username\"\n                name=\"username\"\n                value=\"{{body.username}}\"\n                class=\"form-control {{#error.fields.username}}is-invalid{{/error.fields.username}}\"\n                placeholder=\"kullanıcıAdı\"\n                pattern=\"^[a-z0-9._-]{3,20}$\"\n                required\n              >\n              <div class=\"invalid-feedback\">Geçerli bir kullanıcı adı gir.</div>\n            </div>\n\n            <div class=\"mb-3\">\n              <label for=\"name\" class=\"form-label\">Ad Soyad</label>\n              <input type=\"text\" id=\"name\" name=\"displayName\" value=\"{{body.displayName}}\" \n              class=\"form-control {{#error.fields.displayName}}is-invalid{{/error.fields.displayName}}\" \n              placeholder=\"Adınız Soyadınız\" minlength=\"2\" required>\n              <div class=\"invalid-feedback\">Lütfen ad soyad gir.</div>\n            </div>\n\n            <div class=\"mb-3\">\n              <label for=\"email\" class=\"form-label\">Email</label>\n              <input type=\"email\" id=\"email\" name=\"email\" value=\"{{body.email}}\" class=\"form-control {{#error.fields.email}}is-invalid{{/error.fields.email}}\" placeholder=\"mail@ornek.com\" required>\n              <div class=\"invalid-feedback\">Geçerli bir email gir.</div>\n            </div>\n\n            <div class=\"mb-3\">\n              <label for=\"password\" class=\"form-label\">Şifre</label>\n              <div class=\"input-group\">\n                <input type=\"password\" id=\"password\" name=\"password\" class=\"form-control\" placeholder=\"Şifre (Tekrar)\" required>\n                <button class=\"btn btn-outline-secondary\" type=\"button\" id=\"togglePass1\"><i class=\"bi bi-eye\"></i></button>\n              </div>\n              <div class=\"form-text\">En az 8 karakter.</div>\n              <div class=\"invalid-feedback\">Geçerli bir şifre gir.</div>\n            </div>\n\n            <div class=\"mb-2\">\n              <label for=\"password2\" class=\"form-label\">Şifre (Tekrar)</label>\n              <div class=\"input-group\">\n                <input type=\"password\" id=\"password2\" name=\"confirmPassword\" class=\"form-control\" placeholder=\"Şifre (Tekrar)\" required>\n                <button class=\"btn btn-outline-secondary\" type=\"button\" id=\"togglePass2\"><i class=\"bi bi-eye\"></i></button>\n              </div>\n              <div class=\"invalid-feedback\" id=\"pw2Feedback\">Şifreler eşleşmiyor.</div>\n            </div>\n\n            <div class=\"form-check my-3\">\n              <input class=\"form-check-input\" type=\"checkbox\" id=\"terms\" required>\n              <label class=\"form-check-label\" for=\"terms\">Kullanım şartlarını kabul ediyorum</label>\n              <div class=\"invalid-feedback\">Devam etmek için onay gerekli.</div>\n            </div>\n                <input type=\"hidden\" name=\"isAdmin\" value=\"true\">\n            <div class=\"d-flex justify-content-between align-items-center\">\n              <a href=\"/login\" class=\"link-secondary\">Zaten hesabın var mı? Giriş yap</a>\n              <button id=\"submitBtn\" type=\"submit\" class=\"btn btn-primary\">\n                <span class=\"btn-text\">Kayıt Ol</span>\n                <span class=\"spinner-border spinner-border-sm d-none\" role=\"status\" aria-hidden=\"true\"></span>\n              </button>\n            </div>\n          </form>\n\n          <div id=\"regAlert\" class=\"alert alert-danger mt-3 d-none\" role=\"alert\"></div>\n          <div id=\"regSuccess\" class=\"alert alert-success mt-3 d-none\" role=\"alert\">Kayıt başarılı. Yönlendiriliyorsunuz…</div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n<script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js\"></script>\n\n</body>\n</html>\n",
         "output": "str",
         "x": 460,
-        "y": 1220,
+        "y": 1760,
         "wires": [
             [
                 "84be4beb553cbe26"
@@ -1485,7 +1407,7 @@
         "finalize": "",
         "libs": [],
         "x": 460,
-        "y": 1100,
+        "y": 1660,
         "wires": [
             [
                 "78a062b04551d6e3"
@@ -1512,8 +1434,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 330,
-        "y": 1180,
+        "x": 310,
+        "y": 1800,
         "wires": [
             [
                 "8637acb46830d49a"
@@ -1531,8 +1453,8 @@
         "links": [
             "7817b550669eb8a2"
         ],
-        "x": 235,
-        "y": 1180,
+        "x": 215,
+        "y": 1800,
         "wires": [
             [
                 "5a5879c9b2e4a128"
@@ -1548,8 +1470,8 @@
         "links": [
             "126ead5b72b171f3"
         ],
-        "x": 425,
-        "y": 1180,
+        "x": 405,
+        "y": 1840,
         "wires": []
     },
     {
@@ -1558,7 +1480,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 310,
-        "y": 280,
+        "y": 320,
         "wires": [
             [
                 "414d44229aa0ed03"
@@ -1571,7 +1493,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 330,
-        "y": 360,
+        "y": 440,
         "wires": [
             [
                 "b8be420b120246f5"
@@ -1584,7 +1506,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 330,
-        "y": 580,
+        "y": 880,
         "wires": [
             [
                 "afee2af02b51714d"
@@ -1597,7 +1519,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 330,
-        "y": 460,
+        "y": 580,
         "wires": [
             [
                 "c8e03f51ac6bfb33"
@@ -1610,7 +1532,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 350,
-        "y": 680,
+        "y": 1040,
         "wires": [
             [
                 "acc7c1f55f0a682a"
@@ -1623,7 +1545,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 330,
-        "y": 780,
+        "y": 1180,
         "wires": [
             [
                 "a6a7474d00f800aa"
@@ -1636,7 +1558,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 500,
-        "y": 580,
+        "y": 880,
         "wires": [
             [
                 "4801fcc29ebde45c"
@@ -1655,8 +1577,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1080,
-        "y": 1000,
+        "x": 1360,
+        "y": 1500,
         "wires": [
             [
                 "86740e96f67da72b"
@@ -1669,7 +1591,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 520,
-        "y": 780,
+        "y": 1180,
         "wires": [
             [
                 "7c83cb4a19389f12"
@@ -1682,7 +1604,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 530,
-        "y": 680,
+        "y": 1040,
         "wires": [
             [
                 "7083b2826db710fa"
@@ -1701,8 +1623,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1280,
-        "y": 660,
+        "x": 1420,
+        "y": 1000,
         "wires": [
             [
                 "b5c78ee5996d045c"
@@ -1716,75 +1638,9 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 1430,
-        "y": 660,
+        "x": 1570,
+        "y": 1000,
         "wires": []
-    },
-    {
-        "id": "c53a6e843b91b816",
-        "type": "inject",
-        "z": "651af9bb9a46e4b0",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "{}",
-        "payloadType": "json",
-        "x": 210,
-        "y": 1340,
-        "wires": [
-            [
-                "c0cfd2b865adb073"
-            ]
-        ]
-    },
-    {
-        "id": "407e8d9f5af39101",
-        "type": "debug",
-        "z": "651af9bb9a46e4b0",
-        "name": "debug 1",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "true",
-        "targetType": "full",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 700,
-        "y": 1340,
-        "wires": []
-    },
-    {
-        "id": "c0cfd2b865adb073",
-        "type": "mongodb4",
-        "z": "651af9bb9a46e4b0",
-        "clientNode": "071adb762f609302",
-        "mode": "collection",
-        "collection": "user",
-        "operation": "find",
-        "output": "toArray",
-        "maxTimeMS": "0",
-        "handleDocId": false,
-        "name": "",
-        "x": 430,
-        "y": 1340,
-        "wires": [
-            [
-                "407e8d9f5af39101"
-            ]
-        ]
     },
     {
         "id": "da2c3ef5dc432c29",
@@ -1793,25 +1649,20 @@
         "name": "",
         "props": [
             {
-                "p": "payload"
-            },
-            {
                 "p": "topic",
                 "vt": "str"
             }
         ],
         "repeat": "",
         "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
+        "once": true,
+        "onceDelay": "0.2",
         "topic": "",
-        "payload": "{\"_id\":1000,\"username\":\"admin\",\"password\":\"$2a$10$cjbqr12umrp5Y9PrUj6yOeh5p0hirVp6CsULm/GyYQZLH6ZNyre.O\",\"displayName\":\"Sistem Yöneticisi\",\"email\":\"admin@site.local\",\"roles\":[\"admin\"],\"active\":true,\"createdAt\":1755604800000,\"stamp\":{\"createdAt\":1755604800000,\"ip\":\"127.0.0.1\",\"username\":\"admin\",\"email\":\"admin@site.local\"},\"dateTime\":\"19.08.2025 14:00:00\"}",
-        "payloadType": "json",
-        "x": 210,
-        "y": 1420,
+        "x": 130,
+        "y": 60,
         "wires": [
             [
-                "b50b71bef2ac91e5"
+                "a812e4a7bdb7b2cc"
             ]
         ]
     },
@@ -1828,8 +1679,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 700,
-        "y": 1420,
+        "x": 920,
+        "y": 60,
         "wires": []
     },
     {
@@ -1844,11 +1695,672 @@
         "maxTimeMS": "0",
         "handleDocId": false,
         "name": "",
-        "x": 440,
-        "y": 1420,
+        "x": 760,
+        "y": 60,
         "wires": [
             [
                 "f285f794ec157009"
+            ]
+        ]
+    },
+    {
+        "id": "a15711b91a686a0d",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "user",
+        "operation": "findOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 440,
+        "y": 60,
+        "wires": [
+            [
+                "42e20be815dfa074"
+            ]
+        ]
+    },
+    {
+        "id": "a812e4a7bdb7b2cc",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "function 7",
+        "func": "msg.payload = {\n    username: \"admin\"\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 280,
+        "y": 60,
+        "wires": [
+            [
+                "a15711b91a686a0d"
+            ]
+        ]
+    },
+    {
+        "id": "42e20be815dfa074",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "function 8",
+        "func": "if (msg.payload) return null;  \n\nconst now = Date.now();\nmsg.payload = {\n  _id: 1000,\n  username: \"admin\",\n  password: \"$2a$10$xoiaDc.NvIeTq7eH0XoP5.47mNiKswxqXcXOSmkDTUEQ4MVhfqXOu\", \n  displayName: \"Sistem Yöneticisi\",\n  email: \"admin@site.local\",\n  roles: [\"admin\"],\n  active: true,\n  createdAt: now,\n  stamp: { createdAt: now, ip: \"127.0.0.1\", username: \"admin\", email: \"admin@site.local\" },\n  dateTime: new Date(now).toLocaleString(\"tr-TR\", { hour12: false })\n};\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 600,
+        "y": 60,
+        "wires": [
+            [
+                "b50b71bef2ac91e5"
+            ]
+        ]
+    },
+    {
+        "id": "7b383705f4aaec1f",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "todo",
+        "operation": "find",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 630,
+        "y": 220,
+        "wires": [
+            [
+                "2ae9555726c58d4a"
+            ]
+        ]
+    },
+    {
+        "id": "4ebc1649e8305f46",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "todo",
+        "operation": "findOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 700,
+        "y": 320,
+        "wires": [
+            [
+                "a1e1269d2a6b4d4c"
+            ]
+        ]
+    },
+    {
+        "id": "a1e1269d2a6b4d4c",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "function 9",
+        "func": "if (!msg.payload) {\n    msg.error = {\n        message: \"id ile eşleşen bir kayıt bulunamadı\"\n    }\n    return [null, msg]\n}\nif (msg.payload.done) {\n    msg.error = {\n        message: \"Tamamlanmış işler güncellenemez\"\n    }\n    return [null, msg]\n}\n\nreturn msg;",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 860,
+        "y": 320,
+        "wires": [
+            [
+                "b38fb814b875aebb"
+            ],
+            [
+                "2713f0cacf4e39f6"
+            ]
+        ]
+    },
+    {
+        "id": "8af76568d2754a77",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "todo",
+        "operation": "findOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 700,
+        "y": 440,
+        "wires": [
+            [
+                "b3bffd50b8d5c4d7"
+            ]
+        ]
+    },
+    {
+        "id": "b3bffd50b8d5c4d7",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "function 10",
+        "func": "if (!msg.payload) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, msg];\n}\n\nif (msg.payload.done) {\n  msg.error = { message: \"Tamamlanmış işler için hatırlatıcı kurulamaz\" };\n  return [null, msg];\n}\n\nfunction fmtLocal(dt) {\n  const p = n => String(n).padStart(2, '0');\n  return `${dt.getFullYear()}-${p(dt.getMonth() + 1)}-${p(dt.getDate())}T${p(dt.getHours())}:${p(dt.getMinutes())}`;\n}\n\nconst now   = new Date();\nconst uiNow = fmtLocal(now);\nconst uiDt  = msg.payload.schedule?.datetime || uiNow;\nconst uiNote = msg.payload.schedule?.formData?.note || \"\";\n\nmsg.payload = {\n  id: msg.payload.id,          \n  name: msg.payload.name,\n  schedule: {\n    datetime: uiDt,\n    min: uiNow,\n    note: uiNote\n  }\n};\n\nreturn msg;\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 440,
+        "wires": [
+            [
+                "a35e8f26138c2a60"
+            ],
+            [
+                "22dd74058ceaa141"
+            ]
+        ]
+    },
+    {
+        "id": "813b033439558352",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "function 11",
+        "func": "const nowDate = new Date();\nconst now = nowDate.getTime();\n\n// mongodb4 findOne çıktısını doğru şekilde işle\nvar todoItem = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\n\nif (!todoItem) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, msg, null]; // Hata çıktısı\n}\n\nmsg.todo = todoItem; // Bulunan öğeyi msg.todo'ya ata\n\n// Yetkilendirme ve durum kontrollerinde msg.todo kullan\nif (msg.todo.stamp.username !== msg.user.username && !msg.user.roles.includes(\"admin\")) {\n  msg.error = { message: \"Yetkisiz erişim.\" }\n  return [null, msg, null]; // Hata çıktısı\n}\n\nif (msg.req.params.type === \"update\" && msg.todo.done) {\n  msg.error = { message: \"Tamamlanmış işler güncellenemez\" };\n  return [null, msg, null]; // Hata çıktısı\n}\n\n// Veritabanı işlemi için msg.payload'ı hazırla\nmsg.payload = [\n  {\n    id: msg.formData.id\n  }\n];\n\nif (msg.req.params.type === \"trash\") {\n  msg.operation = \"deleteOne\";\n} else if (msg.req.params.type === \"schedule\") {\n  const when = msg.formData.datetime || \"\"; // Formdan gelen datetime kullan\n  const whenWithSec = when.length === 16 ? when + \":00\" : when;\n\n  let scheduleOptions = msg.scheduleOptions = {\n    crontiMethod: \"onDate\",\n    crontiArgs: [whenWithSec, whenWithSec]\n  };\n  msg.payload.push({\n    $set: {\n      schedule: {\n        formData: msg.formData, // Formdan gelen verileri kullan\n        options: scheduleOptions\n      }\n    }\n  });\n  msg.operation = \"updateOne\";\n\n  // crontinject için ayrı bir mesaj hazırla ve üçüncü çıkışa gönder\n  var crontinjectMsg = {\n      payload: scheduleOptions,\n      todo: msg.todo, // Orijinal todo öğesini gönder\n      topic: `todo:${msg.todo.id}`\n  };\n  return [msg, null, crontinjectMsg]; // DB güncelleme payload'ı, hata yok, crontinject payload'ı\n\n} else if (msg.req.params.type === \"update\") {\n  msg.operation = \"updateOne\";\n\n  const newVal = (msg.formData.name || \"\").trim();\n  const origVal = (msg.formData.orig || \"\").trim();\n\n  if (newVal === origVal) {\n    msg.error = { message: \"Herhangi bir güncelleme yapmadınız.\" };\n    return [null, msg, null];\n  }\n\n  msg.payload = [\n    { id: msg.formData.id },\n    { $set: { name: newVal } }\n  ];\n} else if (msg.req.params.type === \"complete\") {\n  msg.operation = \"updateOne\";\n  msg.payload = [\n    { id: msg.formData.id },\n    { $set: { done: true } }\n  ];\n} else if (msg.req.params.type === \"open\") {\n  msg.operation = \"updateOne\";\n  msg.payload = [\n    { id: msg.formData.id },\n    { $set: { done: false } }\n  ];\n}\nreturn [msg, null, null]; // Diğer işlemler için varsayılan dönüş",
+        "outputs": 3,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1010,
+        "y": 600,
+        "wires": [
+            [
+                "e82dbbf530f551b8"
+            ],
+            [
+                "8646b06022669592"
+            ],
+            [
+                "da0366d8ddd2cb41"
+            ]
+        ]
+    },
+    {
+        "id": "93d181d58a920cd0",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "todo",
+        "operation": "insertOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 840,
+        "y": 560,
+        "wires": [
+            [
+                "af5fc661d33623d3"
+            ]
+        ]
+    },
+    {
+        "id": "af5fc661d33623d3",
+        "type": "http response",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "statusCode": "302",
+        "headers": {
+            "location": "/"
+        },
+        "x": 1000,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "57fe0dbd56855d23",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "todo",
+        "operation": "findOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 840,
+        "y": 600,
+        "wires": [
+            [
+                "813b033439558352"
+            ]
+        ]
+    },
+    {
+        "id": "e82dbbf530f551b8",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "todo",
+        "operation": "findOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 1180,
+        "y": 540,
+        "wires": [
+            [
+                "91308c72ec45a46b"
+            ]
+        ]
+    },
+    {
+        "id": "da0366d8ddd2cb41",
+        "type": "change",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "scheduleOptions",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 1240,
+        "y": 660,
+        "wires": [
+            [
+                "7148ede4c5df0a6c"
+            ]
+        ]
+    },
+    {
+        "id": "7148ede4c5df0a6c",
+        "type": "link out",
+        "z": "651af9bb9a46e4b0",
+        "name": "link out 12",
+        "mode": "link",
+        "links": [
+            "18dc3105a4edec0c"
+        ],
+        "x": 1415,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "193b96b36f8bb8a4",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "todo",
+        "operation": "find",
+        "output": "forEach",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 450,
+        "y": 120,
+        "wires": [
+            [
+                "c993661ed2271d85"
+            ]
+        ]
+    },
+    {
+        "id": "4957ed9e50014e41",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "function 12",
+        "func": "/*\nmsg.payload = {\n    schedule: {\n        $exists: 1\n    }\n}\nreturn msg;\n*/\nvar user = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\n\nif (!user) {\n    msg.error = { message: \"Kullanıcı adı/e-posta veya şifre hatalı\" };\n    return [null, msg];\n}\nmsg.user = user;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 290,
+        "y": 120,
+        "wires": [
+            [
+                "193b96b36f8bb8a4"
+            ]
+        ]
+    },
+    {
+        "id": "c993661ed2271d85",
+        "type": "change",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload.schedule.options",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 690,
+        "y": 120,
+        "wires": [
+            [
+                "dcacbd7ada1430a0"
+            ]
+        ]
+    },
+    {
+        "id": "7ca247c16df46b79",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "todo",
+        "operation": "updateOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 1230,
+        "y": 740,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "eb1d05226c4958f4",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "deleteSchedule",
+        "func": "if(msg.todo?.schedule?.response){\n    msg.payload = {\n        _id: msg.todo.schedule.response.self._id\n    }\n    return msg;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 760,
+        "y": 760,
+        "wires": [
+            [
+                "9b0e02c386fb5009"
+            ]
+        ]
+    },
+    {
+        "id": "9b0e02c386fb5009",
+        "type": "crontinject",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "crontiMethod": "",
+        "crontiArgs": "[]",
+        "inputs": 1,
+        "hasButton": false,
+        "x": 940,
+        "y": 760,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f99da836ba8f456d",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "user",
+        "operation": "find",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 830,
+        "y": 880,
+        "wires": [
+            [
+                "83aeb4a66b06d227"
+            ]
+        ]
+    },
+    {
+        "id": "0d8a639157364107",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "user",
+        "operation": "insertOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 1260,
+        "y": 1000,
+        "wires": [
+            [
+                "f3de723a0ab4e6a9"
+            ]
+        ]
+    },
+    {
+        "id": "0c8fb0b08f44164f",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "user",
+        "operation": "findOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 1260,
+        "y": 1080,
+        "wires": [
+            [
+                "30ba0301a2a907e7"
+            ]
+        ]
+    },
+    {
+        "id": "30ba0301a2a907e7",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "function 13",
+        "func": "const nowDate = new Date();\nconst now = nowDate.getTime();\nconst type = msg.req?.params?.type ?? \"\";\n\nfunction toBool(v) {\n    const s = String(v).toLowerCase();\n    return (s === \"true\" || s === \"1\" || s === \"on\");\n}\n\nconst idx = msg.payload.user.findIndex(x => String(x.id ?? x._id) === String(msg.payload.id));\nif (idx === -1) {\n    msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n    return [null, msg];\n}\n\n\ndelete msg.payload.createdAt;\ndelete msg.payload.order;\ndelete msg.payload.roles;\n\nswitch (type) {\n    case \"update\": {\n        // İsim\n        const newDN = (msg.payload.displayName || \"\").trim();\n        if (newDN && newDN !== msg.payload.user[idx].displayName) msg.payload.user[idx].displayName = newDN;\n\n        // E-posta\n        const newEmail = (msg.payload.email || \"\").trim();\n        if (newEmail && newEmail !== msg.payload.user[idx].email) msg.payload.user[idx].email = newEmail;\n\n        // Parola (bcrypt hash upstream'den geliyor olabilir)\n        const newP = (msg.payload.password || \"\").trim();\n        if (newP && newP !== msg.payload.user[idx].password) msg.payload.user[idx].password = newP;\n\n        // Aktif/Pasif (opsiyonel)\n        if (typeof msg.payload.active !== \"undefined\") {\n            const boolActive = toBool(msg.payload.active);\n            if (boolActive !== msg.payload.user[idx].active) msg.payload.user[idx].active = boolActive;\n        }\n\n        // 🔹 ROL — Admin checkbox (isAdmin_present + isAdmin)\n        if (\"isAdmin_present\" in msg.payload) {\n            const wantAdmin = toBool(msg.payload.isAdmin);\n\n            let roles = Array.isArray(msg.payload.user[idx].roles) ? [...msg.payload.user[idx].roles] : [];\n            // normalize + tekilleştir\n            roles = roles.map(r => String(r).toLowerCase().trim());\n            roles = [...new Set(roles)];\n\n            // \"user\" her zaman bulunsun\n            if (!roles.includes(\"user\")) roles.unshift(\"user\");\n\n            // admin ekle/çıkar\n            if (wantAdmin && !roles.includes(\"admin\")) roles.push(\"admin\");\n            if (!wantAdmin && roles.includes(\"admin\")) roles = roles.filter(r => r !== \"admin\");\n\n            msg.payload.user[idx].roles = roles;\n\n            // temizlik\n            delete msg.payload.isAdmin_present;\n            delete msg.payload.isAdmin;\n        }\n\n        break;\n    }\n\n    case \"activate\":\n        msg.payload.user[idx].active = true;\n        break;\n\n    case \"deactivate\":\n        msg.payload.user[idx].active = false;\n        break;\n\n    default:\n        msg.error = { message: `${type} desteklenmiyor.` };\n        return [null, msg];\n}\n\n// iz/stamp güncelle\nmsg.payload.user[idx].stamp = { createdAt: now, ip: msg.req?.ip, username: msg.user.username || \"\", email: msg.user.email || \"\" };\nmsg.payload.user[idx].dateTime = nowDate.toLocaleString(\"tr-TR\", { hour12: false });\n\n\nreturn [msg, null];",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1430,
+        "y": 1080,
+        "wires": [
+            [
+                "b6a0401ccb7c0187"
+            ],
+            [
+                "68b150d9072e014b"
+            ]
+        ]
+    },
+    {
+        "id": "b6a0401ccb7c0187",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "user",
+        "operation": "updateOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 1610,
+        "y": 1060,
+        "wires": [
+            [
+                "388bd9ef3519ee93"
+            ]
+        ]
+    },
+    {
+        "id": "388bd9ef3519ee93",
+        "type": "http response",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1770,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "049f6c44dff76dd4",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "user",
+        "operation": "findOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 920,
+        "y": 1180,
+        "wires": [
+            [
+                "d8c7a9da715ff676"
+            ]
+        ]
+    },
+    {
+        "id": "d8c7a9da715ff676",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "function 14",
+        "func": "const id = msg.req?.params?.id;\nconst rows = Array.isArray(msg.formData.user) ? msg.formData.user : [];\n\nconst rec = rows.find(r => String(r.id ?? r._id) === String(id));\nif (!rec) {\n  msg.error = { message: \"Kayıt bulunamadı.\" };\n  msg.payload = {};\n  return msg;\n}\n\nconst roles = Array.isArray(rec.roles) ? rec.roles : (rec.role ? [rec.role] : []);\nconst norm = roles.map(s => String(s).toLowerCase().trim());\nrec.roles = norm.length ? Array.from(new Set(norm)) : [\"user\"];\nrec.isAdmin = rec.roles.includes(\"admin\");\n\nmsg.payload = { ...msg.formData, ...msg.payload };\n\nreturn msg;",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1090,
+        "y": 1180,
+        "wires": [
+            [
+                "1251f822538e5dd8"
+            ],
+            [
+                "18d52f7ab428eef7"
+            ]
+        ]
+    },
+    {
+        "id": "a1e33ed13fcde42a",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "user",
+        "operation": "findOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 500,
+        "y": 1520,
+        "wires": [
+            [
+                "23c69382a41e73a9"
+            ]
+        ]
+    },
+    {
+        "id": "23c69382a41e73a9",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "function 15",
+        "func": "const fp = msg.formData || {};\nconst identifier = (fp.identifier || fp.username || fp.email || '').toString().trim().toLowerCase();\nconst password   = (fp.password || '').toString();\n\n\nconst user = msg.payload || null;\n\n\nif (!user) {\n  msg.error = { message: \"Kullanıcı adı/e-posta veya şifre hatalı\" };\n  return [null, msg]; // 2. çıkışa gönder\n}\n\n\nconst uName = String(user.username || '').toLowerCase();\nconst uMail = String(user.email || '').toLowerCase();\nif (identifier && identifier !== uName && identifier !== uMail) {\n  msg.error = { message: \"Kullanıcı adı/e-posta veya şifre hatalı\" };\n  return [null, msg];\n}\n\n\nmsg.user = user;                 \nmsg.payload = { password };      \nreturn [msg, null];              \n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 1520,
+        "wires": [
+            [
+                "ed58fab8df11b349"
+            ],
+            [
+                "42db88840c0f57de"
+            ]
+        ]
+    },
+    {
+        "id": "83aeb4a66b06d227",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "processUserList",
+        "func": "msg.payload = msg.payload.map(user => {\n    // MongoDB'nin _id alanını şablon için 'id' olarak eşle (formlar ve linkler için)\n    user.id = String(user._id);\n\n    // isAdmin alanını ekle\n    user.isAdmin = Array.isArray(user?.roles) && user.roles.includes(\"admin\");\n\n    // isActive alanını ekle (varsayılan olarak true)\n    user.isActive = user?.active ?? true;\n\n    // createdAtText alanını ekle (tam tarih/saat formatında, eğer hala kullanılıyorsa)\n    let formattedCreatedAt = \"\";\n    if (user.createdAt) {\n        const date = new Date(user.createdAt);\n        formattedCreatedAt = date.toLocaleString(\"tr-TR\", {\n            day: \"2-digit\",\n            month: \"2-digit\",\n            year: \"numeric\",\n            hour: \"2-digit\",\n            minute: \"2-digit\",\n            second: \"2-digit\",\n            hour12: false,\n            timeZone: \"Europe/Istanbul\" // Doğru zaman dilimini ayarlayın\n        });\n    }\n    user.createdAtText = formattedCreatedAt;\n\n    // Yeni display_short_created_at_id alanını oluştur: id'nin ilk 10 karakteri + \"...\"\n    let displayIdValue = String(user.id || \"\"); // id'yi string'e dönüştür\n    if (displayIdValue.length > 10) {\n        user.display_short_created_at_id = displayIdValue.substring(0, 10) + \"...\";\n    } else {\n        user.display_short_created_at_id = displayIdValue; // 10 karakterden kısa ise olduğu gibi göster\n    }\n\n    return user;\n});\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 880,
+        "wires": [
+            [
+                "90f7036bef489ba2"
             ]
         ]
     }
