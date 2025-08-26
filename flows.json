@@ -266,14 +266,14 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.todo.find()",
-        "func": "/*\nlet query = msg.user.roles.includes(\"admin\")\n  ? {}\n  : { \"stamp.username\": msg.user.username };\n\nmsg.payload = [\n  { $match: query },\n  { $sort: { \"stamp.createdAt\": -1 } },\n  {\n    $addFields: {\n      hasAdmin: {\n        $cond: [{ $eq: [\"$roles\", \"admin\"] }, true, false]\n      }\n    }\n  }\n];\n\nreturn msg;\n*/\nlet query = msg.user.roles.includes(\"admin\")\n      ? {}\n      : { \"stamp.username\": msg.user.username };\n\n    msg.payload = query; // Sadece sorgu nesnesini gönderiyoruz\n\n    return msg;\n",
+        "func": "\nlet query = msg.user.roles.includes(\"admin\")\n  ? {}\n  : { \"stamp.username\": msg.user.username };\n\nmsg.payload = [[{ $match: query },\n{ $sort: { \"stamp.createdAt\": -1 } },\n\n  ]\n];\n\nmsg.hasAdmin = msg.user.roles.includes(\"admin\") ? true : false;\nreturn msg;\n/*\nlet query = msg.user.roles.includes(\"admin\")\n      ? {}\n      : { \"stamp.username\": msg.user.username };\n\n    msg.payload = query; // Sadece sorgu nesnesini gönderiyoruz\n\n    return msg;\n*/",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 470,
+        "x": 450,
         "y": 220,
         "wires": [
             [
@@ -292,7 +292,7 @@
             "2713f0cacf4e39f6",
             "22dd74058ceaa141"
         ],
-        "x": 185,
+        "x": 175,
         "y": 180,
         "wires": [
             [
@@ -327,7 +327,7 @@
         "headers": {
             "location": "/"
         },
-        "x": 1340,
+        "x": 1500,
         "y": 540,
         "wires": []
     },
@@ -336,7 +336,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.todo.opt()",
-        "func": "const nowDate = new Date();\nconst now = nowDate.getTime();\nconst type = msg.req?.params?.type;\n\nmsg.formData = msg.payload \n\nif (type === \"add\") {\n  msg.payload = {\n    id: now,\n    name: (msg.formData.name || \"\").trim(),\n    done: false,\n    stamp: {\n      createdAt: now,\n      ip: msg.req.ip,\n      username: msg.user.username || \"\",\n      email: msg.user.email || \"\"\n    },\n    dateTime: nowDate.toLocaleString(\"tr-TR\", { hour12: false })\n  }\n  return msg\n}\n\n  msg.payload = {\n    id: msg.formData.id\n  }\n\nreturn [null, msg];\n",
+        "func": "const type = (msg.req?.params?.type || \"\").trim();\nconst nowDate = new Date();\nconst now = nowDate.getTime();\n\nmsg.formData = msg.payload || {};\nconst f = msg.formData;\n\nfunction normId(v) {\n  const s = (v ?? \"\").toString().trim();\n  if (!s) return s;\n  const n = Number(s);\n  return Number.isNaN(n) ? s : n;\n}\n\nif (type === \"add\") {\n  const name = (f.name || \"\").trim();\n  msg.payload = {\n    id: now,\n    name,\n    done: false,\n    stamp: {\n      createdAt: now,\n      ip: msg.req?.ip || \"\",\n      username: msg.user?.username || \"\",\n      email: msg.user?.email || \"\"\n    },\n    dateTime: nowDate.toLocaleString(\"tr-TR\", { hour12: false })\n  };\n  return [msg, null];\n}\n\nconst id =\n  normId(f.id) ||\n  normId(msg.req?.body?.id) ||\n  normId(msg.req?.params?.id) ||\n  \"\";\n\nmsg.payload = { id };\nreturn [null, msg];",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -363,7 +363,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "validation",
-        "func": "const typeLookup = {\n    trash: {\n        text: \"Silme\",\n        requireArgs: [\"id\"]\n    },\n    complete: {\n        text: \"Tamamlama\",\n        requireArgs: [\"id\"]\n    },\n    open: {\n        text: \"Açma\",\n        requireArgs: [\"id\"]\n    },\n    add: {\n        text: \"Ekleme\",\n        requireArgs: [\"name\"]\n    },\n    update: {\n        text: \"Güncelle\",\n        requireArgs: [\"id\", \"name\", \"orig\"]\n    },\n    schedule: {\n        text: \"Hatırlatıcı\",\n        requireArgs: [\"id\", \"datetime\"]\n    }\n}\n\nif (!Object.keys(typeLookup).includes(msg.req.params.type)) {\n    msg.error = {\n        message: `${msg.req.params.type} geçersiz bir parametre değeridir.`\n    }\n    return [null, msg]\n}\n\nif (!typeLookup[msg.req.params.type].requireArgs.every(arg => msg.payload[arg])) {\n    msg.error = {\n        message: `${typeLookup[msg.req.params.type].text} istediğiniz elemanın ${typeLookup[msg.req.params.type].requireArgs} bilgisi olmalı`\n    }\n    return [null, msg]\n}\n\nif (msg.req.params.type === \"update\") {\n    const newVal = (msg.payload.name || \"\").trim();\n    const origVal = (msg.payload.orig || \"\").trim();\n    if (newVal === origVal) {\n        msg.error = {\n            message: \"Herhangi bir güncelleme yapmadınız.\"\n        };\n        return [null, msg];\n    }\n}\nif (msg.req.params.type === \"schedule\") {\n    const newDt = (msg.payload.datetime || \"\").trim();\n    const origDt = (msg.payload.origDt || \"\").trim();\n    const newNote = (msg.payload.note || \"\").trim();\n    const origNote = (msg.payload.origNote || \"\").trim();\n\n    const okFmt = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$/.test(newDt);\n    const ms = Date.parse(newDt);\n\n    if (!okFmt || Number.isNaN(ms)) {\n        msg.error = { message: \"Geçersiz tarih/saat. 'YYYY-AA-GGTHH:mm' giriniz.\" };\n        return [null, msg];\n    }\n    if (ms < Date.now()) {\n        msg.error = { message: \"Geçmiş bir zamana planlanamaz.\" };\n        return [null, msg];\n    }\n    if (origDt && newDt === origDt) {\n        msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n        return [null, msg];\n    }\n\n    msg.payload.schedule = { datetime: newDt, epoch: ms };\n}\n\nreturn msg;",
+        "func": "const typeLookup = {\n    trash: {\n        text: \"Silme\",\n        requireArgs: [\"id\"]\n    },\n    complete: {\n        text: \"Tamamlama\",\n        requireArgs: [\"id\"]\n    },\n    open: {\n        text: \"Açma\",\n        requireArgs: [\"id\"]\n    },\n    add: {\n        text: \"Ekleme\",\n        requireArgs: [\"name\"]\n    },\n    update: {\n        text: \"Güncelle\",\n        requireArgs: [\"id\", \"name\", \"orig\"]\n    },\n    schedule: {\n        text: \"Hatırlatıcı\",\n        requireArgs: [\"id\", \"datetime\"]\n    }\n}\n\nif (!Object.keys(typeLookup).includes(msg.req.params.type)) {\n    msg.error = {\n        message: `${msg.req.params.type} geçersiz bir parametre değeridir.`\n    }\n    return [null, msg]\n}\n\nif (!typeLookup[msg.req.params.type].requireArgs.every(arg => msg.payload[arg])) {\n    msg.error = {\n        message: `${typeLookup[msg.req.params.type].text} istediğiniz elemanın ${typeLookup[msg.req.params.type].requireArgs} bilgisi olmalı`\n    }\n    return [null, msg]\n}\n\nif (msg.req.params.type === \"update\") {\n    const newVal = (msg.payload.name || \"\").trim();\n    const origVal = (msg.payload.orig || \"\").trim();\n    if (newVal === origVal) {\n        msg.error = {\n            message: \"Herhangi bir güncelleme yapmadınız.\"\n        };\n        return [null, msg];\n    }\n}\nif (msg.req.params.type === \"schedule\") {\n    const newDt = (msg.payload.datetime || \"\").trim();\n    const origDt = (msg.payload.origDt || \"\").trim();\n    const newNote = (msg.payload.note || \"\").trim();\n    const origNote = (msg.payload.origNote || \"\").trim();\n\n    const ms = Date.parse(newDt);\n\n    if (ms < Date.now()) {\n        msg.error = { message: \"Geçmiş bir zamana planlanamaz.\" };\n        return [null, msg];\n    }\n    if (origDt && newDt === origDt) {\n        msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n        return [null, msg];\n    }\n\n    msg.payload.schedule = { datetime: newDt, epoch: ms };\n}\n\nreturn msg;",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -407,7 +407,7 @@
         "links": [
             "c5f4d0120c89df7e"
         ],
-        "x": 1125,
+        "x": 1135,
         "y": 600,
         "wires": []
     },
@@ -452,7 +452,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.todo.findOne()",
-        "func": "msg.payload = {\n    id: msg.req.params.id\n}\n\nif(!msg.user.roles.includes(\"admin\")) msg.payload[\"stamp.username\"] = msg.user.username\n\n\nreturn msg",
+        "func": "// URL'den gelen id'yi sayı yapılabiliyorsa sayıya çevir\nconst raw = (msg.req.params.id ?? \"\").toString().trim();\nconst num = Number(raw);\nconst id  = Number.isNaN(num) ? raw : num;\n\nmsg.payload = { id };\n\nif(!msg.user.roles.includes(\"admin\")){\n  msg.payload[\"stamp.username\"] = msg.user.username;\n}\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -479,7 +479,7 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>ToDo</title>\n\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                    <h4>{{message}}</h4>\n                </div>\n                {{/error}}\n                <form action=\"/opt/update\" method=\"POST\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}\">\n                    <input type=\"hidden\" name=\"orig\" value=\"{{payload.name}}\">\n                    <div class=\"mb-3\">\n                        <input required type=\"text\" name=\"name\" value=\"{{payload.name}}\" \n                               class=\"form-control form-control-lg {{#error}}border-danger{{/error}} {{^error}}border-info{{/error}}\"  \n                               placeholder=\"Dosyalar teslim edilecek...\">\n                    </div>\n                    <div class=\"d-flex justify-content-end gap-2\">\n                        <a class=\"btn btn-outline-warning\" href=\"/\">Vazgeç</a>\n                        <button class=\"btn btn-outline-secondary\" \n                                onclick=\"document.querySelector('[name=name]').value = ''\">Temizle</button>\n                        <button id=\"btnUpdate\" class=\"btn btn-outline-success px-5\" type=\"submit\" disabled>Güncelle</button>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n\n    <script>\n    (function(){\n        const nameEl = document.querySelector('[name=name]');\n        const origEl = document.querySelector('[name=orig]');\n        const btn    = document.getElementById('btnUpdate');\n\n        function toggle(){\n            const changed = (nameEl.value || '').trim() !== (origEl.value || '').trim();\n            btn.disabled = !changed;\n        }\n        document.addEventListener('DOMContentLoaded', toggle);\n        nameEl.addEventListener('input', toggle);\n    })();\n    </script>\n\n    <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n</html>\n",
+        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Yapılacaklar — Düzenleme</title>\n\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\" />\n    <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\" />\n</head>\n\n<body class=\"bg-light\">\n    <!-- NAVBAR: ana sayfadaki ile aynı yükseklik ve yapı -->\n    <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n        <div class=\"container d-flex align-items-center\">\n            <span class=\"navbar-text fw-semibold fs-4\">Yapılacaklar — Düzenleme</span>\n            <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/\">Ana Sayfa</a>\n        </div>\n    </nav>\n\n    <div class=\"container\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                    <h4>{{message}}</h4>\n                </div>\n                {{/error}}\n\n                <form action=\"/opt/update\" method=\"POST\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}\">\n                    <input type=\"hidden\" name=\"orig\" value=\"{{payload.name}}\">\n\n                    <div class=\"mb-4\">\n                        <input\n              required\n              type=\"text\"\n              name=\"name\"\n              value=\"{{payload.name}}\"\n              class=\"form-control form-control-lg {{#error}}border-danger{{/error}} {{^error}}border-info{{/error}}\"\n              placeholder=\"Dosyalar teslim edilecek...\"\n            >\n                    </div>\n\n                    <div class=\"d-flex justify-content-end gap-2 mb-1\">\n                        <a class=\"btn btn-outline-warning\" href=\"/\">Vazgeç</a>\n                        <button class=\"btn btn-outline-secondary\" type=\"button\"\n                    onclick=\"document.querySelector('[name=name]').value = ''\">Temizle</button>\n                        <button id=\"btnUpdate\" class=\"btn btn-outline-success px-5\" type=\"submit\" disabled>Güncelle</button>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n\n    <script>\n        (function(){\n    const nameEl = document.querySelector('[name=name]');\n    const origEl = document.querySelector('[name=orig]');\n    const btn    = document.getElementById('btnUpdate');\n\n    function toggle(){\n      const changed = (nameEl.value || '').trim() !== (origEl.value || '').trim();\n      btn.disabled = !changed;\n    }\n    document.addEventListener('DOMContentLoaded', toggle);\n    nameEl.addEventListener('input', toggle);\n  })();\n    </script>\n\n    <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
         "output": "str",
         "x": 1020,
         "y": 320,
@@ -498,7 +498,7 @@
         "links": [
             "c5f4d0120c89df7e"
         ],
-        "x": 965,
+        "x": 955,
         "y": 360,
         "wires": []
     },
@@ -536,14 +536,14 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.todo.findTwo()",
-        "func": "msg.payload = {\n    id: msg.req.params.id\n}\n\nif(!msg.user.roles.includes(\"admin\")) msg.payload[\"stamp.username\"] = msg.user.username\n\n\nreturn msg;\n",
+        "func": "// URL'den gelen id'yi sayı yapılabiliyorsa sayıya çevir\nconst raw = (msg.req.params.id ?? \"\").toString().trim();\nconst num = Number(raw);\nconst id  = Number.isNaN(num) ? raw : num;\n\nmsg.payload = { id };\n\nif(!msg.user.roles.includes(\"admin\")){\n  msg.payload[\"stamp.username\"] = msg.user.username;\n}\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 510,
+        "x": 530,
         "y": 440,
         "wires": [
             [
@@ -563,10 +563,10 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>ToDo</title>\n\n    <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\">\n    <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\">\n</head>\n\n<body>\n    <div class=\"container mt-5\">\n        <div class=\"row\">\n            <div class=\"col-md-8 offset-md-2\">\n                {{#error}}\n                <div class=\"alert alert-danger\">\n                    <h4>{{message}}</h4>\n                </div>\n                {{/error}}\n                <form action=\"/opt/schedule\" method=\"POST\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}\">\n                    <input type=\"hidden\" name=\"orig\" value=\"{{payload.name}}\">\n                    <input type=\"hidden\" name=\"origDt\" value=\"{{payload.schedule.datetime}}\">\n                    <input type=\"hidden\" name=\"origNote\" value=\"{{payload.schedule.note}}\">\n                    <div class=\"mb-3\">\n                        <input required type=\"datetime-local\" name=\"datetime\"\n                        value=\"{{payload.schedule.datetime}}\"\n                        min=\"{{payload.schedule.min}}\"\n                        class=\"form-control form-control-lg {{#error}}border-danger{{/error}} {{^error}}border-info{{/error}}\">\n                    </div>\n                    <div class=\"mb-3\">\n                        <textarea name=\"note\" rows=\"3\"\n                        class=\"form-control form-control-lg {{#error}}border-danger{{/error}} {{^error}}border-info{{/error}}\"\n                        placeholder=\"Bu görevle ilgili kısa not...\">{{payload.schedule.note}}</textarea>\n                    </div>\n                    <div class=\"d-flex justify-content-end gap-2\">\n                        <a class=\"btn btn-outline-warning\" href=\"/\">Vazgeç</a>\n                        <button class=\"btn btn-outline-secondary\" id=\"btnClear\" type=\"button\">Temizle</button>\n                        <button id=\"btnUpdate\" class=\"btn btn-outline-success px-5\" type=\"submit\" disabled>Planla</button>\n                    </div>\n                </form>\n            </div>\n        </div>\n    </div>\n\n    <script>\n        (function () {\n  const dtEl = document.querySelector('[name=datetime]');\n  const origEl = document.querySelector('[name=origDt]');\n  const noteEl   = document.querySelector('[name=note]');        \n  const origNtEl = document.querySelector('[name=origNote]');    \n  const btn = document.getElementById('btnUpdate');\n  const clear = document.getElementById('btnClear');\n\n  function toggle() {\n    const curr = (dtEl.value || '').trim();\n    const orig = (origEl.value || '').trim();\n    btn.disabled = (curr === '' || curr === orig);\n  }\n\n  document.addEventListener('DOMContentLoaded', () => {\n    if (!dtEl.value) {\n      const d = new Date(), p = n => String(n).padStart(2,'0');\n      const now = `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;\n      dtEl.value = now;\n      dtEl.min = now;\n    }\n    toggle();\n  });\n\n  dtEl.addEventListener('input', toggle);\n  noteEl.addEventListener('input', toggle);\n  clear.addEventListener('click', function(){ dtEl.value=''; toggle(); noteEl.value = ''; });\n})();\n    </script>\n\n\n\n    <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
+        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Hatırlatıcılar</title>\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n  <link href=\"/font/bootstrap-icons.min.css\" rel=\"stylesheet\">\n  <style>\n    .badge-time {\n      background: #e9ecef;\n      color: #212529;\n    }\n\n    .list-hover .list-group-item:hover {\n      background: #f8f9fa;\n    }\n  </style>\n</head>\n\n<body class=\"bg-light\">\n\n  <!-- NAVBAR -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Hatırlatıcılar</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/\">Ana Sayfa</a>\n    </div>\n  </nav>\n\n  <main class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-8 offset-md-2\">\n\n        <!-- FORM -->\n        <form id=\"frm\" action=\"/opt/schedule\" method=\"post\" class=\"mb-3\">\n          <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}\">\n\n          {{#payload.schedule}}\n          <input type=\"hidden\" name=\"origDt\" value=\"{{min}}\">\n          <input type=\"hidden\" name=\"origNote\" value=\"{{formData.note}}\">\n          {{/payload.schedule}}\n\n          <!-- Tarih/Saat -->\n          <div class=\"mb-3\">\n            <input\n              id=\"dt\"\n              name=\"datetime\"\n              type=\"datetime-local\"\n              step=\"60\"\n              class=\"form-control form-control-lg\"\n              {{#payload.schedule}} value=\"{{min}}\" {{/payload.schedule}}\n              aria-label=\"Tarih ve saat\">\n          </div>\n\n          <!-- Not -->\n          <div class=\"mb-3\">\n            <textarea\n              id=\"note\"\n              name=\"note\"\n              class=\"form-control form-control-lg\"\n              placeholder=\"Not ekleyin…\"\n              rows=\"3\">{{#payload.schedule}}{{formData.note}}{{/payload.schedule}}</textarea>\n          </div>\n\n          <!-- Butonlar -->\n          <div class=\"mb-3 d-flex justify-content-end gap-2\">\n            <a id=\"btnCancel\" class=\"btn btn-danger\" href=\"/\">Vazgeç</a>\n            <button id=\"btnClear\" class=\"btn btn-secondary\" type=\"button\">Temizle</button>\n            <button id=\"btnPlan\"  class=\"btn btn-success\" type=\"submit\">Planla</button>\n          </div>\n        </form>\n\n        <!-- LİSTE -->\n        <h5 class=\"text-muted mt-4\">Yaklaşan hatırlatıcılar</h5>\n        <div id=\"list\" class=\"list-group list-hover\">\n          {{#payload.schedule}}\n          <div class=\"list-group-item d-flex align-items-center justify-content-between\">\n            <div class=\"me-3\">\n              <div class=\"fw-semibold\">{{note}}{{^note}}Hatırlatıcı{{/note}}</div>\n              {{#formData.note}}\n              <div class=\"text-muted \" style=\"white-space:pre-wrap\">{{formData.note}}</div>\n              {{/formData.note}}\n            </div>\n\n            <div class=\"d-flex align-items-center gap-2\">\n              <span class=\"badge badge-time\">\n                <i class=\"bi bi-calendar2-date\"></i>\n                {{datetime}}\n              </span>\n\n              <button\n                class=\"btn btn-sm btn-outline-primary btn-edit\"\n                type=\"button\"\n                data-id=\"{{id}}\"\n                data-datetime=\"{{datetime}}\"\n                data-note=\"{{formData.note}}\"\n                data-name=\"{{name}}\"\n                title=\"Düzenle\">\n                <i class=\"bi bi-pencil-square\"></i>\n              </button>\n\n              <form action=\"/opt/schedule/delete\" method=\"post\" class=\"m-0 p-0\">\n                <input type=\"hidden\" name=\"id\" value=\"{{id}}\">\n                <button class=\"btn btn-sm btn-outline-danger\" type=\"submit\" title=\"Sil\">\n                  <i class=\"bi bi-trash\"></i>\n                </button>\n              </form>\n            </div>\n          </div>\n          {{/payload.schedule}}\n\n          {{^payload.schedule}}\n          <div class=\"list-group-item text-muted text-center\">Kayıt yok.</div>\n          {{/payload.schedule}}\n        </div>\n\n      </div>\n    </div>\n  </main>\n\n  <script>\n    (function(){\n    const dt       = document.getElementById('dt');\n    const note     = document.getElementById('note');\n    const btnClear = document.getElementById('btnClear');\n    const planBtn  = document.getElementById('btnPlan');\n\n    function pad(n){ return String(n).padStart(2,'0'); }\n    function toLocalInputValue(d){\n      const yy = d.getFullYear();\n      const mm = pad(d.getMonth()+1);\n      const dd = pad(d.getDate());\n      const hh = pad(d.getHours());\n      const mi = pad(d.getMinutes());\n      return `${yy}-${mm}-${dd}T${hh}:${mi}`;\n    }\n    function plusMinutes(date, minutes){\n      const d = new Date(date.getTime());\n      d.setMinutes(d.getMinutes() + minutes);\n      d.setSeconds(0,0);\n      return d;\n    }\n\n    document.addEventListener('DOMContentLoaded', function(){\n      const now = new Date();\n      const suggestion = plusMinutes(now, 10); // sadece varsayılan öneri\n      const minAllowed = now;\n\n      let current = new Date(dt.value);\n      if (!dt.value || !isFinite(current) || current <= now) {\n        dt.value = toLocalInputValue(suggestion);\n      }\n      dt.min = toLocalInputValue(minAllowed);\n\n      dt.addEventListener('change', function(){\n        const chosen = new Date(dt.value);\n        const now2 = new Date();\n        if (!isFinite(chosen) || chosen < now2) {\n          dt.value = toLocalInputValue(plusMinutes(now2, 1));\n        }\n      });\n\n      btnClear?.addEventListener('click', function(){\n        dt.value = '';\n        note.value = '';\n        planBtn.textContent = 'Planla';\n        dt.focus();\n      });\n\n      document.querySelectorAll('.btn-edit').forEach(btn => {\n        btn.addEventListener('click', () => {\n          const frm    = document.getElementById('frm');\n          const idEl   = frm.querySelector('input[name=\"id\"]');\n          const dtEl   = document.getElementById('dt');\n          const noteEl = document.getElementById('note');\n\n          const id   = btn.getAttribute('data-id');\n          const dtv  = btn.getAttribute('data-datetime') || '';\n          const nval = btn.getAttribute('data-note') || '';\n\n          idEl.value   = id;\n          dtEl.value   = dtv.replace(' ', 'T').slice(0,16);\n          noteEl.value = nval;\n\n          planBtn.textContent = 'Güncelle';\n          dtEl.focus();\n        });\n      });\n    });\n  })();\n  </script>\n\n  <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
         "output": "str",
-        "x": 1040,
-        "y": 440,
+        "x": 1060,
+        "y": 420,
         "wires": [
             [
                 "c001fccb8fb4cf85"
@@ -582,7 +582,7 @@
         "links": [
             "c5f4d0120c89df7e"
         ],
-        "x": 975,
+        "x": 995,
         "y": 480,
         "wires": []
     },
@@ -593,8 +593,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 1250,
-        "y": 440,
+        "x": 1210,
+        "y": 420,
         "wires": []
     },
     {
@@ -622,7 +622,7 @@
         "crontiArgs": "[]",
         "inputs": 1,
         "hasButton": false,
-        "x": 740,
+        "x": 700,
         "y": 720,
         "wires": [
             [
@@ -672,7 +672,7 @@
         "tls": true,
         "name": "",
         "dname": "",
-        "x": 1370,
+        "x": 1330,
         "y": 700,
         "wires": []
     },
@@ -681,14 +681,14 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "header",
-        "func": "const DB = global.get(\"DB\") || { todo: [] };\n\nif (!msg.todo) {\n  const m = (msg.topic || \"\").match(/^todo:(\\d+)/);\n  if (m) {\n    const id = m[1];\n    msg.todo = DB.todo.find(t => String(t.id) === id);\n  }\n}\nif (!msg.todo) return null; \n\nif(msg.schedule){\n  msg.payload = [\n    {\n    _id: msg.formData.id\n    },\n    {\n      $set: {\n        schedule: msg.response\n      }\n    }\n  ]\n  return [null, msg]\n}\n\nmsg.from  = \"Hatırlatıcı <talhaormekaya@gmail.com>\";       \nmsg.to    = msg.todo?.stamp?.email || \"talhaormekaya@gmail.com\";\nmsg.topic = `Hatırlatma: ${msg.todo?.name || \"Görev\"}`;\n\nconst i = DB.todo.findIndex(t => String(t.id) === String(msg.todo.id));\nif (i >= 0 && DB.todo[i].schedule) {\n  delete DB.todo[i].schedule;                                 \n  DB.todo[i].dateTime = new Date().toLocaleString(\"tr-TR\",{hour12:false});\n  DB.todo[i].stamp    = { createdAt: Date.now(), ip:\"\", user:\"\", email:\"\" };\n  global.set(\"DB\", DB);\n}\n\nreturn msg;\n",
+        "func": "const DB = global.get(\"DB\") || { todo: [] };\n\n// Önce mevcut msg.todo varsa onu, yoksa topic'ten id yakala\nif (!msg.todo) {\n  const m = (msg.topic || \"\").match(/^todo:(\\d+)/);\n  if (m) {\n    const id = m[1];\n\n    // 1) Akış hafızası (function 11 schedule sırasında yazdık)\n    const flowTodo = flow.get(`todo:${id}`);\n    if (flowTodo) {\n      msg.todo = flowTodo;\n    }\n\n    // 2) Global DB yedeği\n    if (!msg.todo) {\n      msg.todo = DB.todo.find(t => String(t.id) === String(id));\n    }\n  }\n}\nif (!msg.todo) return null;\n\n// Eğer bu çağrı plan kaydını DB'ye yazmak içinse (kaydeden kol)\nif (msg.schedule) {\n  msg.payload = [\n    { _id: msg.formData.id },\n    { $set: { schedule: msg.response } }\n  ];\n  return [null, msg];\n}\n\n// Mail başlıkları\nmsg.from  = \"Hatırlatıcı <talhaormekaya@gmail.com>\";\nmsg.to    = (msg.todo?.stamp && msg.todo.stamp.email) ? msg.todo.stamp.email : \"talhaormekaya@gmail.com\";\nmsg.topic = `Hatırlatma: ${msg.todo?.name || \"Görev\"}`;\n\n// Görev üzerinde schedule'ı temizle ve son gönderim zamanını yaz\nconst idx = DB.todo.findIndex(t => String(t.id) === String(msg.todo.id));\nif (idx >= 0) {\n  if (DB.todo[idx].schedule) delete DB.todo[idx].schedule;\n  DB.todo[idx].dateTime = new Date().toLocaleString(\"tr-TR\", { hour12: false });\n  DB.todo[idx].stamp    = { createdAt: Date.now(), ip: \"\", user: \"\", email: \"\" };\n  global.set(\"DB\", DB);\n}\n\n// Akış hafızasındaki kopyayı da temizle\nconst topicId = (msg.topic || \"\").match(/^Hatırlatma: /) ? String(msg.todo.id) : null;\nif (topicId) {\n  flow.set(`todo:${topicId}`, undefined);\n}\n\nreturn msg;\n",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1060,
+        "x": 1020,
         "y": 720,
         "wires": [
             [
@@ -708,9 +708,9 @@
         "fieldType": "msg",
         "format": "handlebars",
         "syntax": "mustache",
-        "template": "<p>{{todo.name}} işi için hatırlatma.</p>\n\n{{#todo.schedule.formData.note}}\n  <p style=\"white-space:pre-wrap;\"><strong>Not:</strong> {{todo.schedule.formData.note}}</p>\n{{/todo.schedule.formData.note}}\n",
+        "template": "<p>{{todo.name}} işi için hatırlatma.</p>\n\n{{#todo.lastNote}}\n  <p style=\"white-space:pre-wrap;\"><strong>Not:</strong> {{todo.lastNote}}</p>\n{{/todo.lastNote}}\n",
         "output": "str",
-        "x": 1220,
+        "x": 1180,
         "y": 700,
         "wires": [
             [
@@ -727,11 +727,10 @@
             "7148ede4c5df0a6c",
             "dcacbd7ada1430a0"
         ],
-        "x": 635,
-        "y": 740,
+        "x": 585,
+        "y": 720,
         "wires": [
             [
-                "eb1d05226c4958f4",
                 "463e1db29a4e8833"
             ]
         ]
@@ -745,7 +744,7 @@
         "links": [
             "18dc3105a4edec0c"
         ],
-        "x": 885,
+        "x": 895,
         "y": 120,
         "wires": []
     },
@@ -754,14 +753,14 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "OnlyFires",
-        "func": "if (msg.schedule && (msg.schedule.list || msg.schedule.self)) {\n  return null; // kayıt onayı → mail gönderme\n}\n\nif (typeof msg.payload === \"object\" &&\n    (msg.payload.crontiMethod || msg.payload.crontiArgs)) {\n  return null;\n}\nconst isRealFire =\n  typeof msg.payload === \"number\" ||\n  (msg.payload && Object.prototype.toString.call(msg.payload) === \"[object Date]\");\n\nreturn isRealFire ? msg : null;\n",
+        "func": "// OnlyFires — sadece gerçek tetiklemeyi geçir\nif (msg.schedule && (msg.schedule.list || msg.schedule.self)) {\n  return null; // kayıt onayı → mail gönderme\n}\n\n// Kurulum mesajlarını ele\nif (typeof msg.payload === \"object\" &&\n  (msg.payload?.crontiMethod || msg.payload?.crontiArgs)) {\n  return null;\n}\n\n// Gerçek tetik: number (epoch) | Date | \"timestamp\" string'i\nconst isDateObj = msg.payload && Object.prototype.toString.call(msg.payload) === \"[object Date]\";\nconst isNumber = typeof msg.payload === \"number\";\nconst isParsableString = (typeof msg.payload === \"string\") && !Number.isNaN(Date.parse(msg.payload));\n\nconst isRealFire = isNumber || isDateObj || isParsableString;\nreturn isRealFire ? msg : null;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 900,
+        "x": 860,
         "y": 720,
         "wires": [
             [
@@ -778,10 +777,10 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!doctype html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Admin Panel — Kullanıcı Listesi</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n</head>\n\n<body class=\"bg-light\">\n  <!-- NAVBAR -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Admin Panel</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/\">Ana Sayfa</a>\n    </div>\n  </nav>\n\n  <main class=\"container\">\n\n    {{#error}}\n    <div class=\"alert alert-danger d-flex align-items-center\" role=\"alert\">\n      <div class=\"me-2\">⚠️</div>\n      <div>{{message}}</div>\n    </div>\n    {{/error}}\n\n    <!-- Ekleme Formu -->\n    <div class=\"card shadow-sm mb-4\">\n      <div class=\"card-header bg-white\">\n        <h5 class=\"mb-0\">Kullanıcı Ekle</h5>\n      </div>\n      <div class=\"card-body\">\n        <form action=\"/user-opt/add\" method=\"post\" >\n          <div class=\"row g-3\">\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">Kullanıcı Adı</label>\n              <input name=\"username\" required\n                     pattern=\"^[a-zA-Z0-9._]{3,32}$\"\n                     class=\"form-control {{#error.fields.username}}is-invalid{{/error.fields.username}}\"\n                     placeholder=\"Kullanıcı Adı\" value=\"{{body.username}}\">\n              {{#error.fields.username}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.username}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">İsim Soyisim</label>\n              <input name=\"displayName\"\n                     class=\"form-control {{#error.fields.displayName}}is-invalid{{/error.fields.displayName}}\"\n                     placeholder=\"Ad Soyad\" value=\"{{body.displayName}}\">\n              {{#error.fields.displayName}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.displayName}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">E-posta</label>\n              <input name=\"email\" type=\"email\" required\n                     class=\"form-control {{#error.fields.email}}is-invalid{{/error.fields.email}}\"\n                     placeholder=\"ad@domain.com\" value=\"{{body.email}}\">\n              {{#error.fields.email}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.email}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">Parola</label>\n              <input name=\"password\" type=\"password\" required minlength=\"8\"\n                     class=\"form-control {{#error.fields.password}}is-invalid{{/error.fields.password}}\"\n                     placeholder=\"En az 8 karakter\">\n              {{#error.fields.password}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.password}}\n            </div>\n\n            <div class=\"col-md-8 d-flex align-items-end gap-2\">\n              <button class=\"btn btn-primary\" type=\"submit\">Ekle</button>\n              <a class=\"btn btn-light\" href=\"/user-list\">Vazgeç</a>\n              <a class=\"btn btn-outline-secondary\" href=\"/user-list\">Yenile</a>\n            </div>\n          </div>\n        </form>\n      </div>\n    </div>\n    <!-- Liste -->\n    <div class=\"card shadow-sm\">\n      <div class=\"card-header bg-white d-flex align-items-center justify-content-between\">\n        <h5 class=\"mb-0\">Kullanıcılar</h5>\n        <span class=\"text-muted small\">{{payload.length}} kayıt</span>\n      </div>\n      <div class=\"table-responsive\">\n        <table class=\"table table-hover align-middle mb-0\">\n          <thead class=\"table-light\">\n            <tr>\n              <th>ID</th>\n              <th>Kullanıcı</th>\n              <th>İsim</th>\n              <th>E-posta</th>\n              <th>Durum</th>\n              <th>Kayıt</th>\n              <th>Rol</th> <!-- YENİ -->\n              <th class=\"text-end\">İşlemler</th>\n            </tr>\n          </thead>\n          <tbody>\n            {{#payload}}\n            <tr>\n              <td class=\"text-muted\">{{display_short_created_at_id}}</td>\n              <td>{{username}}</td>\n              <td>{{displayName}}</td>\n              <td>{{email}}</td>\n              <td>\n                {{#isActive}}<span class=\"badge text-bg-success\">Aktif</span>{{/isActive}}\n                {{^isActive}}\n                  {{#active}}<span class=\"badge text-bg-success\">Aktif</span>{{/active}}\n                  {{^active}}<span class=\"badge text-bg-secondary\">Pasif</span>{{/active}}\n                {{/isActive}}\n              </td>\n              <td><span class=\"text-muted small\">{{createdAtText}}</span></td>\n              <td>\n                {{#isAdmin}}\n                  <span class=\"badge text-bg-danger\">admin</span>\n                {{/isAdmin}}\n                {{^isAdmin}}\n                  <span class=\"badge text-bg-secondary\">user</span>\n                {{/isAdmin}}\n              </td>\n              <td class=\"text-end\">\n                <a class=\"btn btn-sm btn-outline-primary me-1\" href=\"/user-edit/{{id}}{{_id}}\">Düzenle</a>\n\n                {{#isActive}}\n                  <form class=\"d-inline\" action=\"/user-opt/deactivate\" method=\"post\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{id}}{{_id}}\">\n                    <button class=\"btn btn-sm btn-outline-danger\" type=\"submit\">Pasifleştir</button>\n                  </form>\n                {{/isActive}}\n\n                {{^isActive}}\n                  {{#active}}\n                    <form class=\"d-inline\" action=\"/user-opt/deactivate\" method=\"post\">\n                      <input type=\"hidden\" name=\"id\" value=\"{{id}}{{_id}}\">\n                      <button class=\"btn btn-sm btn-outline-danger\" type=\"submit\">Pasifleştir</button>\n                    </form>\n                  {{/active}}\n                  {{^active}}\n                    <form class=\"d-inline\" action=\"/user-opt/activate\" method=\"post\">\n                      <input type=\"hidden\" name=\"id\" value=\"{{id}}{{_id}}\">\n                      <button class=\"btn btn-sm btn-outline-success\" type=\"submit\">Aktifleştir</button>\n                    </form>\n                  {{/active}}\n                {{/isActive}}\n              </td>\n            </tr>\n            {{/payload}}\n\n            {{^payload}}\n            <tr>\n              <td colspan=\"8\" class=\"text-center text-muted py-4\">Kayıt yok.</td>\n            </tr>\n            {{/payload}}\n          </tbody>\n        </table>\n      </div>\n    </div>\n    <footer class=\"text-center text-muted small my-4\">© {{year}} Admin</footer>\n  </main>\n\n  <script>\n    document.addEventListener('DOMContentLoaded', () => {\n      const el = document.querySelector('footer');\n      if (el && el.innerHTML.includes('{{year}}')) {\n        el.innerHTML = el.innerHTML.replace('{{year}}', new Date().getFullYear());\n      }\n    });\n  </script>\n</body>\n</html>\n",
+        "template": "<!doctype html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Admin Panel — Kullanıcı Listesi</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n</head>\n\n<body class=\"bg-light\">\n  <!-- NAVBAR -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Admin Panel</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/\">Ana Sayfa</a>\n    </div>\n  </nav>\n\n  <main class=\"container\">\n\n    {{#error}}\n    <div class=\"alert alert-danger d-flex align-items-center\" role=\"alert\">\n      <div class=\"me-2\">⚠️</div>\n      <div>{{message}}</div>\n    </div>\n    {{/error}}\n\n    <!-- Ekleme Formu -->\n    <div class=\"card shadow-sm mb-4\">\n      <div class=\"card-header bg-white\">\n        <h5 class=\"mb-0\">Kullanıcı Ekle</h5>\n      </div>\n      <div class=\"card-body\">\n        <form action=\"/user-opt/add\" method=\"post\" >\n          <div class=\"row g-3\">\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">Kullanıcı Adı</label>\n              <input name=\"username\" required\n                     pattern=\"^[a-zA-Z0-9._]{3,32}$\"\n                     class=\"form-control {{#error.fields.username}}is-invalid{{/error.fields.username}}\"\n                     placeholder=\"Kullanıcı Adı\" value=\"{{body.username}}\">\n              {{#error.fields.username}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.username}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">İsim Soyisim</label>\n              <input name=\"displayName\"\n                     class=\"form-control {{#error.fields.displayName}}is-invalid{{/error.fields.displayName}}\"\n                     placeholder=\"Ad Soyad\" value=\"{{body.displayName}}\">\n              {{#error.fields.displayName}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.displayName}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">E-posta</label>\n              <input name=\"email\" type=\"email\" required\n                     class=\"form-control {{#error.fields.email}}is-invalid{{/error.fields.email}}\"\n                     placeholder=\"ad@domain.com\" value=\"{{body.email}}\">\n              {{#error.fields.email}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.email}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">Parola</label>\n              <input name=\"password\" type=\"password\" required minlength=\"8\"\n                     class=\"form-control {{#error.fields.password}}is-invalid{{/error.fields.password}}\"\n                     placeholder=\"En az 8 karakter\">\n              {{#error.fields.password}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.password}}\n            </div>\n\n            <div class=\"col-md-8 d-flex align-items-end gap-2\">\n              <button class=\"btn btn-primary\" type=\"submit\">Ekle</button>\n              <a class=\"btn btn-light\" href=\"/user-list\">Vazgeç</a>\n              <a class=\"btn btn-outline-secondary\" href=\"/user-list\">Yenile</a>\n            </div>\n          </div>\n        </form>\n      </div>\n    </div>\n    <!-- Liste -->\n    <div class=\"card shadow-sm\">\n      <div class=\"card-header bg-white d-flex align-items-center justify-content-between\">\n        <h5 class=\"mb-0\">Kullanıcılar</h5>\n        <span class=\"text-muted small\">{{payload.length}} kayıt</span>\n      </div>\n      <div class=\"table-responsive\">\n        <table class=\"table table-hover align-middle mb-0\">\n          <thead class=\"table-light\">\n            <tr>\n              <th>ID</th>\n              <th>Kullanıcı</th>\n              <th>İsim</th>\n              <th>E-posta</th>\n              <th>Durum</th>\n              <th>Kayıt</th>\n              <th>Rol</th> <!-- YENİ -->\n              <th class=\"text-end\">İşlemler</th>\n            </tr>\n          </thead>\n          <tbody>\n            {{#payload}}\n            <tr>\n              <td class=\"text-muted\">{{display_short_created_at_id}}</td>\n              <td>{{username}}</td>\n              <td>{{displayName}}</td>\n              <td>{{email}}</td>\n              <td>\n                {{#isActive}}<span class=\"badge text-bg-success\">Aktif</span>{{/isActive}}\n                {{^isActive}}\n                  {{#active}}<span class=\"badge text-bg-success\">Aktif</span>{{/active}}\n                  {{^active}}<span class=\"badge text-bg-secondary\">Pasif</span>{{/active}}\n                {{/isActive}}\n              </td>\n              <td><span class=\"text-muted small\">{{createdAtText}}</span></td>\n              <td>\n                {{#isAdmin}}\n                  <span class=\"badge text-bg-danger\">admin</span>\n                {{/isAdmin}}\n                {{^isAdmin}}\n                  <span class=\"badge text-bg-secondary\">user</span>\n                {{/isAdmin}}\n              </td>\n              <td class=\"text-end\">\n                <a class=\"btn btn-sm btn-outline-primary me-1\" href=\"/user-edit/{{id}}\">Düzenle</a>\n\n                {{#isActive}}\n                  <form class=\"d-inline\" action=\"/user-opt/deactivate\" method=\"post\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{id}}\">\n                    <button class=\"btn btn-sm btn-outline-danger\" type=\"submit\">Pasifleştir</button>\n                  </form>\n                {{/isActive}}\n\n                {{^isActive}}\n                  {{#active}}\n                    <form class=\"d-inline\" action=\"/user-opt/deactivate\" method=\"post\">\n                      <input type=\"hidden\" name=\"id\" value=\"{{id}}\">\n                      <button class=\"btn btn-sm btn-outline-danger\" type=\"submit\">Pasifleştir</button>\n                    </form>\n                  {{/active}}\n                  {{^active}}\n                    <form class=\"d-inline\" action=\"/user-opt/activate\" method=\"post\">\n                      <input type=\"hidden\" name=\"id\" value=\"{{id}}\">\n                      <button class=\"btn btn-sm btn-outline-success\" type=\"submit\">Aktifleştir</button>\n                    </form>\n                  {{/active}}\n                {{/isActive}}\n              </td>\n            </tr>\n            {{/payload}}\n\n            {{^payload}}\n            <tr>\n              <td colspan=\"8\" class=\"text-center text-muted py-4\">Kayıt yok.</td>\n            </tr>\n            {{/payload}}\n          </tbody>\n        </table>\n      </div>\n    </div>\n    <footer class=\"text-center text-muted small my-4\">© {{year}} Admin</footer>\n  </main>\n\n  <script>\n    document.addEventListener('DOMContentLoaded', () => {\n      const el = document.querySelector('footer');\n      if (el && el.innerHTML.includes('{{year}}')) {\n        el.innerHTML = el.innerHTML.replace('{{year}}', new Date().getFullYear());\n      }\n    });\n  </script>\n</body>\n</html>\n",
         "output": "str",
         "x": 1180,
-        "y": 880,
+        "y": 940,
         "wires": [
             [
                 "ec5abb8df0da65db"
@@ -796,7 +795,7 @@
         "statusCode": "",
         "headers": {},
         "x": 1330,
-        "y": 880,
+        "y": 940,
         "wires": []
     },
     {
@@ -812,7 +811,7 @@
         "finalize": "",
         "libs": [],
         "x": 670,
-        "y": 880,
+        "y": 940,
         "wires": [
             [
                 "f99da836ba8f456d"
@@ -830,7 +829,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 880,
+        "y": 940,
         "wires": [
             [
                 "608bec346261cb04"
@@ -848,7 +847,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 150,
-        "y": 1040,
+        "y": 1100,
         "wires": [
             [
                 "8a33b0e666b5995f"
@@ -860,7 +859,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.user.opt()",
-        "func": "const nowDate = new Date();\nconst now = nowDate.getTime();\nconst type = msg.req?.params?.type ?? \"\";\n\nmsg.formData = msg.payload; \n\nif (type === \"add\") {\n  const userDoc = {\n    username: (msg.formData.username || \"\").trim(),\n    password: (msg.formData.password || \"\").trim(),\n    displayName: (msg.formData.displayName || \"\").trim(),\n    email: (msg.formData.email || \"\").trim(),\n    roles: [\"user\"],\n    active: true,\n\n    createdAt: now,\n    order: now,\n    stamp: {\n      createdAt: now,\n      ip: msg.req?.ip,\n      username: (msg.formData.username || \"\").trim(),\n      email: (msg.formData.email || \"\").trim()\n    },\n    dateTime: nowDate.toLocaleString(\"tr-TR\", { hour12: false })\n  };\n\n  msg.payload = userDoc;\n\n  return [msg, null];\n}\n\nmsg.payload = { _id: String(msg.formData.id || \"\") };\nreturn [null, msg];\n",
+        "func": "const type = msg.req?.params?.type ?? \"\";\nmsg.formData = msg.payload; \n\nif (type === \"add\") {\n  const now = Date.now();\n  const userDoc = {\n    username: (msg.formData.username || \"\").trim(),\n    password: (msg.formData.password || \"\").trim(),\n    displayName: (msg.formData.displayName || \"\").trim(),\n    email: (msg.formData.email || \"\").trim(),\n    roles: [\"user\"],\n    active: true,\n    createdAt: now,\n    order: now,\n    stamp: {\n      createdAt: now,\n      ip: msg.req?.ip,\n      username: (msg.formData.username || \"\").trim(),\n      email: (msg.formData.email || \"\").trim()\n    },\n    dateTime: new Date(now).toLocaleString(\"tr-TR\", { hour12: false })\n  };\n  msg.payload = userDoc;\n  return [msg, null];\n}\n\n// Sorunlu \"if (id.length === 48)\" satırı kaldırılmış, sadeleştirilmiş kod\nconst id = String(msg.formData.id || \"\");\n\nlet query;\nif (!id) {\n    query = { _id: \"__NEVER_FIND_THIS__\" };\n} else {\n    // \"Düzenle\" akışında çalıştığı kanıtlanmış olan güvenilir sorgu yöntemi kullanılıyor\n    query = {\n        $expr: {\n            $eq: [ { $toString: \"$_id\" }, id ]\n        }\n    };\n}\n\nmsg.payload = query;\nreturn [null, msg];",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -868,7 +867,7 @@
         "finalize": "",
         "libs": [],
         "x": 1110,
-        "y": 1040,
+        "y": 1100,
         "wires": [
             [
                 "0d8a639157364107"
@@ -887,7 +886,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "validation",
-        "func": "// ===== User Validation (add/update/activate/deactivate) =====\nconst type = msg.req?.params?.type || \"\";\n\n\nconst fromRegister = (msg.req?.headers?.referer || \"\").includes(\"/register\");\n\n// Hata dönüş helper\nfunction fail(message, fields = {}) {\n  const b = { ...(msg.payload || {}) };\n  delete b.password;\n  delete b.confirmPassword;\n\n  msg.error = { message, fields };\n  msg.body = b;\n  msg.redirect = fromRegister ? \"/register\" : \"/user-list\";\n  return [null, msg];\n}\n\n// ---- Zorunlu alan şeması\nconst typeLookup = {\n  add: { text: \"Ekleme\", requireArgs: [\"username\", \"password\", \"email\"] },\n  update: { text: \"Güncelle\", requireArgs: [\"id\", \"email\"] }, \n  activate: { text: \"Aktifleştirme\", requireArgs: [\"id\"] },\n  deactivate: { text: \"Pasifleştirme\", requireArgs: [\"id\"] },\n};\n\n// ---- Tip kontrolü\nif (!typeLookup[type]) {\n  return fail(`${type} geçersiz bir parametre değeridir.`);\n}\n\n// ---- Normalize\nmsg.payload.username = (msg.payload.username ?? \"\").trim();\nmsg.payload.displayName = (msg.payload.displayName ?? \"\").trim();\nmsg.payload.email = (msg.payload.email ?? \"\").trim();\nmsg.payload.id = (msg.payload.id ?? \"\").toString().trim();\nconst pass = (msg.payload.password ?? \"\").trim();\nconst confirmPassword = (msg.payload.confirmPassword ?? \"\").trim();\nconst { username, email, id } = msg.payload;\n\n// ---- Zorunlu alan kontrolü\nconst req = typeLookup[type].requireArgs;\nconst missing = req.filter(a => (((msg.payload?.[a] ?? \"\") + \"\").trim() === \"\"));\nif (missing.length) {\n  return fail(`${typeLookup[type].text} için ${req.join(\", \")} zorunlu.`,\n    Object.fromEntries(missing.map(k => [k, \"Zorunlu alan.\"])));\n}\n\n// ---- Ortak regex'ler\nconst emailRe = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;\nconst userRe = /^[a-zA-Z0-9._]{3,32}$/; // harf/rakam/._ 3-32\nconst DB = global.get(\"DB\") || {};\nconst usersTable = Array.isArray(DB.user) ? DB.user : [];\n\n// ---- Alan bazlı validasyon (type'a göre)\nconst fe = {};\n\nswitch (type) {\n  case \"add\": {\n    if (!userRe.test(username)) fe.username = \"Kullanıcı adı 3-32, harf/rakam/._\";\n    if (!emailRe.test(email)) fe.email = \"Geçerli e-posta girin.\";\n    if (pass.length < 8) fe.password = \"En az 8 karakter.\";\n\n    if (fromRegister) {\n      if (!confirmPassword) fe.confirmPassword = \"Tekrar şifre zorunlu.\";\n      else if (confirmPassword !== pass) fe.confirmPassword = \"Şifreler eşleşmiyor.\";\n    }\n\n    // Benzersizlik (username/email)\n    const unameLower = username.toLowerCase();\n    const emailLower = email.toLowerCase();\n    if (usersTable.some(u => (u.username || \"\").toLowerCase() === unameLower)) {\n      fe.username = (fe.username ? fe.username + \" \" : \"\") + \"Kullanıcı adı zaten kayıtlı.\";\n    }\n    if (usersTable.some(u => (u.email || \"\").toLowerCase() === emailLower)) {\n      fe.email = (fe.email ? fe.email + \" \" : \"\") + \"E-posta zaten kayıtlı.\";\n    }\n    break;\n  }\n\n  case \"update\": {\n    if (!emailRe.test(email)) fe.email = \"Geçerli e-posta girin.\";\n    if (pass && pass.length < 8) fe.password = \"Parola girilecekse en az 8 karakter.\";\n\n    // Benzersizlik (aynı kaydı hariç tut)\n    const myId = id;\n    const unameLower = (username || \"\").toLowerCase();\n    const emailLower = email.toLowerCase();\n\n    if (username) {\n      if (!userRe.test(username)) fe.username = \"Kullanıcı adı 3-32, harf/rakam/._\";\n      if (usersTable.some(u => String(u.id) !== myId &&\n        (u.username || \"\").toLowerCase() === unameLower)) {\n        fe.username = (fe.username ? fe.username + \" \" : \"\") + \"Kullanıcı adı zaten kayıtlı.\";\n      }\n    }\n    if (usersTable.some(u => String(u.id) !== myId &&\n      (u.email || \"\").toLowerCase() === emailLower)) {\n      fe.email = (fe.email ? fe.email + \" \" : \"\") + \"E-posta zaten kayıtlı.\";\n    }\n    break;\n  }\n\n  case \"activate\":\n  case \"deactivate\": {\n    // İlgili kullanıcı mevcut mu?\n    if (!usersTable.some(u => String(u.id) === String(id))) {\n      fe.id = \"Kullanıcı bulunamadı.\";\n    }\n    break;\n  }\n}\n\nif (Object.keys(fe).length) {\n  return fail(\"Lütfen form hatalarını düzeltin.\", fe);\n}\n\nif (type === \"update\" && !pass) delete msg.payload.password;\ndelete msg.payload.confirmPassword;\n\nif (type === \"add\" && fromRegister) {\n  // Register sayfasından kayıt → login\n  msg.redirect = \"/login\";\n} else {\n  // Admin tarafında ekleme/güncelleme → user-list\n  msg.redirect = \"/user-list\";\n}\n\nreturn [msg, null];\n\n",
+        "func": "/***********************\n * Admin Validation v2\n * - /user-opt/:type  (POST)\n *   type ∈ { add, activate, deactivate }\n * - Cache KULLANMAZ → varlık kontrolünü DB bir sonraki nodda yapar.\n ***********************/\nconst BAD_REQ = 400;\n\nfunction redirect(path, flashType, flashMsg) {\n    msg.flash = { type: flashType || \"danger\", text: flashMsg || \"\" };\n    msg.statusCode = 302;\n    msg.headers = msg.headers || {};\n    msg.headers.Location = path || \"/user-list\";\n    return msg;\n}\n\nfunction fail(message, fieldErrors, toPath) {\n    msg.valid = false;\n    msg.errors = fieldErrors || {};\n    return redirect(toPath || \"/user-list\", \"danger\", message || \"İstek doğrulanamadı.\");\n}\n\nfunction ok(payload) {\n    msg.valid = true;\n    if (payload) msg.payload = payload;\n    return msg;\n}\n\n// ---- request kaynakları\nconst params = (msg.req && msg.req.params) || {};\nconst body   = (msg.payload && typeof msg.payload === \"object\") ? msg.payload : {};\nconst type   = String(params.type || body.type || \"\").trim().toLowerCase();\n\n// Küçük yardımcılar\nconst isEmail = (e) => /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(String(e || \"\").trim());\nconst notEmpty = (s) => String(s || \"\").trim().length > 0;\n\n// ---- router\nif (!type) {\n    return fail(\"Geçersiz istek: işlem türü yok.\", { type: \"Zorunlu.\" }, \"/user-list\");\n}\n\nif (type === \"activate\" || type === \"deactivate\") {\n    // Sadece ID’nin geldiğini doğrula; varlık kontrolünü MongoDB findOne yapacak\n    const id = String(body.id || \"\").trim();\n    if (!id) {\n        return fail(\"Geçersiz istek: id yok.\", { id: \"Zorunlu.\" }, \"/user-list\");\n    }\n    // Opsiyonel: 24 hex veya string id kabul edelim\n    const looksLikeObjectId = /^[a-fA-F0-9]{24}$/.test(id);\n    if (!looksLikeObjectId && id.length < 8) {\n        return fail(\"Geçersiz id.\", { id: \"Biçim geçersiz.\" }, \"/user-list\");\n    }\n\n    // Downstream için temiz bir payload bırak\n    msg.payload = { id, type };\n    return ok();\n}\n\nif (type === \"add\") {\n    const username = String(body.username || body.kullaniciAdi || \"\").trim();\n    const fullname = String(body.fullname || body.isim || \"\").trim();\n    const email    = String(body.email || body.eposta || \"\").trim();\n    const password = String(body.password || body.parola || \"\").trim();\n\n    const errors = {};\n    if (!notEmpty(username)) errors.username = \"Kullanıcı adı zorunlu.\";\n    if (!notEmpty(fullname)) errors.fullname = \"İsim soyisim zorunlu.\";\n    if (!isEmail(email))     errors.email    = \"E-posta biçimi hatalı.\";\n    if (password.length < 8) errors.password = \"Parola en az 8 karakter olmalı.\";\n\n    if (Object.keys(errors).length) {\n        return fail(\"Eksik veya hatalı alanlar var.\", errors, \"/user-list\");\n    }\n\n    // Downstream insert için normalize payload\n    msg.payload = { type, username, fullname, email, password };\n    return ok();\n}\n\n// İleride başka türler gelirse:\nreturn fail(`Desteklenmeyen işlem: ${type}`, { type: \"Bilinmiyor.\" }, \"/user-list\");\n",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -895,7 +894,7 @@
         "finalize": "",
         "libs": [],
         "x": 700,
-        "y": 1040,
+        "y": 1100,
         "wires": [
             [
                 "fc9042b8d1523bc0"
@@ -920,7 +919,7 @@
             "14819198696d743b"
         ],
         "x": 565,
-        "y": 840,
+        "y": 900,
         "wires": [
             [
                 "4801fcc29ebde45c"
@@ -937,7 +936,7 @@
             "8a6d783f9fac6a74"
         ],
         "x": 795,
-        "y": 1080,
+        "y": 1140,
         "wires": []
     },
     {
@@ -950,7 +949,7 @@
             "126ead5b72b171f3"
         ],
         "x": 1545,
-        "y": 1120,
+        "y": 1180,
         "wires": []
     },
     {
@@ -967,7 +966,7 @@
         "outputs": 1,
         "rounds": 10,
         "x": 990,
-        "y": 1000,
+        "y": 1060,
         "wires": [
             [
                 "97440a5695968cc4"
@@ -985,7 +984,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 140,
-        "y": 1180,
+        "y": 1260,
         "wires": [
             [
                 "333ba1b4a05495f7"
@@ -997,7 +996,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.user.findOne()",
-        "func": "msg.formData = msg.payload\n\nmsg.payload = {\n  _id: msg.formData.id || msg.req.params.id\n}\n\nreturn msg;\n\n",
+        "func": "const id = String(msg.req.params.id || '');\n\nmsg.payload = {\n  $expr: { $eq: [ { $toString: '$_id' }, id ] }\n};\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1005,15 +1004,14 @@
         "finalize": "",
         "libs": [],
         "x": 730,
-        "y": 1180,
+        "y": 1260,
         "wires": [
             [
                 "049f6c44dff76dd4"
             ]
         ],
         "outputLabels": [
-            "Success",
-            "Error"
+            "Success"
         ]
     },
     {
@@ -1028,7 +1026,7 @@
         "template": "<!doctype html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Admin Panel — Kullanıcı Düzenle</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <!-- Bootstrap -->\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n</head>\n\n<body class=\"bg-light\">\n  <!-- NAVBAR: solda büyük metin, sağda metin link -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Admin Panel — Düzenleme Sayfası</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/user-list\">Admin Panel</a>\n    </div>\n  </nav>\n\n  <main class=\"container\">\n    {{#error}}\n    <div class=\"alert alert-danger d-flex align-items-center\" role=\"alert\">\n      <div class=\"me-2\">⚠️</div><div>{{message}}</div>\n    </div>\n    {{/error}}\n\n    <div class=\"card shadow-sm\">\n      <div class=\"card-header bg-white\">\n        <h5 class=\"mb-0\">Kullanıcı Düzenle</h5>\n      </div>\n      <div class=\"card-body\">\n        <form action=\"/user-opt/update\" method=\"post\" novalidate>\n          <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}\">\n\n          <div class=\"row g-3\">\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">Kullanıcı adı</label>\n              <input name=\"username\" readonly\n                     class=\"form-control {{#error.fields.username}}is-invalid{{/error.fields.username}}\"\n                     placeholder=\"kullanici\" value=\"{{payload.username}}\">\n              {{#error.fields.username}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.username}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">İsim Soyisim</label>\n              <input id=\"displayName\"\n                     name=\"displayName\"\n                     data-initial=\"{{payload.displayName}}\"\n                     class=\"form-control {{#error.fields.displayName}}is-invalid{{/error.fields.displayName}}\"\n                     placeholder=\"Ad Soyad\" value=\"{{payload.displayName}}\">\n              {{#error.fields.displayName}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.displayName}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">E-posta</label>\n              <input name=\"email\" type=\"email\" required readonly\n                     class=\"form-control {{#error.fields.email}}is-invalid{{/error.fields.email}}\"\n                     placeholder=\"ad@domain.com\" value=\"{{payload.email}}\">\n              {{#error.fields.email}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.email}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">Yeni şifre (opsiyonel)</label>\n              <input id=\"password\" name=\"password\" type=\"password\" minlength=\"8\"\n                     class=\"form-control {{#error.fields.password}}is-invalid{{/error.fields.password}}\"\n                     placeholder=\"Yeni parola\">\n              {{#error.fields.password}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.password}}\n            </div>\n            {{#user.isAdmin}}\n            <!-- Admin yetkisi -->\n            <div class=\"col-12\">\n              <div class=\"form-check\">\n                <!-- Alanın gönderildiğini backend'e belli etmek için -->\n                <input type=\"hidden\" name=\"isAdmin_present\" value=\"1\">\n                <input class=\"form-check-input\" type=\"checkbox\" id=\"cbAdmin\"\n                       name=\"isAdmin\" value=\"true\"\n                       {{#payload.isAdmin}}checked{{/payload.isAdmin}}>\n                <label class=\"form-check-label\" for=\"cbAdmin\">Admin yetkisi ver</label>\n              </div>\n            </div>\n            {{/user.isAdmin}}\n            \n            <!-- Aktif / Pasif -->\n            <div class=\"col-12\">\n              <div class=\"form-check form-check-inline\">\n                <input class=\"form-check-input\" id=\"r1\" type=\"radio\" name=\"active\" value=\"true\"\n                       {{#payload.isActive}}checked{{/payload.isActive}}\n                       {{#payload.active}}checked{{/payload.active}}>\n                <label class=\"form-check-label\" for=\"r1\">Aktif</label>\n              </div>\n              <div class=\"form-check form-check-inline\">\n                <input class=\"form-check-input\" id=\"r2\" type=\"radio\" name=\"active\" value=\"false\"\n                       {{^payload.isActive}}{{^payload.active}}checked{{/payload.active}}{{/payload.isActive}}>\n                <label class=\"form-check-label\" for=\"r2\">Pasif</label>\n              </div>\n            </div>\n\n            <div class=\"col-12 d-flex justify-content-end gap-2\">\n              <a class=\"btn btn-warning\" href=\"/user-list\">Vazgeç</a>\n              <button id=\"btnUpdate\" class=\"btn btn-secondary\" type=\"submit\" disabled>Güncelle</button>\n            </div>\n          </div>\n        </form>\n      </div>\n    </div>\n\n    <footer class=\"text-center text-muted small my-4\">© {{year}} Admin</footer>\n  </main>\n\n  <!-- Değişiklik olmadan Güncelle açılamasın -->\n  <script>\n  document.addEventListener('DOMContentLoaded', () => {\n    const btn    = document.getElementById('btnUpdate');      // Güncelle\n    const dnEl   = document.getElementById('displayName');    // İsim Soyisim\n    const pwEl   = document.getElementById('password');       // Yeni şifre\n    const cb     = document.getElementById('cbAdmin');        // Admin checkbox\n    const radios = document.querySelectorAll('input[name=\"active\"]'); // Aktif/Pasif\n\n    if (!btn || !dnEl || !pwEl) return;\n\n    const initialDN     = (dnEl.dataset.initial || '').trim();\n    const initialAdmin  = !!cb?.checked;\n    const initialActive = (document.querySelector('input[name=\"active\"]:checked')?.value ?? '');\n\n    function checkCanSubmit() {\n      const dn = dnEl.value.trim();\n      const pw = pwEl.value;\n\n      const dnChanged    = dn !== initialDN;\n      const pwChanged    = pw.trim().length > 0;\n      const pwValid      = !pwChanged || pw.trim().length >= 8;\n      const roleChanged  = cb ? (cb.checked !== initialAdmin) : false;\n      const currentActive= (document.querySelector('input[name=\"active\"]:checked')?.value ?? '');\n      const activeChanged= currentActive !== initialActive;\n\n      // Kısa şifre görsel uyarısı\n      pwEl.classList.toggle('is-invalid', pwChanged && !pwValid);\n\n      const can = (dnChanged || pwChanged || roleChanged || activeChanged) && pwValid;\n\n      btn.disabled = !can;\n      btn.classList.toggle('btn-success', can);\n      btn.classList.toggle('btn-secondary', !can);\n    }\n\n    dnEl.addEventListener('input', checkCanSubmit);\n    pwEl.addEventListener('input', checkCanSubmit);\n    cb?.addEventListener('change', checkCanSubmit);\n    radios.forEach(r => r.addEventListener('change', checkCanSubmit));\n\n    checkCanSubmit();\n  });\n  </script>\n\n  <script>\n    // Yıl bilgisi\n    document.addEventListener('DOMContentLoaded', () => {\n      const el = document.querySelector('footer');\n      if (el && el.innerHTML.includes('{{year}}')) {\n        el.innerHTML = el.innerHTML.replace('{{year}}', new Date().getFullYear());\n      }\n    });\n  </script>\n</body>\n</html>\n",
         "output": "str",
         "x": 1260,
-        "y": 1160,
+        "y": 1240,
         "wires": [
             [
                 "f8653907910821de"
@@ -1043,7 +1041,7 @@
         "statusCode": "",
         "headers": {},
         "x": 1410,
-        "y": 1160,
+        "y": 1240,
         "wires": []
     },
     {
@@ -1056,7 +1054,7 @@
             "126ead5b72b171f3"
         ],
         "x": 1215,
-        "y": 1220,
+        "y": 1300,
         "wires": []
     },
     {
@@ -1080,7 +1078,7 @@
         "repair": false,
         "outputs": 2,
         "x": 870,
-        "y": 1040,
+        "y": 1100,
         "wires": [
             [
                 "158f6cdbc523a790"
@@ -1101,7 +1099,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 120,
-        "y": 1360,
+        "y": 1460,
         "wires": [
             [
                 "8c7785adb445f91b"
@@ -1120,7 +1118,7 @@
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Giriş Yap</title>\n\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\" />\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\" />\n</head>\n\n<body>\n  <div class=\"container mt-5\">\n    <div class=\"row justify-content-center\">\n      <div class=\"col-md-6 col-lg-5\">\n        <div class=\"card shadow-sm\">\n          <div class=\"card-body\">\n            <h5 class=\"mb-3\">Giriş Yap</h5>\n            {{#error}}\n            <div class=\"alert alert-danger\">\n                  {{message}}\n            </div>\n            {{/error}}\n            <form id=\"loginForm\" action=\"/login\" method=\"post\" novalidate>\n              <div class=\"mb-3\">\n                <label for=\"identifier\" class=\"form-label\">Kullanıcı adı veya E‑posta</label>\n                <input\n                    type=\"text\"\n                    class=\"form-control\"\n                    id=\"identifier\"\n                    name=\"identifier\"\n                    placeholder=\"kullanıcıAdı veya mail@ornek.com\"\n                    minlength=\"3\"\n                    required\n                  >\n                <div class=\"invalid-feedback\">Kullanıcı adı veya e‑posta gir.</div>\n              </div>\n\n              <div class=\"mb-2\">\n                <label for=\"password\" class=\"form-label\">Şifre</label>\n                <div class=\"input-group\">\n                  <input type=\"password\" class=\"form-control\" id=\"password\" name=\"password\" placeholder=\"Şifre\" minlength=\"4\" required>\n                  <button class=\"btn btn-outline-secondary\" type=\"button\" id=\"togglePass\"><i class=\"bi bi-eye\"></i></button>\n                </div>\n                <div class=\"invalid-feedback\">Şifre zorunludur.</div>\n              </div>\n\n              <div class=\"d-flex align-items-center justify-content-between mt-3\">\n                <div class=\"form-check\">\n                  <input class=\"form-check-input\" type=\"checkbox\" id=\"remember\">\n                  <label class=\"form-check-label\" for=\"remember\">Beni hatırla</label>\n                </div>\n                <button id=\"submitBtn\" class=\"btn btn-danger\" type=\"submit\">\n      <span class=\"btn-text\">Login</span>\n      <span class=\"spinner-border spinner-border-sm d-none\" role=\"status\" aria-hidden=\"true\"></span>\n    </button>\n              </div>\n            </form>\n\n            <div id=\"loginAlert\" class=\"alert alert-danger mt-3 d-none\" role=\"alert\"></div>\n\n            <p class=\"mt-3 mb-0\">\n              Kayıtlı değil misin? <a href=\"/register\">Hesap oluştur</a>\n            </p>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n</body>\n\n</html>",
         "output": "str",
         "x": 440,
-        "y": 1360,
+        "y": 1460,
         "wires": [
             [
                 "0f88d4f9899d9885"
@@ -1135,7 +1133,7 @@
         "statusCode": "",
         "headers": {},
         "x": 730,
-        "y": 1360,
+        "y": 1460,
         "wires": []
     },
     {
@@ -1149,7 +1147,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 1660,
+        "y": 1700,
         "wires": [
             [
                 "898343caa6e3f92c"
@@ -1166,7 +1164,7 @@
             "location": "/login"
         },
         "x": 760,
-        "y": 1660,
+        "y": 1700,
         "wires": []
     },
     {
@@ -1183,7 +1181,7 @@
         "signvar": "payload",
         "storetoken": "payload",
         "x": 1180,
-        "y": 1500,
+        "y": 1540,
         "wires": [
             [
                 "f59872569465a1b9"
@@ -1201,7 +1199,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 1520,
+        "y": 1560,
         "wires": [
             [
                 "bcf4da036ac5b43b"
@@ -1221,7 +1219,7 @@
         "finalize": "",
         "libs": [],
         "x": 1010,
-        "y": 1500,
+        "y": 1540,
         "wires": [
             [
                 "0f7d31954dc9a188"
@@ -1249,7 +1247,7 @@
             }
         ],
         "x": 340,
-        "y": 1520,
+        "y": 1560,
         "wires": [
             [
                 "a1e33ed13fcde42a"
@@ -1270,7 +1268,7 @@
         "outputs": 1,
         "rounds": 10,
         "x": 840,
-        "y": 1500,
+        "y": 1540,
         "wires": [
             [
                 "e8c57f2b754850cc"
@@ -1287,7 +1285,7 @@
             "location": "/"
         },
         "x": 1520,
-        "y": 1500,
+        "y": 1540,
         "wires": []
     },
     {
@@ -1300,7 +1298,7 @@
             "3ecb9ddfd9c53584"
         ],
         "x": 1115,
-        "y": 1540,
+        "y": 1580,
         "wires": []
     },
     {
@@ -1313,7 +1311,7 @@
             "42db88840c0f57de"
         ],
         "x": 345,
-        "y": 1320,
+        "y": 1420,
         "wires": [
             [
                 "8c7785adb445f91b"
@@ -1330,7 +1328,7 @@
             "3ecb9ddfd9c53584"
         ],
         "x": 775,
-        "y": 1560,
+        "y": 1600,
         "wires": []
     },
     {
@@ -1338,7 +1336,7 @@
         "type": "subflow:9357c048778312fb",
         "z": "651af9bb9a46e4b0",
         "name": "",
-        "x": 290,
+        "x": 270,
         "y": 220,
         "wires": [
             [
@@ -1357,7 +1355,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 1760,
+        "y": 1800,
         "wires": [
             [
                 "8637acb46830d49a"
@@ -1372,7 +1370,7 @@
         "statusCode": "",
         "headers": {},
         "x": 750,
-        "y": 1760,
+        "y": 1800,
         "wires": []
     },
     {
@@ -1387,7 +1385,7 @@
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n  <title>Kayıt ol</title>\n\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\"/>\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\"/>\n</head>\n\n<body>\n<div class=\"container mt-5\">\n  <div class=\"row justify-content-center\">\n    <div class=\"col-md-7 col-lg-6\">\n      <div class=\"card shadow-sm\">\n        <div class=\"card-body\">\n          <h5 class=\"mb-3\">Hesap Oluştur</h5>\n          {{#error}}<div class=\"alert alert-danger d-flex align-items-center\" role=\"alert\">\n                    <div class=\"me-2\">⚠️</div><div>{{message}}</div>\n                    </div>\n          {{/error}}\n          <form id=\"registerForm\" action=\"/user-opt/add\" method=\"post\" novalidate>\n            <div class=\"mb-3\">\n              <label for=\"username\" class=\"form-label\">Kullanıcı Adı</label>\n              <input\n                type=\"text\"\n                id=\"username\"\n                name=\"username\"\n                value=\"{{body.username}}\"\n                class=\"form-control {{#error.fields.username}}is-invalid{{/error.fields.username}}\"\n                placeholder=\"kullanıcıAdı\"\n                pattern=\"^[a-z0-9._-]{3,20}$\"\n                required\n              >\n              <div class=\"invalid-feedback\">Geçerli bir kullanıcı adı gir.</div>\n            </div>\n\n            <div class=\"mb-3\">\n              <label for=\"name\" class=\"form-label\">Ad Soyad</label>\n              <input type=\"text\" id=\"name\" name=\"displayName\" value=\"{{body.displayName}}\" \n              class=\"form-control {{#error.fields.displayName}}is-invalid{{/error.fields.displayName}}\" \n              placeholder=\"Adınız Soyadınız\" minlength=\"2\" required>\n              <div class=\"invalid-feedback\">Lütfen ad soyad gir.</div>\n            </div>\n\n            <div class=\"mb-3\">\n              <label for=\"email\" class=\"form-label\">Email</label>\n              <input type=\"email\" id=\"email\" name=\"email\" value=\"{{body.email}}\" class=\"form-control {{#error.fields.email}}is-invalid{{/error.fields.email}}\" placeholder=\"mail@ornek.com\" required>\n              <div class=\"invalid-feedback\">Geçerli bir email gir.</div>\n            </div>\n\n            <div class=\"mb-3\">\n              <label for=\"password\" class=\"form-label\">Şifre</label>\n              <div class=\"input-group\">\n                <input type=\"password\" id=\"password\" name=\"password\" class=\"form-control\" placeholder=\"Şifre (Tekrar)\" required>\n                <button class=\"btn btn-outline-secondary\" type=\"button\" id=\"togglePass1\"><i class=\"bi bi-eye\"></i></button>\n              </div>\n              <div class=\"form-text\">En az 8 karakter.</div>\n              <div class=\"invalid-feedback\">Geçerli bir şifre gir.</div>\n            </div>\n\n            <div class=\"mb-2\">\n              <label for=\"password2\" class=\"form-label\">Şifre (Tekrar)</label>\n              <div class=\"input-group\">\n                <input type=\"password\" id=\"password2\" name=\"confirmPassword\" class=\"form-control\" placeholder=\"Şifre (Tekrar)\" required>\n                <button class=\"btn btn-outline-secondary\" type=\"button\" id=\"togglePass2\"><i class=\"bi bi-eye\"></i></button>\n              </div>\n              <div class=\"invalid-feedback\" id=\"pw2Feedback\">Şifreler eşleşmiyor.</div>\n            </div>\n\n            <div class=\"form-check my-3\">\n              <input class=\"form-check-input\" type=\"checkbox\" id=\"terms\" required>\n              <label class=\"form-check-label\" for=\"terms\">Kullanım şartlarını kabul ediyorum</label>\n              <div class=\"invalid-feedback\">Devam etmek için onay gerekli.</div>\n            </div>\n                <input type=\"hidden\" name=\"isAdmin\" value=\"true\">\n            <div class=\"d-flex justify-content-between align-items-center\">\n              <a href=\"/login\" class=\"link-secondary\">Zaten hesabın var mı? Giriş yap</a>\n              <button id=\"submitBtn\" type=\"submit\" class=\"btn btn-primary\">\n                <span class=\"btn-text\">Kayıt Ol</span>\n                <span class=\"spinner-border spinner-border-sm d-none\" role=\"status\" aria-hidden=\"true\"></span>\n              </button>\n            </div>\n          </form>\n\n          <div id=\"regAlert\" class=\"alert alert-danger mt-3 d-none\" role=\"alert\"></div>\n          <div id=\"regSuccess\" class=\"alert alert-success mt-3 d-none\" role=\"alert\">Kayıt başarılı. Yönlendiriliyorsunuz…</div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n<script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js\"></script>\n\n</body>\n</html>\n",
         "output": "str",
         "x": 460,
-        "y": 1760,
+        "y": 1800,
         "wires": [
             [
                 "84be4beb553cbe26"
@@ -1407,7 +1405,7 @@
         "finalize": "",
         "libs": [],
         "x": 460,
-        "y": 1660,
+        "y": 1700,
         "wires": [
             [
                 "78a062b04551d6e3"
@@ -1435,7 +1433,7 @@
         "repair": false,
         "outputs": 2,
         "x": 310,
-        "y": 1800,
+        "y": 1840,
         "wires": [
             [
                 "8637acb46830d49a"
@@ -1454,7 +1452,7 @@
             "7817b550669eb8a2"
         ],
         "x": 215,
-        "y": 1800,
+        "y": 1840,
         "wires": [
             [
                 "5a5879c9b2e4a128"
@@ -1471,7 +1469,7 @@
             "126ead5b72b171f3"
         ],
         "x": 405,
-        "y": 1840,
+        "y": 1880,
         "wires": []
     },
     {
@@ -1506,7 +1504,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 330,
-        "y": 880,
+        "y": 940,
         "wires": [
             [
                 "afee2af02b51714d"
@@ -1532,7 +1530,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 350,
-        "y": 1040,
+        "y": 1100,
         "wires": [
             [
                 "acc7c1f55f0a682a"
@@ -1545,7 +1543,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 330,
-        "y": 1180,
+        "y": 1260,
         "wires": [
             [
                 "a6a7474d00f800aa"
@@ -1558,7 +1556,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 500,
-        "y": 880,
+        "y": 940,
         "wires": [
             [
                 "4801fcc29ebde45c"
@@ -1578,7 +1576,7 @@
         "finalize": "",
         "libs": [],
         "x": 1360,
-        "y": 1500,
+        "y": 1540,
         "wires": [
             [
                 "86740e96f67da72b"
@@ -1591,7 +1589,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 520,
-        "y": 1180,
+        "y": 1260,
         "wires": [
             [
                 "7c83cb4a19389f12"
@@ -1604,7 +1602,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 530,
-        "y": 1040,
+        "y": 1100,
         "wires": [
             [
                 "7083b2826db710fa"
@@ -1624,7 +1622,7 @@
         "finalize": "",
         "libs": [],
         "x": 1420,
-        "y": 1000,
+        "y": 1060,
         "wires": [
             [
                 "b5c78ee5996d045c"
@@ -1639,7 +1637,7 @@
         "statusCode": "",
         "headers": {},
         "x": 1570,
-        "y": 1000,
+        "y": 1060,
         "wires": []
     },
     {
@@ -1770,12 +1768,12 @@
         "clientNode": "071adb762f609302",
         "mode": "collection",
         "collection": "todo",
-        "operation": "find",
+        "operation": "aggregate",
         "output": "toArray",
         "maxTimeMS": "0",
-        "handleDocId": false,
+        "handleDocId": true,
         "name": "",
-        "x": 630,
+        "x": 620,
         "y": 220,
         "wires": [
             [
@@ -1838,7 +1836,7 @@
         "maxTimeMS": "0",
         "handleDocId": false,
         "name": "",
-        "x": 700,
+        "x": 720,
         "y": 440,
         "wires": [
             [
@@ -1851,14 +1849,14 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "function 10",
-        "func": "if (!msg.payload) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, msg];\n}\n\nif (msg.payload.done) {\n  msg.error = { message: \"Tamamlanmış işler için hatırlatıcı kurulamaz\" };\n  return [null, msg];\n}\n\nfunction fmtLocal(dt) {\n  const p = n => String(n).padStart(2, '0');\n  return `${dt.getFullYear()}-${p(dt.getMonth() + 1)}-${p(dt.getDate())}T${p(dt.getHours())}:${p(dt.getMinutes())}`;\n}\n\nconst now   = new Date();\nconst uiNow = fmtLocal(now);\nconst uiDt  = msg.payload.schedule?.datetime || uiNow;\nconst uiNote = msg.payload.schedule?.formData?.note || \"\";\n\nmsg.payload = {\n  id: msg.payload.id,          \n  name: msg.payload.name,\n  schedule: {\n    datetime: uiDt,\n    min: uiNow,\n    note: uiNote\n  }\n};\n\nreturn msg;\n",
+        "func": "if (!msg.payload) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, msg];\n}\n\nif (msg.payload.done) {\n  msg.error = { message: \"Tamamlanmış işler için hatırlatıcı kurulamaz\" };\n  return [null, msg];\n}\n\nfunction fmtLocal(dt) {\n  const p = n => String(n).padStart(2, '0');\n  return `${dt.getFullYear()}-${p(dt.getMonth() + 1)}-${p(dt.getDate())}T${p(dt.getHours())}:${p(dt.getMinutes())}`;\n}\n\nconst now = new Date();\nconst uiNow = fmtLocal(now);\nconst uiDt = msg.payload.schedule?.formData?.datetime || uiNow;\nconst uiNote = msg.payload.schedule?.formData?.note || \"\";\n\nmsg.payload = {\n  id: msg.payload.id,\n  name: msg.payload.name,\n  schedule: {\n    datetime: uiDt,  // burada formdan gelen tarih olacak\n    min: uiNow,\n    note: uiNote\n  }\n};\n\nreturn msg;\n",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 870,
+        "x": 890,
         "y": 440,
         "wires": [
             [
@@ -1874,7 +1872,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "function 11",
-        "func": "const nowDate = new Date();\nconst now = nowDate.getTime();\n\n// mongodb4 findOne çıktısını doğru şekilde işle\nvar todoItem = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\n\nif (!todoItem) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, msg, null]; // Hata çıktısı\n}\n\nmsg.todo = todoItem; // Bulunan öğeyi msg.todo'ya ata\n\n// Yetkilendirme ve durum kontrollerinde msg.todo kullan\nif (msg.todo.stamp.username !== msg.user.username && !msg.user.roles.includes(\"admin\")) {\n  msg.error = { message: \"Yetkisiz erişim.\" }\n  return [null, msg, null]; // Hata çıktısı\n}\n\nif (msg.req.params.type === \"update\" && msg.todo.done) {\n  msg.error = { message: \"Tamamlanmış işler güncellenemez\" };\n  return [null, msg, null]; // Hata çıktısı\n}\n\n// Veritabanı işlemi için msg.payload'ı hazırla\nmsg.payload = [\n  {\n    id: msg.formData.id\n  }\n];\n\nif (msg.req.params.type === \"trash\") {\n  msg.operation = \"deleteOne\";\n} else if (msg.req.params.type === \"schedule\") {\n  const when = msg.formData.datetime || \"\"; // Formdan gelen datetime kullan\n  const whenWithSec = when.length === 16 ? when + \":00\" : when;\n\n  let scheduleOptions = msg.scheduleOptions = {\n    crontiMethod: \"onDate\",\n    crontiArgs: [whenWithSec, whenWithSec]\n  };\n  msg.payload.push({\n    $set: {\n      schedule: {\n        formData: msg.formData, // Formdan gelen verileri kullan\n        options: scheduleOptions\n      }\n    }\n  });\n  msg.operation = \"updateOne\";\n\n  // crontinject için ayrı bir mesaj hazırla ve üçüncü çıkışa gönder\n  var crontinjectMsg = {\n      payload: scheduleOptions,\n      todo: msg.todo, // Orijinal todo öğesini gönder\n      topic: `todo:${msg.todo.id}`\n  };\n  return [msg, null, crontinjectMsg]; // DB güncelleme payload'ı, hata yok, crontinject payload'ı\n\n} else if (msg.req.params.type === \"update\") {\n  msg.operation = \"updateOne\";\n\n  const newVal = (msg.formData.name || \"\").trim();\n  const origVal = (msg.formData.orig || \"\").trim();\n\n  if (newVal === origVal) {\n    msg.error = { message: \"Herhangi bir güncelleme yapmadınız.\" };\n    return [null, msg, null];\n  }\n\n  msg.payload = [\n    { id: msg.formData.id },\n    { $set: { name: newVal } }\n  ];\n} else if (msg.req.params.type === \"complete\") {\n  msg.operation = \"updateOne\";\n  msg.payload = [\n    { id: msg.formData.id },\n    { $set: { done: true } }\n  ];\n} else if (msg.req.params.type === \"open\") {\n  msg.operation = \"updateOne\";\n  msg.payload = [\n    { id: msg.formData.id },\n    { $set: { done: false } }\n  ];\n}\nreturn [msg, null, null]; // Diğer işlemler için varsayılan dönüş",
+        "func": "// function 11 — /opt/:type (trash | complete | open | update | schedule)\n//\n// Bu sürümde \"schedule\" işleminde NOT metni schedule.formData içine\n// kaydedilmez; sadece zamanı tutulur. Not metni DB'de \"lastNote\" alanına\n// (opsiyonel) yazılır. Böylece listede \"not\" alanı boş görünür.\n\nconst type = msg.req?.params?.type || \"\";\nconst user = msg.user || { username: \"\", roles: [] };\n\n// findOne çıktısını normalize et\nconst doc = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\n\n// --- ID normalizasyonu\nconst rawFromForm = (msg.formData?.id ?? \"\").toString();\nconst rawFromDoc  = (doc?.id ?? \"\").toString();\nconst rawId = rawFromForm || rawFromDoc;\nconst asNum = Number(rawId);\nconst id = Number.isNaN(asNum) ? rawId : asNum;\n\nif (!doc) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, msg, null];  // [mongo, error, cron]\n}\n\n// --- Basit yetki kontrolü\nconst isAdmin = Array.isArray(user.roles) && user.roles.includes(\"admin\");\nif (doc?.stamp?.username && user?.username && doc.stamp.username !== user.username && !isAdmin) {\n  msg.error = { message: \"Yetkisiz işlem.\" };\n  return [null, msg, null];\n}\n\n// === İşlemler ===\nif (type === \"trash\") {\n  msg.operation = \"deleteOne\";\n  msg.payload   = [{ id }];\n  return [msg, null, null];\n}\n\nif (type === \"complete\") {\n  msg.operation = \"updateOne\";\n  msg.payload   = [{ id }, { $set: { done: true } }];\n  return [msg, null, null];\n}\n\nif (type === \"open\") {\n  msg.operation = \"updateOne\";\n  msg.payload   = [{ id }, { $set: { done: false } }];\n  return [msg, null, null];\n}\n\nif (type === \"update\") {\n  const newName = (msg.formData?.name || \"\").trim();\n  const origVal = (msg.formData?.orig || \"\").trim();\n  if (!newName) {\n    msg.error = { message: \"Görev adı boş olamaz.\" };\n    return [null, msg, null];\n  }\n  if (newName === origVal) {\n    msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n    return [null, msg, null];\n  }\n  msg.operation = \"updateOne\";\n  msg.payload   = [{ id }, { $set: { name: newName } }];\n  return [msg, null, null];\n}\n\nif (type === \"schedule\") {\n  // ——— PLANLAMA ———\n  const whenRaw  = (msg.formData?.datetime || \"\").trim();   // \"YYYY-MM-DDTHH:mm[:ss]\"\n  const noteText = (msg.formData?.note || \"\").trim();       // EKRANDAKİ NOT (DB'de schedule'a yazmayacağız)\n\n  if (!whenRaw) {\n    msg.error = { message: \"Tarih/saat seçiniz.\" };\n    return [null, msg, null];\n  }\n\n  // saniye ekle (datetime-local saniyesiz gelir)\n  const whenIso = whenRaw.length === 16 ? (whenRaw + \":00\") : whenRaw;\n  const dt = new Date(whenIso);\n\n  if (isNaN(dt.getTime())) {\n    msg.error = { message: \"Geçersiz tarih/saat.\" };\n    return [null, msg, null];\n  }\n\n  // crontinject için doğru seçenek: Date nesnesi\n  const scheduleOptions = {\n    crontiMethod: \"onDate\",\n    crontiArgs: [dt]         // <— ÖNEMLİ: string değil, Date/epoch\n  };\n\n  // —— DB'ye yazılacak güncelleme ——\n  // NOT: schedule.formData içine NOTE KOYMUYORUZ; sadece datetime kalıyor.\n  const mongoMsg = {\n    ...msg,\n    operation: \"updateOne\",\n    payload: [\n      { id },\n      { $set: {\n          schedule: {\n            formData: { \n              datetime: msg.formData.datetime,\n              note: msg.formData.note\n              },\n            fireAt: dt.toISOString(),\n            epoch: dt.getTime()\n          },\n          // Notu ayrı bir alana istersen yaz (görsel temizlik için liste note'u boş kalsın)\n          lastNote: noteText\n        }\n      }\n    ]\n  };\n\n  // — akış hafızasına kısa bir kopya (tetik anında erişim için)\n  const shallowTodo = {\n    ...doc,\n    schedule: {\n      formData: { \n        datetime: msg.formData.datetime,\n        note: msg.formData.note\n        },\n      fireAt: dt.toISOString(),\n      epoch: dt.getTime()\n    },\n    lastNote: noteText\n  };\n  flow.set(`todo:${id}`, shallowTodo);\n\n  // — crontinject’e gidecek mesaj\n  const cronMsg = {\n    topic: `todo:${id}`,\n    payload: scheduleOptions,\n    todo: shallowTodo\n  };\n\n  // 3 çıkış: [mongo, error, cron]\n  return [mongoMsg, null, cronMsg];\n}\n\n// Bilinmeyen işlem\nmsg.error = { message: `Bilinmeyen işlem türü: ${type}` };\nreturn [null, msg, null];\n",
         "outputs": 3,
         "timeout": 0,
         "noerr": 0,
@@ -1885,13 +1883,13 @@
         "y": 600,
         "wires": [
             [
-                "e82dbbf530f551b8"
+                "9736330931d8ab79"
             ],
             [
                 "8646b06022669592"
             ],
             [
-                "da0366d8ddd2cb41"
+                "7148ede4c5df0a6c"
             ]
         ]
     },
@@ -1908,7 +1906,7 @@
         "handleDocId": false,
         "name": "",
         "x": 840,
-        "y": 560,
+        "y": 540,
         "wires": [
             [
                 "af5fc661d33623d3"
@@ -1955,43 +1953,16 @@
         "clientNode": "071adb762f609302",
         "mode": "collection",
         "collection": "todo",
-        "operation": "findOne",
+        "operation": "deleteOne",
         "output": "toArray",
         "maxTimeMS": "0",
         "handleDocId": false,
         "name": "",
-        "x": 1180,
-        "y": 540,
+        "x": 1330,
+        "y": 500,
         "wires": [
             [
                 "91308c72ec45a46b"
-            ]
-        ]
-    },
-    {
-        "id": "da0366d8ddd2cb41",
-        "type": "change",
-        "z": "651af9bb9a46e4b0",
-        "name": "",
-        "rules": [
-            {
-                "t": "move",
-                "p": "scheduleOptions",
-                "pt": "msg",
-                "to": "payload",
-                "tot": "msg"
-            }
-        ],
-        "action": "",
-        "property": "",
-        "from": "",
-        "to": "",
-        "reg": false,
-        "x": 1240,
-        "y": 660,
-        "wires": [
-            [
-                "7148ede4c5df0a6c"
             ]
         ]
     },
@@ -2004,7 +1975,7 @@
         "links": [
             "18dc3105a4edec0c"
         ],
-        "x": 1415,
+        "x": 1135,
         "y": 660,
         "wires": []
     },
@@ -2087,59 +2058,8 @@
         "maxTimeMS": "0",
         "handleDocId": false,
         "name": "",
-        "x": 1230,
+        "x": 1190,
         "y": 740,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "eb1d05226c4958f4",
-        "type": "function",
-        "z": "651af9bb9a46e4b0",
-        "name": "deleteSchedule",
-        "func": "if(msg.todo?.schedule?.response){\n    msg.payload = {\n        _id: msg.todo.schedule.response.self._id\n    }\n    return msg;\n}\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 760,
-        "y": 760,
-        "wires": [
-            [
-                "9b0e02c386fb5009"
-            ]
-        ]
-    },
-    {
-        "id": "9b0e02c386fb5009",
-        "type": "crontinject",
-        "z": "651af9bb9a46e4b0",
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "crontiMethod": "",
-        "crontiArgs": "[]",
-        "inputs": 1,
-        "hasButton": false,
-        "x": 940,
-        "y": 760,
         "wires": [
             []
         ]
@@ -2157,7 +2077,7 @@
         "handleDocId": false,
         "name": "",
         "x": 830,
-        "y": 880,
+        "y": 940,
         "wires": [
             [
                 "83aeb4a66b06d227"
@@ -2177,7 +2097,7 @@
         "handleDocId": false,
         "name": "",
         "x": 1260,
-        "y": 1000,
+        "y": 1060,
         "wires": [
             [
                 "f3de723a0ab4e6a9"
@@ -2197,7 +2117,7 @@
         "handleDocId": false,
         "name": "",
         "x": 1260,
-        "y": 1080,
+        "y": 1140,
         "wires": [
             [
                 "30ba0301a2a907e7"
@@ -2209,7 +2129,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "function 13",
-        "func": "const nowDate = new Date();\nconst now = nowDate.getTime();\nconst type = msg.req?.params?.type ?? \"\";\n\nfunction toBool(v) {\n    const s = String(v).toLowerCase();\n    return (s === \"true\" || s === \"1\" || s === \"on\");\n}\n\nconst idx = msg.payload.user.findIndex(x => String(x.id ?? x._id) === String(msg.payload.id));\nif (idx === -1) {\n    msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n    return [null, msg];\n}\n\n\ndelete msg.payload.createdAt;\ndelete msg.payload.order;\ndelete msg.payload.roles;\n\nswitch (type) {\n    case \"update\": {\n        // İsim\n        const newDN = (msg.payload.displayName || \"\").trim();\n        if (newDN && newDN !== msg.payload.user[idx].displayName) msg.payload.user[idx].displayName = newDN;\n\n        // E-posta\n        const newEmail = (msg.payload.email || \"\").trim();\n        if (newEmail && newEmail !== msg.payload.user[idx].email) msg.payload.user[idx].email = newEmail;\n\n        // Parola (bcrypt hash upstream'den geliyor olabilir)\n        const newP = (msg.payload.password || \"\").trim();\n        if (newP && newP !== msg.payload.user[idx].password) msg.payload.user[idx].password = newP;\n\n        // Aktif/Pasif (opsiyonel)\n        if (typeof msg.payload.active !== \"undefined\") {\n            const boolActive = toBool(msg.payload.active);\n            if (boolActive !== msg.payload.user[idx].active) msg.payload.user[idx].active = boolActive;\n        }\n\n        // 🔹 ROL — Admin checkbox (isAdmin_present + isAdmin)\n        if (\"isAdmin_present\" in msg.payload) {\n            const wantAdmin = toBool(msg.payload.isAdmin);\n\n            let roles = Array.isArray(msg.payload.user[idx].roles) ? [...msg.payload.user[idx].roles] : [];\n            // normalize + tekilleştir\n            roles = roles.map(r => String(r).toLowerCase().trim());\n            roles = [...new Set(roles)];\n\n            // \"user\" her zaman bulunsun\n            if (!roles.includes(\"user\")) roles.unshift(\"user\");\n\n            // admin ekle/çıkar\n            if (wantAdmin && !roles.includes(\"admin\")) roles.push(\"admin\");\n            if (!wantAdmin && roles.includes(\"admin\")) roles = roles.filter(r => r !== \"admin\");\n\n            msg.payload.user[idx].roles = roles;\n\n            // temizlik\n            delete msg.payload.isAdmin_present;\n            delete msg.payload.isAdmin;\n        }\n\n        break;\n    }\n\n    case \"activate\":\n        msg.payload.user[idx].active = true;\n        break;\n\n    case \"deactivate\":\n        msg.payload.user[idx].active = false;\n        break;\n\n    default:\n        msg.error = { message: `${type} desteklenmiyor.` };\n        return [null, msg];\n}\n\n// iz/stamp güncelle\nmsg.payload.user[idx].stamp = { createdAt: now, ip: msg.req?.ip, username: msg.user.username || \"\", email: msg.user.email || \"\" };\nmsg.payload.user[idx].dateTime = nowDate.toLocaleString(\"tr-TR\", { hour12: false });\n\n\nreturn [msg, null];",
+        "func": "// function 13 — activate/deactivate + update + başarılı işlemde redirect\nconst type  = msg.req?.params?.type ?? \"\";\nconst found = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\n\nif (!found) {\n  msg.error = { message: `İşlem için kullanıcı bulunamadı (ID: ${msg.formData?.id})` };\n  msg.redirect = \"/user-list\";\n  return [null, msg]; // [success, error]\n}\n\n// form verisini normalize et\nconst f = msg.formData || {};\nconst changes = {};\n\n// ---- UPDATE (profil düzenleme)\nif (type === \"update\") {\n  // Görünen ad\n  const dn = (f.displayName || \"\").trim();\n  if (dn && dn !== found.displayName) changes.displayName = dn;\n\n  // Admin rolü (checkbox yalnızca adminlere gösteriliyorsa isAdmin_present flag'i gönder)\n  if (\"isAdmin_present\" in f) {\n    const roles = Array.isArray(found.roles) ? [...new Set(found.roles.map(String))] : [];\n    const hasAdmin  = roles.includes(\"admin\");\n    const wantAdmin = String(f.isAdmin) === \"true\";\n    if (wantAdmin && !hasAdmin) roles.push(\"admin\");\n    if (!wantAdmin && hasAdmin) roles.splice(roles.indexOf(\"admin\"), 1);\n    changes.roles = roles.length ? roles : [\"user\"];\n  }\n\n  // Aktif/Pasif (radio \"active\" -> \"true\"/\"false\")\n  if (typeof f.active !== \"undefined\") {\n    const wantActive = String(f.active) === \"true\";\n    const current    = found.active ?? true;\n    if (wantActive !== current) changes.active = wantActive;\n  }\n\n  // Şifre (hash'lenmiş değer bu alana gelmiş olmalı)\n  if (f.password && String(f.password).trim().length) {\n    changes.password = f.password;\n  }\n\n  if (!Object.keys(changes).length) {\n    msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n    msg.redirect = `/user-edit/${found._id}`;\n    return [null, msg];\n  }\n\n  // DB updateOne payload'ı\n  msg.payload = [{ _id: found._id }, { $set: changes }];\n\n  // Başarılı HTTP yönlendirmesi\n  msg.statusCode = 302;\n  msg.headers = { Location: \"/user-list\" };\n\n  return [msg, null];\n}\n\n// ---- ACTIVATE / DEACTIVATE\nif (type === \"activate\" || type === \"deactivate\") {\n  changes.active = (type === \"activate\");\n\n  msg.payload = [{ _id: found._id }, { $set: changes }];\n\n  msg.statusCode = 302;\n  msg.headers = { Location: \"/user-list\" };\n\n  return [msg, null];\n}\n\n// ---- Bilinmeyen işlem\nmsg.error = { message: `Bilinmeyen işlem türü: ${type}` };\nmsg.redirect = \"/user-list\";\nreturn [null, msg];\n",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -2217,7 +2137,7 @@
         "finalize": "",
         "libs": [],
         "x": 1430,
-        "y": 1080,
+        "y": 1140,
         "wires": [
             [
                 "b6a0401ccb7c0187"
@@ -2240,7 +2160,7 @@
         "handleDocId": false,
         "name": "",
         "x": 1610,
-        "y": 1060,
+        "y": 1120,
         "wires": [
             [
                 "388bd9ef3519ee93"
@@ -2255,7 +2175,7 @@
         "statusCode": "",
         "headers": {},
         "x": 1770,
-        "y": 1060,
+        "y": 1120,
         "wires": []
     },
     {
@@ -2271,7 +2191,7 @@
         "handleDocId": false,
         "name": "",
         "x": 920,
-        "y": 1180,
+        "y": 1260,
         "wires": [
             [
                 "d8c7a9da715ff676"
@@ -2283,7 +2203,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "function 14",
-        "func": "const id = msg.req?.params?.id;\nconst rows = Array.isArray(msg.formData.user) ? msg.formData.user : [];\n\nconst rec = rows.find(r => String(r.id ?? r._id) === String(id));\nif (!rec) {\n  msg.error = { message: \"Kayıt bulunamadı.\" };\n  msg.payload = {};\n  return msg;\n}\n\nconst roles = Array.isArray(rec.roles) ? rec.roles : (rec.role ? [rec.role] : []);\nconst norm = roles.map(s => String(s).toLowerCase().trim());\nrec.roles = norm.length ? Array.from(new Set(norm)) : [\"user\"];\nrec.isAdmin = rec.roles.includes(\"admin\");\n\nmsg.payload = { ...msg.formData, ...msg.payload };\n\nreturn msg;",
+        "func": "const doc = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\n\nif (!doc) { msg.error = { message: \"Kayıt bulunamadı.\" }; return msg; }\n\n// id ve durum türevleri\ndoc.id       = String(doc._id);\ndoc.isActive = doc.active ?? true;\n\n// roller normalizasyonu (sizde zaten var)\nconst roles = Array.isArray(doc.roles) ? doc.roles : (doc.role ? [doc.role] : []);\nconst norm  = roles.map(s => String(s).toLowerCase().trim());\ndoc.roles   = norm.length ? Array.from(new Set(norm)) : [\"user\"];\ndoc.isAdmin = doc.roles.includes(\"admin\");\n\nmsg.payload = doc;\nmsg.year = new Date().getFullYear(); // alt yazı için (şablonda {{year}} var)\nreturn msg;",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -2291,7 +2211,7 @@
         "finalize": "",
         "libs": [],
         "x": 1090,
-        "y": 1180,
+        "y": 1260,
         "wires": [
             [
                 "1251f822538e5dd8"
@@ -2314,7 +2234,7 @@
         "handleDocId": false,
         "name": "",
         "x": 500,
-        "y": 1520,
+        "y": 1560,
         "wires": [
             [
                 "23c69382a41e73a9"
@@ -2334,7 +2254,7 @@
         "finalize": "",
         "libs": [],
         "x": 670,
-        "y": 1520,
+        "y": 1560,
         "wires": [
             [
                 "ed58fab8df11b349"
@@ -2349,7 +2269,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "processUserList",
-        "func": "msg.payload = msg.payload.map(user => {\n    // MongoDB'nin _id alanını şablon için 'id' olarak eşle (formlar ve linkler için)\n    user.id = String(user._id);\n\n    // isAdmin alanını ekle\n    user.isAdmin = Array.isArray(user?.roles) && user.roles.includes(\"admin\");\n\n    // isActive alanını ekle (varsayılan olarak true)\n    user.isActive = user?.active ?? true;\n\n    // createdAtText alanını ekle (tam tarih/saat formatında, eğer hala kullanılıyorsa)\n    let formattedCreatedAt = \"\";\n    if (user.createdAt) {\n        const date = new Date(user.createdAt);\n        formattedCreatedAt = date.toLocaleString(\"tr-TR\", {\n            day: \"2-digit\",\n            month: \"2-digit\",\n            year: \"numeric\",\n            hour: \"2-digit\",\n            minute: \"2-digit\",\n            second: \"2-digit\",\n            hour12: false,\n            timeZone: \"Europe/Istanbul\" // Doğru zaman dilimini ayarlayın\n        });\n    }\n    user.createdAtText = formattedCreatedAt;\n\n    // Yeni display_short_created_at_id alanını oluştur: id'nin ilk 10 karakteri + \"...\"\n    let displayIdValue = String(user.id || \"\"); // id'yi string'e dönüştür\n    if (displayIdValue.length > 10) {\n        user.display_short_created_at_id = displayIdValue.substring(0, 10) + \"...\";\n    } else {\n        user.display_short_created_at_id = displayIdValue; // 10 karakterden kısa ise olduğu gibi göster\n    }\n\n    return user;\n});\nreturn msg;\n",
+        "func": "// processUserList — createdAt'a göre DESC sırala + \"Kod 1\" zenginleştirme\n\n// 0) payload'ı diziye normalize et\nlet arr = Array.isArray(msg.payload) ? msg.payload : (msg.payload ? [msg.payload] : []);\n\n// 1) Zamana göre (createdAt) azalan sırala\nconst getTs = (u) => {\n    const v = u?.createdAt;\n    if (typeof v === \"number\" && !isNaN(v)) return v;       // epoch ms / s (ms olduğunu varsayar)\n    const t = Date.parse(v);                                 // ISO string vs.\n    return isNaN(t) ? 0 : t;\n};\narr.sort((a, b) => getTs(b) - getTs(a));\n\n// 2) \"Kod 1\" (hiç dokunmadan) — her kullanıcı kaydını zenginleştir\nmsg.payload = arr.map(user => {\n    user.id = String(user._id);\n    user.isAdmin = Array.isArray(user?.roles) && user.roles.includes(\"admin\");\n    user.isActive = user?.active ?? true;\n    \n    let formattedCreatedAt = \"\";\n    if (user.createdAt) {\n        const date = new Date(user.createdAt);\n        formattedCreatedAt = date.toLocaleString(\"tr-TR\", {\n            day: \"2-digit\",\n            month: \"2-digit\",\n            year: \"numeric\",\n            hour: \"2-digit\",\n            minute: \"2-digit\",\n            second: \"2-digit\",\n            hour12: false,\n            timeZone: \"Europe/Istanbul\"\n        });\n    }\n    user.createdAtText = formattedCreatedAt;\n    \n    let displayIdValue = String(user.id || \"\");\n    if (displayIdValue.length > 10) {\n        user.display_short_created_at_id = displayIdValue.substring(0, 10) + \"...\";\n    } else {\n        user.display_short_created_at_id = displayIdValue;\n    }\n\n    return user;\n});\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -2357,10 +2277,63 @@
         "finalize": "",
         "libs": [],
         "x": 1000,
-        "y": 880,
+        "y": 940,
         "wires": [
             [
                 "90f7036bef489ba2"
+            ]
+        ]
+    },
+    {
+        "id": "4e98ad516c31ad46",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "todo",
+        "operation": "updateOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 1330,
+        "y": 580,
+        "wires": [
+            [
+                "91308c72ec45a46b"
+            ]
+        ]
+    },
+    {
+        "id": "9736330931d8ab79",
+        "type": "switch",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "property": "operation",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "deleteOne",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "updateOne",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 1170,
+        "y": 540,
+        "wires": [
+            [
+                "e82dbbf530f551b8"
+            ],
+            [
+                "4e98ad516c31ad46"
             ]
         ]
     }
