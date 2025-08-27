@@ -777,7 +777,7 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!doctype html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Admin Panel — Kullanıcı Listesi</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n</head>\n\n<body class=\"bg-light\">\n  <!-- NAVBAR -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Admin Panel</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/\">Ana Sayfa</a>\n    </div>\n  </nav>\n\n  <main class=\"container\">\n\n    {{#error}}\n    <div class=\"alert alert-danger d-flex align-items-center\" role=\"alert\">\n      <div class=\"me-2\">⚠️</div>\n      <div>{{message}}</div>\n    </div>\n    {{/error}}\n\n    <!-- Ekleme Formu -->\n    <div class=\"card shadow-sm mb-4\">\n      <div class=\"card-header bg-white\">\n        <h5 class=\"mb-0\">Kullanıcı Ekle</h5>\n      </div>\n      <div class=\"card-body\">\n        <form action=\"/user-opt/add\" method=\"post\" >\n          <div class=\"row g-3\">\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">Kullanıcı Adı</label>\n              <input name=\"username\" required\n                     pattern=\"^[a-zA-Z0-9._]{3,32}$\"\n                     class=\"form-control {{#error.fields.username}}is-invalid{{/error.fields.username}}\"\n                     placeholder=\"Kullanıcı Adı\" value=\"{{body.username}}\">\n              {{#error.fields.username}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.username}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">İsim Soyisim</label>\n              <input name=\"displayName\"\n                     class=\"form-control {{#error.fields.displayName}}is-invalid{{/error.fields.displayName}}\"\n                     placeholder=\"Ad Soyad\" value=\"{{body.displayName}}\">\n              {{#error.fields.displayName}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.displayName}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">E-posta</label>\n              <input name=\"email\" type=\"email\" required\n                     class=\"form-control {{#error.fields.email}}is-invalid{{/error.fields.email}}\"\n                     placeholder=\"ad@domain.com\" value=\"{{body.email}}\">\n              {{#error.fields.email}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.email}}\n            </div>\n\n            <div class=\"col-md-4\">\n              <label class=\"form-label\">Parola</label>\n              <input name=\"password\" type=\"password\" required minlength=\"8\"\n                     class=\"form-control {{#error.fields.password}}is-invalid{{/error.fields.password}}\"\n                     placeholder=\"En az 8 karakter\">\n              {{#error.fields.password}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.password}}\n            </div>\n\n            <div class=\"col-md-8 d-flex align-items-end gap-2\">\n              <button class=\"btn btn-primary\" type=\"submit\">Ekle</button>\n              <a class=\"btn btn-light\" href=\"/user-list\">Vazgeç</a>\n              <a class=\"btn btn-outline-secondary\" href=\"/user-list\">Yenile</a>\n            </div>\n          </div>\n        </form>\n      </div>\n    </div>\n    <!-- Liste -->\n    <div class=\"card shadow-sm\">\n      <div class=\"card-header bg-white d-flex align-items-center justify-content-between\">\n        <h5 class=\"mb-0\">Kullanıcılar</h5>\n        <span class=\"text-muted small\">{{payload.length}} kayıt</span>\n      </div>\n      <div class=\"table-responsive\">\n        <table class=\"table table-hover align-middle mb-0\">\n          <thead class=\"table-light\">\n            <tr>\n              <th>ID</th>\n              <th>Kullanıcı</th>\n              <th>İsim</th>\n              <th>E-posta</th>\n              <th>Durum</th>\n              <th>Kayıt</th>\n              <th>Rol</th> <!-- YENİ -->\n              <th class=\"text-end\">İşlemler</th>\n            </tr>\n          </thead>\n          <tbody>\n            {{#payload}}\n            <tr>\n              <td class=\"text-muted\">{{display_short_created_at_id}}</td>\n              <td>{{username}}</td>\n              <td>{{displayName}}</td>\n              <td>{{email}}</td>\n              <td>\n                {{#isActive}}<span class=\"badge text-bg-success\">Aktif</span>{{/isActive}}\n                {{^isActive}}\n                  {{#active}}<span class=\"badge text-bg-success\">Aktif</span>{{/active}}\n                  {{^active}}<span class=\"badge text-bg-secondary\">Pasif</span>{{/active}}\n                {{/isActive}}\n              </td>\n              <td><span class=\"text-muted small\">{{createdAtText}}</span></td>\n              <td>\n                {{#isAdmin}}\n                  <span class=\"badge text-bg-danger\">admin</span>\n                {{/isAdmin}}\n                {{^isAdmin}}\n                  <span class=\"badge text-bg-secondary\">user</span>\n                {{/isAdmin}}\n              </td>\n              <td class=\"text-end\">\n                <a class=\"btn btn-sm btn-outline-primary me-1\" href=\"/user-edit/{{id}}\">Düzenle</a>\n\n                {{#isActive}}\n                  <form class=\"d-inline\" action=\"/user-opt/deactivate\" method=\"post\">\n                    <input type=\"hidden\" name=\"id\" value=\"{{id}}\">\n                    <button class=\"btn btn-sm btn-outline-danger\" type=\"submit\">Pasifleştir</button>\n                  </form>\n                {{/isActive}}\n\n                {{^isActive}}\n                  {{#active}}\n                    <form class=\"d-inline\" action=\"/user-opt/deactivate\" method=\"post\">\n                      <input type=\"hidden\" name=\"id\" value=\"{{id}}\">\n                      <button class=\"btn btn-sm btn-outline-danger\" type=\"submit\">Pasifleştir</button>\n                    </form>\n                  {{/active}}\n                  {{^active}}\n                    <form class=\"d-inline\" action=\"/user-opt/activate\" method=\"post\">\n                      <input type=\"hidden\" name=\"id\" value=\"{{id}}\">\n                      <button class=\"btn btn-sm btn-outline-success\" type=\"submit\">Aktifleştir</button>\n                    </form>\n                  {{/active}}\n                {{/isActive}}\n              </td>\n            </tr>\n            {{/payload}}\n\n            {{^payload}}\n            <tr>\n              <td colspan=\"8\" class=\"text-center text-muted py-4\">Kayıt yok.</td>\n            </tr>\n            {{/payload}}\n          </tbody>\n        </table>\n      </div>\n    </div>\n    <footer class=\"text-center text-muted small my-4\">© {{year}} Admin</footer>\n  </main>\n\n  <script>\n    document.addEventListener('DOMContentLoaded', () => {\n      const el = document.querySelector('footer');\n      if (el && el.innerHTML.includes('{{year}}')) {\n        el.innerHTML = el.innerHTML.replace('{{year}}', new Date().getFullYear());\n      }\n    });\n  </script>\n</body>\n</html>\n",
+        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Kullanıcı Listesi</title>\n\n  <!-- Bootstrap & DataTables -->\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\" />\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\" />\n  <link rel=\"stylesheet\" href=\"https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css\" />\n\n  <!-- SurveyJS (jQuery sürümü) -->\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n\n  <style>\n    /* Container’ı biraz daha genişlet */\n    @media (min-width: 1400px) {\n      .container {\n        max-width: 1320px;\n      }\n    }\n\n    /* Kartların tam genişlikte görünmesi için */\n    .form-row,\n    .list-row {\n      margin-left: 0;\n      margin-right: 0;\n    }\n\n    /* Tablo kesin 100% */\n    #tblUsers {\n      width: 100% !important;\n    }\n\n    /* Survey formu ve tablo kartları */\n    .card {\n      border-radius: 0.75rem;\n    }\n\n    .badge-role {\n      font-weight: 500;\n    }\n  </style>\n</head>\n\n<body class=\"bg-light\">\n\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center justify-content-between\">\n      <span class=\"navbar-text fw-semibold fs-5\">Admin Panel</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/\">Ana Sayfa</a>\n    </div>\n  </nav>\n\n  <div class=\"container pb-5\">\n    <!-- Kullanıcı Ekle -->\n    <div class=\"row form-row\">\n      <div class=\"col-12\">\n        <div class=\"card shadow-sm mb-4\">\n          <div class=\"card-body\">\n            <h5 class=\"mb-3\">Kullanıcı Ekle</h5>\n            <div id=\"formHost\"></div>\n\n            <!-- Parola gücü etiketi ve butonlar -->\n            <div class=\"d-flex align-items-center justify-content-between mt-2\">\n              <div class=\"text-muted\">Parola gücü: <span id=\"pwLabel\">—</span></div>\n              <div>\n                <button id=\"btnReset\" class=\"btn btn-outline-secondary me-2\">Temizle</button>\n                <button id=\"btnSubmit\" class=\"btn btn-primary\"><i class=\"bi bi-person-plus\"></i> Kaydet</button>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <!-- Kullanıcı Listesi -->\n    <div class=\"row list-row\">\n      <div class=\"col-12\">\n        <div class=\"card shadow-sm\">\n          <div class=\"card-body\">\n            <div class=\"d-flex align-items-center justify-content-between mb-2\">\n              <h5 class=\"mb-0\">Kullanıcı Listesi</h5>\n              <div id=\"listMeta\" class=\"text-muted small\"></div>\n            </div>\n\n            <div class=\"table-responsive\">\n              <table id=\"tblUsers\" class=\"table table-striped table-hover table-sm align-middle\">\n                <thead>\n                  <tr>\n                    <th>ID</th>\n                    <th>Kullanıcı Adı</th>\n                    <th>Ad Soyad</th>\n                    <th>E-posta</th>\n                    <th>Kayıt</th>\n                    <th>Rol</th>\n                    <th>Durum</th>\n                    <th class=\"text-end\">İşlemler</th>\n                  </tr>\n                </thead>\n                <tbody></tbody>\n              </table>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n  </div><!-- /.container -->\n\n  <!-- DataTables JS -->\n  <script src=\"https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js\"></script>\n  <script src=\"https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js\"></script>\n\n  <script>\n    /* ---------- yardımcı fetch ---------- */\n    async function postJSON(url, data) {\n      const res = await fetch(url, {\n        method: \"POST\",\n        headers: {\"Content-Type\":\"application/json\"},\n        credentials: \"include\",\n        body: JSON.stringify(data)\n      });\n      const text = await res.text();\n      let payload = null;\n      try { payload = text ? JSON.parse(text) : null; } catch {}\n      if (!res.ok) {\n        const err = new Error((payload && payload.message) || res.statusText);\n        if (payload && payload.fields) err.fields = payload.fields;\n        throw err;\n      }\n      return payload;\n    }\n\n    /* ---------- SurveyJS ---------- */\n    Survey.StylesManager.applyTheme(\"modern\");\n    const surveyJson = {\n      showQuestionNumbers: \"off\",\n      questionTitleLocation: \"left\",\n      widthMode: \"responsive\",\n      showNavigationButtons: \"none\",\n      showCompletedPage: false,\n      elements: [\n        /* İstediğin düzeltme: placeholder’da sadece kurallar kalsın */\n        { type:\"text\", name:\"username\", title:\"Kullanıcı Adı\", isRequired:true,\n          minLength:3, maxLength:32,\n          placeholder:\"(3–32, harf/rakam/._)\" }, /* önceki 'kullaniciadi ...' kaldırıldı */\n        { type:\"text\", name:\"displayName\", title:\"Ad Soyad\", isRequired:true,\n          minLength:2, maxLength:60, startWithNewLine:false },\n        { type:\"text\", name:\"email\", title:\"E-posta\", isRequired:true, startWithNewLine:false,\n          inputType:\"email\", placeholder:\"ornek@site.com\",\n          validators:[{ type:\"email\", text:\"Geçerli bir e-posta girin.\" }] },\n        { type:\"text\", name:\"password\", title:\"Parola\", inputType:\"password\",\n          isRequired:true, minLength:8, maxLength:64 },\n        { type:\"text\", name:\"password2\", title:\"Parola (Tekrar)\", inputType:\"password\",\n          isRequired:true, startWithNewLine:false,\n          validators:[{ type:\"expression\", expression:\"{password} = {password2}\", text:\"Parolalar eşleşmiyor.\" }] }\n      ]\n    };\n    const survey = new Survey.Model(surveyJson);\n    $(\"#formHost\").Survey({ model: survey });\n\n    /* Parola gücü mini hesap */\n    function scorePassword(p){ let s=0; if(!p) return 0;\n      s += Math.min(6, new Set(p).size);\n      s += /[a-z]/.test(p); s += /[A-Z]/.test(p);\n      s += /\\\\d/.test(p); s += /[^A-Za-z0-9]/.test(p);\n      s += Math.min(4, Math.floor(p.length/3)); return s; }\n    function labelFromScore(sc){\n      if(sc>=9) return {text:\"çok güçlü\", cls:\"color: #198754\"};         // yeşil\n      if(sc>=7) return {text:\"güçlü\", cls:\"color: #198754\"};\n      if(sc>=5) return {text:\"orta\", cls:\"color: #fd7e14\"};              // turuncu\n      return {text:\"zayıf\", cls:\"color: #dc3545\"};                        // kırmızı\n    }\n    survey.onValueChanged.add((s,opt)=>{\n      if(opt.name===\"password\"){\n        const lbl=document.getElementById(\"pwLabel\");\n        if(lbl){ const info = labelFromScore(scorePassword(opt.value||\"\"));\n          lbl.textContent = info.text; lbl.style = info.cls; }\n      }\n    });\n\n    /* Submit / Reset */\n    document.addEventListener(\"click\",(ev)=>{\n      if(ev.target.id===\"btnSubmit\"||ev.target.closest(\"#btnSubmit\")) handleSubmit();\n      if(ev.target.id===\"btnReset\" ||ev.target.closest(\"#btnReset\"))  handleReset();\n    });\n    async function handleSubmit(){\n      if (survey.hasErrors(true)) return;\n      const payload = { ...survey.data };\n      [\"username\",\"displayName\",\"email\"].forEach(k=>{\n        if(payload[k]!=null) payload[k]=String(payload[k]).trim();\n      });\n      try{\n        await postJSON(\"/user-opt/add\", payload);\n        survey.clear(false,true);\n        const lbl=document.getElementById(\"pwLabel\"); if(lbl){ lbl.textContent=\"—\"; lbl.style=\"\"; }\n        $(\"#tblUsers\").DataTable().ajax.reload(null,false);\n      }catch(e){\n        if(e.fields){\n          for(const [name,msg] of Object.entries(e.fields)){\n            survey.getQuestionByName(name)?.addError(new Survey.CustomError(String(msg)));\n          }\n        }\n        alert(e.message||\"Kayıt başarısız.\");\n      }\n    }\n    function handleReset(){\n      survey.clear(false,true);\n      const lbl=document.getElementById(\"pwLabel\"); if(lbl){ lbl.textContent=\"—\"; lbl.style=\"\"; }\n      setTimeout(()=>survey.getQuestionByName(\"username\")?.focus(true),0);\n    }\n\n    /* ---------- DataTables ---------- */\n    const shortId = (id)=> (id? String(id).slice(0,10)+\"…\" : \"—\");\n    $(function(){\n      $(\"#tblUsers\").DataTable({\n        processing:true,\n        serverSide:false,\n        order: [[4, \"desc\"]],\n        ajax:{\n          url:\"/user-opt/list\",\n          dataSrc:(json)=> Array.isArray(json)? json : (json.items||[]),\n          error:(xhr)=>{ console.error(\"Liste hatası:\",xhr?.responseText||xhr.statusText);\n            alert(\"Kullanıcı listesi alınamadı.\"); }\n        },\n        pageLength:10,\n        columns:[\n          { data:\"id\", render:(v)=>`<span class=\"text-muted\">${shortId(v)}</span>` },\n          { data:\"username\" },\n          { data:\"displayName\" },\n          { data:\"email\" },\n          /* Kayıt tarihi kolonu backend’ten createdAtText ile gelecek. */\n          { data:\"createdAtText\", defaultContent:\"—\",\n            render:(v)=>`<span class=\"text-muted small\">${v||\"—\"}</span>` },\n          { data:\"roles\", render:(r)=>{\n              const role = Array.isArray(r)&&r.includes(\"admin\") ? \"admin\" : \"user\";\n              const cls  = role==='admin' ? 'primary' : 'secondary';\n              return `<span class=\"badge text-bg-${cls} badge-role\">${role}</span>`;\n            }},\n          { data:\"active\", render:(v)=> v\n              ? '<span class=\"badge text-bg-success\">Aktif</span>'\n              : '<span class=\"badge text-bg-danger\">Pasif</span>' },\n          { data:null, className:\"text-end\", orderable:false, render:(_,__,row)=>{\n              const q=(k)=>encodeURIComponent(row[k]??\"\");\n              const isActive=!!row.active;\n              const urlEdit=`/user-edit/${q('id')}`;\n              const btnClass=isActive?'btn-outline-danger':'btn-outline-success';\n              const icon=isActive?'bi-power':'bi-check2-circle';\n              const label=isActive?'Pasifleştir':'Aktifleştir';\n              return `\n                <a class=\"btn btn-sm btn-outline-primary me-1\" href=\"${urlEdit}\">\n                  <i class=\"bi bi-pencil-square\"></i> Düzenle\n                </a>\n                <button class=\"btn btn-sm ${btnClass} me-1 btn-toggle\" data-id=\"${q('id')}\" data-active=\"${isActive}\">\n                  <i class=\"bi ${icon}\"></i> ${label}\n                </button>`;\n            } }\n        ]\n      });\n    });\n  </script>\n</body>\n\n</html>",
         "output": "str",
         "x": 1180,
         "y": 940,
@@ -803,7 +803,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "db.user.find()",
-        "func": "/*\nmsg.payload = [\n  { $match: {} },\n  { $sort: { \"stamp.createdAt\": -1 } },\n  { $addFields: {\n      isAdmin: { $in: [\"admin\", { $ifNull: [\"$roles\", []] }] },\n      isActive: { $ifNull: [\"$active\", true] },\n      createdAtText: {\n        $dateToString: {\n          date: { $toDate: \"$createdAt\" },\n          format: \"%d.%m.%Y %H:%M:%S\",\n          timezone: \"Europe/Istanbul\"\n        }\n      }\n  } }\n];\nreturn msg;\n*/\n\nmsg.payload = {}; // Tüm kullanıcıları bulmak için boş sorgu\nmsg.sort = { \"stamp.createdAt\": -1 }; // Oluşturulma tarihine göre tersten sırala\nreturn msg;",
+        "func": "\nmsg.payload = {}; // Tüm kullanıcıları bulmak için boş sorgu\nmsg.sort = { \"stamp.createdAt\": -1 }; // Oluşturulma tarihine göre tersten sırala\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -866,8 +866,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1110,
-        "y": 1100,
+        "x": 1310,
+        "y": 1140,
         "wires": [
             [
                 "0d8a639157364107"
@@ -886,7 +886,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "validation",
-        "func": "/***********************\n * Admin Validation v2\n * - /user-opt/:type  (POST)\n *   type ∈ { add, activate, deactivate }\n * - Cache KULLANMAZ → varlık kontrolünü DB bir sonraki nodda yapar.\n ***********************/\nconst BAD_REQ = 400;\n\nfunction redirect(path, flashType, flashMsg) {\n    msg.flash = { type: flashType || \"danger\", text: flashMsg || \"\" };\n    msg.statusCode = 302;\n    msg.headers = msg.headers || {};\n    msg.headers.Location = path || \"/user-list\";\n    return msg;\n}\n\nfunction fail(message, fieldErrors, toPath) {\n    msg.valid = false;\n    msg.errors = fieldErrors || {};\n    return redirect(toPath || \"/user-list\", \"danger\", message || \"İstek doğrulanamadı.\");\n}\n\nfunction ok(payload) {\n    msg.valid = true;\n    if (payload) msg.payload = payload;\n    return msg;\n}\n\n// ---- request kaynakları\nconst params = (msg.req && msg.req.params) || {};\nconst body   = (msg.payload && typeof msg.payload === \"object\") ? msg.payload : {};\nconst type   = String(params.type || body.type || \"\").trim().toLowerCase();\n\n// Küçük yardımcılar\nconst isEmail = (e) => /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(String(e || \"\").trim());\nconst notEmpty = (s) => String(s || \"\").trim().length > 0;\n\n// ---- router\nif (!type) {\n    return fail(\"Geçersiz istek: işlem türü yok.\", { type: \"Zorunlu.\" }, \"/user-list\");\n}\n\nif (type === \"activate\" || type === \"deactivate\") {\n    // Sadece ID’nin geldiğini doğrula; varlık kontrolünü MongoDB findOne yapacak\n    const id = String(body.id || \"\").trim();\n    if (!id) {\n        return fail(\"Geçersiz istek: id yok.\", { id: \"Zorunlu.\" }, \"/user-list\");\n    }\n    // Opsiyonel: 24 hex veya string id kabul edelim\n    const looksLikeObjectId = /^[a-fA-F0-9]{24}$/.test(id);\n    if (!looksLikeObjectId && id.length < 8) {\n        return fail(\"Geçersiz id.\", { id: \"Biçim geçersiz.\" }, \"/user-list\");\n    }\n\n    // Downstream için temiz bir payload bırak\n    msg.payload = { id, type };\n    return ok();\n}\n\nif (type === \"add\") {\n    const username = String(body.username || body.kullaniciAdi || \"\").trim();\n    const fullname = String(body.fullname || body.isim || \"\").trim();\n    const email    = String(body.email || body.eposta || \"\").trim();\n    const password = String(body.password || body.parola || \"\").trim();\n\n    const errors = {};\n    if (!notEmpty(username)) errors.username = \"Kullanıcı adı zorunlu.\";\n    if (!notEmpty(fullname)) errors.fullname = \"İsim soyisim zorunlu.\";\n    if (!isEmail(email))     errors.email    = \"E-posta biçimi hatalı.\";\n    if (password.length < 8) errors.password = \"Parola en az 8 karakter olmalı.\";\n\n    if (Object.keys(errors).length) {\n        return fail(\"Eksik veya hatalı alanlar var.\", errors, \"/user-list\");\n    }\n\n    // Downstream insert için normalize payload\n    msg.payload = { type, username, fullname, email, password };\n    return ok();\n}\n\n// İleride başka türler gelirse:\nreturn fail(`Desteklenmeyen işlem: ${type}`, { type: \"Bilinmiyor.\" }, \"/user-list\");\n",
+        "func": "/***********************\n * Admin Validation v2\n * - /user-opt/:type  (POST)\n *   type ∈ { add, activate, deactivate }\n * - Cache KULLANMAZ → varlık kontrolünü DB bir sonraki nodda yapar.\n ***********************/\nconst BAD_REQ = 400;\n\nfunction redirect(path, flashType, flashMsg) {\n    msg.flash = { type: flashType || \"danger\", text: flashMsg || \"\" };\n    msg.statusCode = 302;\n    msg.headers = msg.headers || {};\n    msg.headers.Location = path || \"/user-list\";\n    return msg;\n}\n\nfunction fail(message, fieldErrors, toPath) {\n    msg.valid = false;\n    msg.errors = fieldErrors || {};\n    return redirect(toPath || \"/user-list\", \"danger\", message || \"İstek doğrulanamadı.\");\n}\n\nfunction ok(payload) {\n    msg.valid = true;\n    if (payload) msg.payload = payload;\n    return msg;\n}\n\n// ---- request kaynakları\nconst params = (msg.req && msg.req.params) || {};\nconst body   = (msg.payload && typeof msg.payload === \"object\") ? msg.payload : {};\nconst type   = String(params.type || body.type || \"\").trim().toLowerCase();\n\n// Küçük yardımcılar\nconst isEmail = (e) => /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(String(e || \"\").trim());\nconst notEmpty = (s) => String(s || \"\").trim().length > 0;\n\n// ---- router\nif (!type) {\n    return fail(\"Geçersiz istek: işlem türü yok.\", { type: \"Zorunlu.\" }, \"/user-list\");\n}\n\nif (type === \"activate\" || type === \"deactivate\") {\n    // Sadece ID’nin geldiğini doğrula; varlık kontrolünü MongoDB findOne yapacak\n    const id = String(body.id || \"\").trim();\n    if (!id) {\n        return fail(\"Geçersiz istek: id yok.\", { id: \"Zorunlu.\" }, \"/user-list\");\n    }\n    // Opsiyonel: 24 hex veya string id kabul edelim\n    const looksLikeObjectId = /^[a-fA-F0-9]{24}$/.test(id);\n    if (!looksLikeObjectId && id.length < 8) {\n        return fail(\"Geçersiz id.\", { id: \"Biçim geçersiz.\" }, \"/user-list\");\n    }\n\n    // Downstream için temiz bir payload bırak\n    msg.payload = { id, type };\n    return ok();\n}\n\nif (type === \"add\") {\n    const username = String(body.username || body.kullaniciAdi || \"\").trim();\n    const displayName = String(body.displayName || body.fullname || body.isim || \"\").trim();\n    const email    = String(body.email || body.eposta || \"\").trim();\n    const password = String(body.password || body.parola || \"\").trim();\n\n    const errors = {};\n    if (!notEmpty(username)) errors.username = \"Kullanıcı adı zorunlu.\";\n    if (!notEmpty(displayName)) errors.displayName = \"İsim soyisim zorunlu.\";\n    if (!isEmail(email))     errors.email    = \"E-posta biçimi hatalı.\";\n    if (password.length < 8) errors.password = \"Parola en az 8 karakter olmalı.\";\n\n    if (Object.keys(errors).length) {\n        return fail(\"Eksik veya hatalı alanlar var.\", errors, \"/user-list\");\n    }\n\n    // Downstream insert için normalize payload\n    msg.payload = { type, username, displayName, email, password };\n    return ok();\n}\n\n// İleride başka türler gelirse:\nreturn fail(`Desteklenmeyen işlem: ${type}`, { type: \"Bilinmiyor.\" }, \"/user-list\");\n",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -897,7 +897,7 @@
         "y": 1100,
         "wires": [
             [
-                "fc9042b8d1523bc0"
+                "d9c5fb2fbf3b0189"
             ],
             [
                 "7817b550669eb8a2"
@@ -935,7 +935,7 @@
         "links": [
             "8a6d783f9fac6a74"
         ],
-        "x": 795,
+        "x": 815,
         "y": 1140,
         "wires": []
     },
@@ -948,8 +948,8 @@
         "links": [
             "126ead5b72b171f3"
         ],
-        "x": 1545,
-        "y": 1180,
+        "x": 1745,
+        "y": 1220,
         "wires": []
     },
     {
@@ -965,8 +965,8 @@
         "match": "match",
         "outputs": 1,
         "rounds": 10,
-        "x": 990,
-        "y": 1060,
+        "x": 1190,
+        "y": 1100,
         "wires": [
             [
                 "97440a5695968cc4"
@@ -984,7 +984,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 140,
-        "y": 1260,
+        "y": 1300,
         "wires": [
             [
                 "333ba1b4a05495f7"
@@ -1004,7 +1004,7 @@
         "finalize": "",
         "libs": [],
         "x": 730,
-        "y": 1260,
+        "y": 1300,
         "wires": [
             [
                 "049f6c44dff76dd4"
@@ -1023,10 +1023,10 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!doctype html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"utf-8\">\n  <title>Admin Panel — Kullanıcı Düzenle</title>\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n  <!-- Bootstrap -->\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n</head>\n\n<body class=\"bg-light\">\n  <!-- NAVBAR: solda büyük metin, sağda metin link -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Admin Panel — Düzenleme Sayfası</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/user-list\">Admin Panel</a>\n    </div>\n  </nav>\n\n  <main class=\"container\">\n    {{#error}}\n    <div class=\"alert alert-danger d-flex align-items-center\" role=\"alert\">\n      <div class=\"me-2\">⚠️</div><div>{{message}}</div>\n    </div>\n    {{/error}}\n\n    <div class=\"card shadow-sm\">\n      <div class=\"card-header bg-white\">\n        <h5 class=\"mb-0\">Kullanıcı Düzenle</h5>\n      </div>\n      <div class=\"card-body\">\n        <form action=\"/user-opt/update\" method=\"post\" novalidate>\n          <input type=\"hidden\" name=\"id\" value=\"{{payload.id}}\">\n\n          <div class=\"row g-3\">\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">Kullanıcı adı</label>\n              <input name=\"username\" readonly\n                     class=\"form-control {{#error.fields.username}}is-invalid{{/error.fields.username}}\"\n                     placeholder=\"kullanici\" value=\"{{payload.username}}\">\n              {{#error.fields.username}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.username}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">İsim Soyisim</label>\n              <input id=\"displayName\"\n                     name=\"displayName\"\n                     data-initial=\"{{payload.displayName}}\"\n                     class=\"form-control {{#error.fields.displayName}}is-invalid{{/error.fields.displayName}}\"\n                     placeholder=\"Ad Soyad\" value=\"{{payload.displayName}}\">\n              {{#error.fields.displayName}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.displayName}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">E-posta</label>\n              <input name=\"email\" type=\"email\" required readonly\n                     class=\"form-control {{#error.fields.email}}is-invalid{{/error.fields.email}}\"\n                     placeholder=\"ad@domain.com\" value=\"{{payload.email}}\">\n              {{#error.fields.email}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.email}}\n            </div>\n\n            <div class=\"col-md-6\">\n              <label class=\"form-label\">Yeni şifre (opsiyonel)</label>\n              <input id=\"password\" name=\"password\" type=\"password\" minlength=\"8\"\n                     class=\"form-control {{#error.fields.password}}is-invalid{{/error.fields.password}}\"\n                     placeholder=\"Yeni parola\">\n              {{#error.fields.password}}<div class=\"invalid-feedback\">{{.}}</div>{{/error.fields.password}}\n            </div>\n            {{#user.isAdmin}}\n            <!-- Admin yetkisi -->\n            <div class=\"col-12\">\n              <div class=\"form-check\">\n                <!-- Alanın gönderildiğini backend'e belli etmek için -->\n                <input type=\"hidden\" name=\"isAdmin_present\" value=\"1\">\n                <input class=\"form-check-input\" type=\"checkbox\" id=\"cbAdmin\"\n                       name=\"isAdmin\" value=\"true\"\n                       {{#payload.isAdmin}}checked{{/payload.isAdmin}}>\n                <label class=\"form-check-label\" for=\"cbAdmin\">Admin yetkisi ver</label>\n              </div>\n            </div>\n            {{/user.isAdmin}}\n            \n            <!-- Aktif / Pasif -->\n            <div class=\"col-12\">\n              <div class=\"form-check form-check-inline\">\n                <input class=\"form-check-input\" id=\"r1\" type=\"radio\" name=\"active\" value=\"true\"\n                       {{#payload.isActive}}checked{{/payload.isActive}}\n                       {{#payload.active}}checked{{/payload.active}}>\n                <label class=\"form-check-label\" for=\"r1\">Aktif</label>\n              </div>\n              <div class=\"form-check form-check-inline\">\n                <input class=\"form-check-input\" id=\"r2\" type=\"radio\" name=\"active\" value=\"false\"\n                       {{^payload.isActive}}{{^payload.active}}checked{{/payload.active}}{{/payload.isActive}}>\n                <label class=\"form-check-label\" for=\"r2\">Pasif</label>\n              </div>\n            </div>\n\n            <div class=\"col-12 d-flex justify-content-end gap-2\">\n              <a class=\"btn btn-warning\" href=\"/user-list\">Vazgeç</a>\n              <button id=\"btnUpdate\" class=\"btn btn-secondary\" type=\"submit\" disabled>Güncelle</button>\n            </div>\n          </div>\n        </form>\n      </div>\n    </div>\n\n    <footer class=\"text-center text-muted small my-4\">© {{year}} Admin</footer>\n  </main>\n\n  <!-- Değişiklik olmadan Güncelle açılamasın -->\n  <script>\n  document.addEventListener('DOMContentLoaded', () => {\n    const btn    = document.getElementById('btnUpdate');      // Güncelle\n    const dnEl   = document.getElementById('displayName');    // İsim Soyisim\n    const pwEl   = document.getElementById('password');       // Yeni şifre\n    const cb     = document.getElementById('cbAdmin');        // Admin checkbox\n    const radios = document.querySelectorAll('input[name=\"active\"]'); // Aktif/Pasif\n\n    if (!btn || !dnEl || !pwEl) return;\n\n    const initialDN     = (dnEl.dataset.initial || '').trim();\n    const initialAdmin  = !!cb?.checked;\n    const initialActive = (document.querySelector('input[name=\"active\"]:checked')?.value ?? '');\n\n    function checkCanSubmit() {\n      const dn = dnEl.value.trim();\n      const pw = pwEl.value;\n\n      const dnChanged    = dn !== initialDN;\n      const pwChanged    = pw.trim().length > 0;\n      const pwValid      = !pwChanged || pw.trim().length >= 8;\n      const roleChanged  = cb ? (cb.checked !== initialAdmin) : false;\n      const currentActive= (document.querySelector('input[name=\"active\"]:checked')?.value ?? '');\n      const activeChanged= currentActive !== initialActive;\n\n      // Kısa şifre görsel uyarısı\n      pwEl.classList.toggle('is-invalid', pwChanged && !pwValid);\n\n      const can = (dnChanged || pwChanged || roleChanged || activeChanged) && pwValid;\n\n      btn.disabled = !can;\n      btn.classList.toggle('btn-success', can);\n      btn.classList.toggle('btn-secondary', !can);\n    }\n\n    dnEl.addEventListener('input', checkCanSubmit);\n    pwEl.addEventListener('input', checkCanSubmit);\n    cb?.addEventListener('change', checkCanSubmit);\n    radios.forEach(r => r.addEventListener('change', checkCanSubmit));\n\n    checkCanSubmit();\n  });\n  </script>\n\n  <script>\n    // Yıl bilgisi\n    document.addEventListener('DOMContentLoaded', () => {\n      const el = document.querySelector('footer');\n      if (el && el.innerHTML.includes('{{year}}')) {\n        el.innerHTML = el.innerHTML.replace('{{year}}', new Date().getFullYear());\n      }\n    });\n  </script>\n</body>\n</html>\n",
+        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n  <title>Kullanıcı Düzenle</title>\n\n  <!-- Bootstrap -->\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\" />\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\" />\n\n  <!-- SurveyJS (jQuery) -->\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n</head>\n<body class=\"bg-light\">\n  <!-- NAVBAR -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Admin Panel — Düzenleme Sayfası</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/user-list\">Admin Panel</a>\n    </div>\n  </nav>\n\n  <main class=\"container\">\n    <div class=\"d-flex align-items-center gap-2 mb-3\">\n      <a href=\"/user-list\" class=\"btn btn-sm btn-outline-secondary\">&larr; Listeye dön</a>\n      <h5 class=\"m-0\">Kullanıcı Düzenle</h5>\n      <span id=\"loading\" class=\"ms-auto small text-muted\">Yükleniyor…</span>\n    </div>\n\n    <!-- Sunucudan gelen başlangıç verilerini göm (Mustache) -->\n    <div id=\"init\"\n      data-id=\"{{payload._id}}\"\n      data-username=\"{{payload.username}}\"\n      data-email=\"{{payload.email}}\"\n      data-displayname=\"{{payload.displayName}}\"\n      data-active=\"{{#payload.active}}true{{/payload.active}}{{^payload.active}}false{{/payload.active}}\"\n      data-roles='[{{#payload.roles}}\"{{.}}\",{{/payload.roles}}]'>\n    </div>\n\n    <div class=\"card shadow-sm\">\n      <div class=\"card-body\">\n        <div id=\"surveyContainer\"></div>\n      </div>\n    </div>\n\n    <footer class=\"text-center text-muted small my-4\">© {{year}} Admin</footer>\n  </main>\n\n  <script>\n    // Tema\n    Survey.StylesManager.applyTheme(\"modern\");\n\n    // Küçük yardımcılar\n    async function postJSON(url, data){\n      const r = await fetch(url, {\n        method:\"POST\",\n        headers:{ \"Content-Type\":\"application/json; charset=utf-8\" },\n        credentials:\"same-origin\",\n        body: JSON.stringify(data)\n      });\n      let j = {};\n      try { j = await r.json(); } catch(_) {}\n      if(!r.ok || j.ok === false){\n        const e = new Error(j?.message || \"Güncelleme başarısız.\");\n        e.fields = j?.errors || null;\n        throw e;\n      }\n      return j;\n    }\n\n    // Başlangıç verisini DOM'daki #init'ten oku\n    function readInit(){\n      const el = document.getElementById('init');\n      const rolesRaw = el.dataset.roles || \"[]\";\n      let roles = [];\n      try {\n        // trailing virgülü temizle\n        const fixed = rolesRaw.replace(/,\\s*]/, \"]\");\n        roles = JSON.parse(fixed);\n      } catch(_){ /* yoksay */ }\n      return {\n        id:          el.dataset.id || \"\",\n        username:    el.dataset.username || \"\",\n        email:       el.dataset.email || \"\",\n        displayName: el.dataset.displayname || \"\",\n        active:      String(el.dataset.active) === \"true\",\n        roles:       Array.isArray(roles) ? roles : []\n      };\n    }\n\n    // Mustache ile viewer admin mi?\n    {{#user.isAdmin}}\n    const isViewerAdmin = true;\n    {{/user.isAdmin}}\n    {{^user.isAdmin}}\n    const isViewerAdmin = false;\n    {{/user.isAdmin}}\n\n    // Form JSON\n    const formJson = {\n      showTitle: false,\n      showCompletedPage: false,\n      showQuestionNumbers: \"off\",\n      completeText: \"Güncelle\",\n      widthMode: \"responsive\",\n      elements: [\n        { type:\"text\", name:\"id\", visible:false },\n\n        // KULLANICI ADI / E-POSTA tam yazılamaz\n        { type:\"text\", name:\"username\", title:\"Kullanıcı adı\", readOnly:true },\n        { type:\"text\", name:\"email\",    title:\"E-posta\", inputType:\"email\", readOnly:true },\n\n        { type:\"text\", name:\"displayName\", title:\"Ad Soyad\", isRequired:true, minLength:2, maxLength:64,\n          placeholder: \"Ad Soyad\"\n        },\n\n        // Şifre değişimi (opsiyonel)\n        { type:\"text\", name:\"password\", title:\"Yeni şifre (opsiyonel)\", inputType:\"password\", minLength:8 },\n\n        // Aktif/Pasif\n        {\n          type:\"radiogroup\", name:\"active\", title:\"Durum\",\n          choices:[ {value:true, text:\"Aktif\"}, {value:false, text:\"Pasif\"} ],\n          colCount: 2, isRequired:true\n        },\n\n        // Sadece admin görecek → Admin yetkisi ver\n        {\n          type:\"boolean\",\n          name:\"isAdminFlag\",\n          title:\"Admin yetkisi ver\",\n          visible: isViewerAdmin === true,\n          valueTrue: true,\n          valueFalse: false,\n          labelTrue: \"Evet\",\n          labelFalse: \"Hayır\"\n        }\n      ]\n    };\n\n    const survey = new Survey.Model(formJson);\n\n    // Submit davranışı\n    survey.onCompleting.add(function(sender, options){\n      options.allow = false; // async\n      const f = sender.data || {};\n\n      // Admin switch güvenli parse\n      const v = f.isAdminFlag;\n      const isAdminChecked = (v === true || v === \"true\" || v === 1 || v === \"1\");\n\n      const payload = {\n        type: \"update\",\n        id: f.id,\n        displayName: (f.displayName || \"\").trim(),\n        // backend'e alanın gönderildiğini belirtmek için\n        isAdmin_present: isViewerAdmin ? \"1\" : undefined,\n        isAdmin: (isViewerAdmin && isAdminChecked) ? \"true\" : \"false\",\n        active: (String(f.active) === \"true\" || f.active === true) ? \"true\" : \"false\"\n      };\n      if ((f.password || \"\").trim().length > 0) payload.password = f.password;\n\n      (async () => {\n        try {\n          await postJSON(\"/user-opt/update\", payload);\n          // Başarılı → listeye dön\n          location.assign(`/user-list?updated=${encodeURIComponent(payload.id)}`);\n        } catch(e) {\n          // Alan bazlı hata varsa alana yaz\n          if (e.fields) {\n            for (const [name,msg] of Object.entries(e.fields)) {\n              sender.getQuestionByName(name)?.addError(new Survey.CustomError(String(msg)));\n            }\n          }\n          // Üst genel hata\n          sender.errors = [{ text: e.message || \"Güncelleme başarısız.\" }];\n          sender.doComplete(false);\n        }\n      })();\n    });\n\n    // Render ve başlangıç verisini bağla\n    $(function(){\n      const init = readInit();\n\n      // roles içinde admin var mı?\n      const hasAdmin = Array.isArray(init.roles) && init.roles.map(String).includes(\"admin\");\n\n      survey.data = {\n        id: init.id,\n        username: init.username,\n        email: init.email,\n        displayName: init.displayName || \"\",\n        active: !!init.active,\n        isAdminFlag: !!hasAdmin\n      };\n\n      const l = document.getElementById(\"loading\"); if (l) l.style.display = \"none\";\n      $(\"#surveyContainer\").Survey({ model: survey });\n\n      // Footer yılı\n      const ft = document.querySelector('footer');\n      if (ft && ft.innerHTML.includes('{{year}}')) {\n        ft.innerHTML = ft.innerHTML.replace('{{year}}', new Date().getFullYear());\n      }\n    });\n  </script>\n</body>\n</html>\n",
         "output": "str",
         "x": 1260,
-        "y": 1240,
+        "y": 1280,
         "wires": [
             [
                 "f8653907910821de"
@@ -1041,7 +1041,7 @@
         "statusCode": "",
         "headers": {},
         "x": 1410,
-        "y": 1240,
+        "y": 1280,
         "wires": []
     },
     {
@@ -1054,7 +1054,7 @@
             "126ead5b72b171f3"
         ],
         "x": 1215,
-        "y": 1300,
+        "y": 1340,
         "wires": []
     },
     {
@@ -1077,8 +1077,8 @@
         "checkall": "true",
         "repair": false,
         "outputs": 2,
-        "x": 870,
-        "y": 1100,
+        "x": 1070,
+        "y": 1140,
         "wires": [
             [
                 "158f6cdbc523a790"
@@ -1099,7 +1099,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 120,
-        "y": 1460,
+        "y": 1640,
         "wires": [
             [
                 "8c7785adb445f91b"
@@ -1115,10 +1115,10 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Giriş Yap</title>\n\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\" />\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\" />\n</head>\n\n<body>\n  <div class=\"container mt-5\">\n    <div class=\"row justify-content-center\">\n      <div class=\"col-md-6 col-lg-5\">\n        <div class=\"card shadow-sm\">\n          <div class=\"card-body\">\n            <h5 class=\"mb-3\">Giriş Yap</h5>\n            {{#error}}\n            <div class=\"alert alert-danger\">\n                  {{message}}\n            </div>\n            {{/error}}\n            <form id=\"loginForm\" action=\"/login\" method=\"post\" novalidate>\n              <div class=\"mb-3\">\n                <label for=\"identifier\" class=\"form-label\">Kullanıcı adı veya E‑posta</label>\n                <input\n                    type=\"text\"\n                    class=\"form-control\"\n                    id=\"identifier\"\n                    name=\"identifier\"\n                    placeholder=\"kullanıcıAdı veya mail@ornek.com\"\n                    minlength=\"3\"\n                    required\n                  >\n                <div class=\"invalid-feedback\">Kullanıcı adı veya e‑posta gir.</div>\n              </div>\n\n              <div class=\"mb-2\">\n                <label for=\"password\" class=\"form-label\">Şifre</label>\n                <div class=\"input-group\">\n                  <input type=\"password\" class=\"form-control\" id=\"password\" name=\"password\" placeholder=\"Şifre\" minlength=\"4\" required>\n                  <button class=\"btn btn-outline-secondary\" type=\"button\" id=\"togglePass\"><i class=\"bi bi-eye\"></i></button>\n                </div>\n                <div class=\"invalid-feedback\">Şifre zorunludur.</div>\n              </div>\n\n              <div class=\"d-flex align-items-center justify-content-between mt-3\">\n                <div class=\"form-check\">\n                  <input class=\"form-check-input\" type=\"checkbox\" id=\"remember\">\n                  <label class=\"form-check-label\" for=\"remember\">Beni hatırla</label>\n                </div>\n                <button id=\"submitBtn\" class=\"btn btn-danger\" type=\"submit\">\n      <span class=\"btn-text\">Login</span>\n      <span class=\"spinner-border spinner-border-sm d-none\" role=\"status\" aria-hidden=\"true\"></span>\n    </button>\n              </div>\n            </form>\n\n            <div id=\"loginAlert\" class=\"alert alert-danger mt-3 d-none\" role=\"alert\"></div>\n\n            <p class=\"mt-3 mb-0\">\n              Kayıtlı değil misin? <a href=\"/register\">Hesap oluştur</a>\n            </p>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n</body>\n\n</html>",
+        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Giriş Yap</title>\n\n  <!-- Bootstrap -->\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\" />\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\" />\n\n  <!-- SurveyJS (jQuery) -->\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n</head>\n<body>\n  <div class=\"container mt-5\">\n    <div class=\"row justify-content-center\">\n      <div class=\"col-md-6 col-lg-5\">\n        <div class=\"card shadow-sm\">\n          <div class=\"card-body\">\n            <h5 class=\"mb-3\">Giriş Yap</h5>\n\n            {{#error}} <div class=\"alert alert-danger\">{{message}}</div> {{/error}}\n\n            <div id=\"surveyContainer\"></div>\n\n            <div class=\"text-center mt-3\">\n              Hesabın yok mu? <a href=\"/register\">Kayıt ol</a>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n<script>\n  Survey.StylesManager.applyTheme(\"modern\");\n\n  const surveyJson = {\n    title: \"Giriş Yap\",\n    showTitle: false,\n    showCompletedPage: false,\n    showQuestionNumbers: \"off\",\n    completeText: \"Giriş Yap\",\n    widthMode: \"responsive\",\n    elements: [\n      {\n        type: \"text\",\n        name: \"identifier\",\n        title: \"Kullanıcı adı veya E-posta\",\n        isRequired: true,\n        minLength: 3,\n        placeholder: \"Kullanıcı Adı veya mail@ornek.com\"\n      },\n      {\n        type: \"text\",\n        name: \"password\",\n        title: \"Şifre\",\n        inputType: \"password\",\n        isRequired: true,\n        minLength: 8\n      }\n    ]\n  };\n\n  const survey = new Survey.Model(surveyJson);\n\n  let submitting = false;\n\n  survey.onCompleting.add(async function (sender, options) {\n    options.allowComplete = false;\n    if (submitting) return;\n    submitting = true;\n\n    // Hataları temizle\n    sender.errors = [];\n    const allQs = typeof sender.getAllQuestions === \"function\" ? sender.getAllQuestions() : [];\n    allQs.forEach(q => { if (q && typeof q.clearErrors === \"function\") q.clearErrors(); });\n\n    sender.isReadOnly = true;\n\n    const payload = sender.data;\n    const url = \"/login\" + (window.location.search || \"\");\n\n    try {\n      const res = await fetch(url, {\n        method: \"POST\",\n        headers: {\n          \"Content-Type\": \"application/json; charset=utf-8\",\n          \"Accept\": \"application/json\",\n          \"X-Requested-With\": \"XMLHttpRequest\"\n        },\n        credentials: \"same-origin\",\n        body: JSON.stringify(payload)\n      });\n\n      if (res.ok) {\n        const qs = new URLSearchParams(window.location.search);\n        let next = qs.get(\"next\") || \"/\";\n        try {\n          const data = await res.clone().json();\n          if (data && data.next) next = data.next;\n        } catch(_) {}\n        if (res.redirected && res.url) window.location.assign(res.url);\n        else window.location.assign(next);\n        return;\n      }\n\n      // Hata: JSON’u dene\n      let message = \"Kullanıcı adı/e-posta veya şifre hatalı.\";\n      let fieldErrors = null;\n      try {\n        const err = await res.clone().json();\n        if (err?.message) message = err.message;\n        if (err?.errors && typeof err.errors === \"object\") fieldErrors = err.errors;\n      } catch(_) {}\n\n      // --- ŞİFREYİ TEMİZLE + ODAKLA + ALTA HATA VER ---\n      const pwdQ = sender.getQuestionByName(\"password\");\n      if (pwdQ) {\n        // değeri sıfırla\n        if (\"value\" in pwdQ) pwdQ.value = \"\";\n        else sender.setValue(\"password\", \"\");\n        // alan altına hata yaz\n        if (typeof pwdQ.addError === \"function\") {\n          // backend özel bir password hatası göndermediyse varsayılan mesaj\n          const pwdMsg = (fieldErrors && fieldErrors.password) ? String(fieldErrors.password) : \"Hatalı şifre girdiniz.\";\n          pwdQ.addError(new Survey.CustomError(pwdMsg));\n        }\n        // imleci tekrar şifreye getir\n        setTimeout(() => { if (typeof pwdQ.focus === \"function\") pwdQ.focus(); }, 0);\n      }\n      // -------------------------------------------------\n\n      // Varsa diğer alan hataları\n      if (fieldErrors) {\n        Object.entries(fieldErrors).forEach(([name, text]) => {\n          if (name === \"password\") return; // yukarıda ele aldık\n          const q = sender.getQuestionByName(name);\n          if (q && typeof q.addError === \"function\") q.addError(new Survey.CustomError(String(text)));\n        });\n      }\n\n      // Genel üst hata (istersen bunu silebilirsin)\n      sender.errors = [{ text: message }];\n\n    } catch (e) {\n      sender.errors = [{ text: \"Sunucuya ulaşılamadı. Lütfen tekrar deneyin.\" }];\n      console.error(e);\n    } finally {\n      submitting = false;\n      sender.isReadOnly = false;\n    }\n  });\n\n  $(function () { $(\"#surveyContainer\").Survey({ model: survey }); });\n</script>\n</body>\n</html>\n",
         "output": "str",
         "x": 440,
-        "y": 1460,
+        "y": 1640,
         "wires": [
             [
                 "0f88d4f9899d9885"
@@ -1133,7 +1133,7 @@
         "statusCode": "",
         "headers": {},
         "x": 730,
-        "y": 1460,
+        "y": 1640,
         "wires": []
     },
     {
@@ -1147,7 +1147,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 1700,
+        "y": 1880,
         "wires": [
             [
                 "898343caa6e3f92c"
@@ -1164,7 +1164,7 @@
             "location": "/login"
         },
         "x": 760,
-        "y": 1700,
+        "y": 1880,
         "wires": []
     },
     {
@@ -1181,7 +1181,7 @@
         "signvar": "payload",
         "storetoken": "payload",
         "x": 1180,
-        "y": 1540,
+        "y": 1720,
         "wires": [
             [
                 "f59872569465a1b9"
@@ -1199,7 +1199,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 1560,
+        "y": 1740,
         "wires": [
             [
                 "bcf4da036ac5b43b"
@@ -1211,7 +1211,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "passControl",
-        "func": "if (!msg.match) {\n    msg.error = { message: \"Kullanıcı adı/e-posta veya şifre hatalı\" };\n    return [null, msg];   // Hata çıkışı\n}\n\n// Kullanıcı bilgilerini JWT payload için hazırla\nmsg.payload = {\n    username: msg.user.username,\n    email: msg.user.email,\n    displayName: msg.user.displayName,\n    roles: msg.user.roles,\n    ip: msg.req.ip\n};\n\n// Sonrasında JWT Sign node token'ı üretecek ve msg.token içine yazacak.\n// Biz de redirect adresini şimdiden hazırlıyoruz.\nconst next = msg.req && msg.req.query && msg.req.query.next;\nmsg.nextUrl = next && /^\\/.*/.test(next) ? next : \"/\";\n\nreturn msg;\n",
+        "func": "if (!msg.match) {\n    msg.payload = { success: false, message: \"Kullanıcı adı/e-posta veya şifre hatalı\" };\n    msg.statusCode = 400; // HTTP 400 Bad Request\n    return [null, msg];   // Hata çıkışı\n}\n\n// Kullanıcı bilgilerini JWT payload için hazırla\nmsg.payload = {\n    username: msg.user.username,\n    email: msg.user.email,\n    displayName: msg.user.displayName,\n    roles: msg.user.roles,\n    ip: msg.req.ip\n};\n\n// Sonrasında JWT Sign node token'ı üretecek ve msg.token içine yazacak.\n// Biz de redirect adresini şimdiden hazırlıyoruz.\nconst next = msg.req && msg.req.query && msg.req.query.next;\nmsg.nextUrl = next && /^\\/.*/.test(next) ? next : \"/\";\n\nreturn msg;\n",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -1219,13 +1219,13 @@
         "finalize": "",
         "libs": [],
         "x": 1010,
-        "y": 1540,
+        "y": 1720,
         "wires": [
             [
                 "0f7d31954dc9a188"
             ],
             [
-                "4d06ea5e79816953"
+                "2b2157abba6313fe"
             ]
         ]
     },
@@ -1247,7 +1247,7 @@
             }
         ],
         "x": 340,
-        "y": 1560,
+        "y": 1740,
         "wires": [
             [
                 "a1e33ed13fcde42a"
@@ -1268,7 +1268,7 @@
         "outputs": 1,
         "rounds": 10,
         "x": 840,
-        "y": 1540,
+        "y": 1720,
         "wires": [
             [
                 "e8c57f2b754850cc"
@@ -1285,50 +1285,7 @@
             "location": "/"
         },
         "x": 1520,
-        "y": 1540,
-        "wires": []
-    },
-    {
-        "id": "4d06ea5e79816953",
-        "type": "link out",
-        "z": "651af9bb9a46e4b0",
-        "name": "link out 7",
-        "mode": "link",
-        "links": [
-            "3ecb9ddfd9c53584"
-        ],
-        "x": 1115,
-        "y": 1580,
-        "wires": []
-    },
-    {
-        "id": "3ecb9ddfd9c53584",
-        "type": "link in",
-        "z": "651af9bb9a46e4b0",
-        "name": "link in 3",
-        "links": [
-            "4d06ea5e79816953",
-            "42db88840c0f57de"
-        ],
-        "x": 345,
-        "y": 1420,
-        "wires": [
-            [
-                "8c7785adb445f91b"
-            ]
-        ]
-    },
-    {
-        "id": "42db88840c0f57de",
-        "type": "link out",
-        "z": "651af9bb9a46e4b0",
-        "name": "link out 10",
-        "mode": "link",
-        "links": [
-            "3ecb9ddfd9c53584"
-        ],
-        "x": 775,
-        "y": 1600,
+        "y": 1720,
         "wires": []
     },
     {
@@ -1355,7 +1312,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 1800,
+        "y": 1980,
         "wires": [
             [
                 "8637acb46830d49a"
@@ -1370,7 +1327,7 @@
         "statusCode": "",
         "headers": {},
         "x": 750,
-        "y": 1800,
+        "y": 1980,
         "wires": []
     },
     {
@@ -1382,10 +1339,10 @@
         "fieldType": "msg",
         "format": "handlebars",
         "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\n  <title>Kayıt ol</title>\n\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\"/>\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\"/>\n</head>\n\n<body>\n<div class=\"container mt-5\">\n  <div class=\"row justify-content-center\">\n    <div class=\"col-md-7 col-lg-6\">\n      <div class=\"card shadow-sm\">\n        <div class=\"card-body\">\n          <h5 class=\"mb-3\">Hesap Oluştur</h5>\n          {{#error}}<div class=\"alert alert-danger d-flex align-items-center\" role=\"alert\">\n                    <div class=\"me-2\">⚠️</div><div>{{message}}</div>\n                    </div>\n          {{/error}}\n          <form id=\"registerForm\" action=\"/user-opt/add\" method=\"post\" novalidate>\n            <div class=\"mb-3\">\n              <label for=\"username\" class=\"form-label\">Kullanıcı Adı</label>\n              <input\n                type=\"text\"\n                id=\"username\"\n                name=\"username\"\n                value=\"{{body.username}}\"\n                class=\"form-control {{#error.fields.username}}is-invalid{{/error.fields.username}}\"\n                placeholder=\"kullanıcıAdı\"\n                pattern=\"^[a-z0-9._-]{3,20}$\"\n                required\n              >\n              <div class=\"invalid-feedback\">Geçerli bir kullanıcı adı gir.</div>\n            </div>\n\n            <div class=\"mb-3\">\n              <label for=\"name\" class=\"form-label\">Ad Soyad</label>\n              <input type=\"text\" id=\"name\" name=\"displayName\" value=\"{{body.displayName}}\" \n              class=\"form-control {{#error.fields.displayName}}is-invalid{{/error.fields.displayName}}\" \n              placeholder=\"Adınız Soyadınız\" minlength=\"2\" required>\n              <div class=\"invalid-feedback\">Lütfen ad soyad gir.</div>\n            </div>\n\n            <div class=\"mb-3\">\n              <label for=\"email\" class=\"form-label\">Email</label>\n              <input type=\"email\" id=\"email\" name=\"email\" value=\"{{body.email}}\" class=\"form-control {{#error.fields.email}}is-invalid{{/error.fields.email}}\" placeholder=\"mail@ornek.com\" required>\n              <div class=\"invalid-feedback\">Geçerli bir email gir.</div>\n            </div>\n\n            <div class=\"mb-3\">\n              <label for=\"password\" class=\"form-label\">Şifre</label>\n              <div class=\"input-group\">\n                <input type=\"password\" id=\"password\" name=\"password\" class=\"form-control\" placeholder=\"Şifre (Tekrar)\" required>\n                <button class=\"btn btn-outline-secondary\" type=\"button\" id=\"togglePass1\"><i class=\"bi bi-eye\"></i></button>\n              </div>\n              <div class=\"form-text\">En az 8 karakter.</div>\n              <div class=\"invalid-feedback\">Geçerli bir şifre gir.</div>\n            </div>\n\n            <div class=\"mb-2\">\n              <label for=\"password2\" class=\"form-label\">Şifre (Tekrar)</label>\n              <div class=\"input-group\">\n                <input type=\"password\" id=\"password2\" name=\"confirmPassword\" class=\"form-control\" placeholder=\"Şifre (Tekrar)\" required>\n                <button class=\"btn btn-outline-secondary\" type=\"button\" id=\"togglePass2\"><i class=\"bi bi-eye\"></i></button>\n              </div>\n              <div class=\"invalid-feedback\" id=\"pw2Feedback\">Şifreler eşleşmiyor.</div>\n            </div>\n\n            <div class=\"form-check my-3\">\n              <input class=\"form-check-input\" type=\"checkbox\" id=\"terms\" required>\n              <label class=\"form-check-label\" for=\"terms\">Kullanım şartlarını kabul ediyorum</label>\n              <div class=\"invalid-feedback\">Devam etmek için onay gerekli.</div>\n            </div>\n                <input type=\"hidden\" name=\"isAdmin\" value=\"true\">\n            <div class=\"d-flex justify-content-between align-items-center\">\n              <a href=\"/login\" class=\"link-secondary\">Zaten hesabın var mı? Giriş yap</a>\n              <button id=\"submitBtn\" type=\"submit\" class=\"btn btn-primary\">\n                <span class=\"btn-text\">Kayıt Ol</span>\n                <span class=\"spinner-border spinner-border-sm d-none\" role=\"status\" aria-hidden=\"true\"></span>\n              </button>\n            </div>\n          </form>\n\n          <div id=\"regAlert\" class=\"alert alert-danger mt-3 d-none\" role=\"alert\"></div>\n          <div id=\"regSuccess\" class=\"alert alert-success mt-3 d-none\" role=\"alert\">Kayıt başarılı. Yönlendiriliyorsunuz…</div>\n        </div>\n      </div>\n    </div>\n  </div>\n</div>\n\n<script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js\"></script>\n\n</body>\n</html>\n",
+        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Kayıt Ol</title>\n\n  <!-- Bootstrap -->\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\" />\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\" />\n\n  <!-- SurveyJS (jQuery) -->\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n</head>\n<body>\n  <div class=\"container mt-5\">\n    <div class=\"row justify-content-center\">\n      <div class=\"col-md-6 col-lg-5\">\n        <div class=\"card shadow-sm\">\n          <div class=\"card-body\">\n            <h5 class=\"mb-3\">Kayıt Ol</h5>\n\n            {{#error}} <div class=\"alert alert-danger\">{{message}}</div> {{/error}}\n\n            <div id=\"surveyContainer\"></div>\n\n            <div class=\"text-center mt-3\">\n              Zaten hesabın var mı? <a href=\"/login\">Giriş yap</a>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n<script>\n  Survey.StylesManager.applyTheme(\"modern\");\n\n  const surveyJson = {\n    title: \"Kayıt Ol\",\n    showTitle: false,\n    showCompletedPage: false,\n    showQuestionNumbers: \"off\",\n    completeText: \"Kayıt Ol\",\n    widthMode: \"responsive\",\n    elements: [\n      {\n        type: \"text\",\n        name: \"username\",\n        title: \"Kullanıcı adı\",\n        isRequired: true,\n        minLength: 3,\n        placeholder: \"Kullanıcı adın\"\n      },\n      {\n        type: \"text\",\n        name: \"displayName\", \n        title: \"Ad Soyad \",\n        isRequired: true,\n        placeholder: \"Adınız Soyadınız\",\n        validators: [\n          { type: \"regex\", regex: \"^(?=.*\\\\S).{2,}$\", text: \"Lütfen ad soyad girin.\" }\n        ]\n      },\n      {\n        type: \"text\",\n        name: \"email\",\n        title: \"E-posta\",\n        inputType: \"email\",\n        isRequired: true,\n        placeholder: \"mail@ornek.com\",\n        validators: [{ type: \"email\" }]\n      },\n      {\n        type: \"text\",\n        name: \"password\",\n        title: \"Şifre\",\n        inputType: \"password\",\n        isRequired: true,\n        minLength: 8,\n        placeholder: \"En az 8 karakter giriniz!\"\n      },\n      {\n        type: \"text\",\n        name: \"password2\",\n        title: \"Şifre (tekrar)\",\n        inputType: \"password\",\n        isRequired: true,\n        validators: [\n          {\n            type: \"expression\",\n            text: \"Şifreler eşleşmiyor.\",\n            expression: \"{password} = {password2}\"\n          }\n        ]\n      }\n    ]\n  };\n\n  const survey = new Survey.Model(surveyJson);\n\n  // (isteğe bağlı) client validasyon logu\n  survey.onValidateQuestion.add(function(_, opt){\n    if (opt.error) console.log(\"[VALIDATION]\", opt.question?.name, opt.error);\n  });\n\n  let submitting = false;\n\n  // onCompleting: form gizlenmesin, submit burada\n  survey.onCompleting.add(async function (sender, options) {\n    options.allowComplete = false;\n    if (submitting) return;\n    submitting = true;\n\n    // Eski hataları temizle\n    sender.errors = [];\n    const allQs = typeof sender.getAllQuestions === \"function\" ? sender.getAllQuestions() : [];\n    allQs.forEach(q => { if (q && typeof q.clearErrors === \"function\") q.clearErrors(); });\n\n    // UI kilitle\n    sender.isReadOnly = true;\n\n    // --- GÖNDERİM ÖNCESİ TEMİZLİK ---\n    const payload = { ...sender.data };\n    // trim\n    [\"username\",\"displayName\",\"email\"].forEach(k => {\n      if (payload[k] != null) payload[k] = String(payload[k]).trim();\n    });\n    // password2’yi backend’e göndermeyelim\n    delete payload.password2;\n    // --------------------------------\n\n    const url = \"/user-opt/add\";\n\n    try {\n      const res = await fetch(url, {\n        method: \"POST\",\n        headers: {\n          \"Content-Type\": \"application/json; charset=utf-8\",\n          \"Accept\": \"application/json\",\n          \"X-Requested-With\": \"XMLHttpRequest\"\n        },\n        credentials: \"same-origin\",\n        body: JSON.stringify(payload)\n      });\n\n      if (res.ok) {\n        let next = \"/login\";\n        try {\n          const data = await res.clone().json();\n          if (data && data.next) next = data.next;\n        } catch(_) {}\n        window.location.assign(next);\n        return;\n      }\n\n      // Hata: JSON parse etmeyi dene\n      let message = \"Kayıt oluşturulamadı.\";\n      let fieldErrors = null;\n      try {\n        const err = await res.clone().json();\n        if (err?.message) message = err.message;\n        if (err?.errors && typeof err.errors === \"object\") fieldErrors = err.errors;\n      } catch(_) {}\n\n      // Özel: 409/400 ve alan bilgisi yoksa varsayılan mesajları üret\n      if ((res.status === 409 || res.status === 400) && !fieldErrors) {\n        fieldErrors = {};\n        // backend hangi alanın çakıştığını söylemiyorsa ikisini de uyar\n        fieldErrors.username = fieldErrors.username || \"Bu kullanıcı adı alınmış.\";\n        fieldErrors.email    = fieldErrors.email    || \"Bu e-posta kullanılmaktadır.\";\n      }\n\n      // Alan altı hataları sırayla bas ve ilk hatalı alana odaklan\n      const order = [\"username\",\"displayName\",\"email\",\"password\",\"password2\"];\n      let focused = false;\n\n      // Önce order’a göre geç\n      order.forEach(name => {\n        const text = fieldErrors?.[name];\n        if (text) {\n          const q = sender.getQuestionByName(name);\n          if (q && typeof q.addError === \"function\") {\n            q.addError(new Survey.CustomError(String(text)));\n            if (!focused && typeof q.focus === \"function\") {\n              focused = true; setTimeout(() => q.focus(), 0);\n            }\n          }\n        }\n      });\n\n      // Order dışı kalan olursa yine göster\n      if (fieldErrors) {\n        Object.entries(fieldErrors).forEach(([name, text]) => {\n          if (order.includes(name)) return;\n          const q = sender.getQuestionByName(name);\n          if (q && typeof q.addError === \"function\") q.addError(new Survey.CustomError(String(text)));\n        });\n      }\n\n      // Genel üst hata\n      sender.errors = [{ text: message }];\n\n    } catch (e) {\n      console.error(\"[NETWORK ERROR]\", e);\n      sender.errors = [{ text: \"Sunucuya ulaşılamadı. Lütfen tekrar deneyin.\" }];\n    } finally {\n      submitting = false;\n      sender.isReadOnly = false;\n    }\n  });\n\n  // Render\n  $(function () { $(\"#surveyContainer\").Survey({ model: survey }); });\n</script>\n</body>\n</html>\n",
         "output": "str",
         "x": 460,
-        "y": 1800,
+        "y": 1980,
         "wires": [
             [
                 "84be4beb553cbe26"
@@ -1405,7 +1362,7 @@
         "finalize": "",
         "libs": [],
         "x": 460,
-        "y": 1700,
+        "y": 1880,
         "wires": [
             [
                 "78a062b04551d6e3"
@@ -1433,7 +1390,7 @@
         "repair": false,
         "outputs": 2,
         "x": 310,
-        "y": 1840,
+        "y": 2020,
         "wires": [
             [
                 "8637acb46830d49a"
@@ -1452,7 +1409,7 @@
             "7817b550669eb8a2"
         ],
         "x": 215,
-        "y": 1840,
+        "y": 2020,
         "wires": [
             [
                 "5a5879c9b2e4a128"
@@ -1469,7 +1426,7 @@
             "126ead5b72b171f3"
         ],
         "x": 405,
-        "y": 1880,
+        "y": 2060,
         "wires": []
     },
     {
@@ -1543,7 +1500,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 330,
-        "y": 1260,
+        "y": 1300,
         "wires": [
             [
                 "a6a7474d00f800aa"
@@ -1576,7 +1533,7 @@
         "finalize": "",
         "libs": [],
         "x": 1360,
-        "y": 1540,
+        "y": 1720,
         "wires": [
             [
                 "86740e96f67da72b"
@@ -1589,7 +1546,7 @@
         "z": "651af9bb9a46e4b0",
         "name": "",
         "x": 520,
-        "y": 1260,
+        "y": 1300,
         "wires": [
             [
                 "7c83cb4a19389f12"
@@ -1621,8 +1578,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1420,
-        "y": 1060,
+        "x": 1620,
+        "y": 1100,
         "wires": [
             [
                 "b5c78ee5996d045c"
@@ -1636,8 +1593,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 1570,
-        "y": 1060,
+        "x": 1770,
+        "y": 1100,
         "wires": []
     },
     {
@@ -2096,8 +2053,8 @@
         "maxTimeMS": "0",
         "handleDocId": false,
         "name": "",
-        "x": 1260,
-        "y": 1060,
+        "x": 1460,
+        "y": 1100,
         "wires": [
             [
                 "f3de723a0ab4e6a9"
@@ -2116,8 +2073,8 @@
         "maxTimeMS": "0",
         "handleDocId": false,
         "name": "",
-        "x": 1260,
-        "y": 1140,
+        "x": 1460,
+        "y": 1180,
         "wires": [
             [
                 "30ba0301a2a907e7"
@@ -2129,15 +2086,15 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "function 13",
-        "func": "// function 13 — activate/deactivate + update + başarılı işlemde redirect\nconst type  = msg.req?.params?.type ?? \"\";\nconst found = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\n\nif (!found) {\n  msg.error = { message: `İşlem için kullanıcı bulunamadı (ID: ${msg.formData?.id})` };\n  msg.redirect = \"/user-list\";\n  return [null, msg]; // [success, error]\n}\n\n// form verisini normalize et\nconst f = msg.formData || {};\nconst changes = {};\n\n// ---- UPDATE (profil düzenleme)\nif (type === \"update\") {\n  // Görünen ad\n  const dn = (f.displayName || \"\").trim();\n  if (dn && dn !== found.displayName) changes.displayName = dn;\n\n  // Admin rolü (checkbox yalnızca adminlere gösteriliyorsa isAdmin_present flag'i gönder)\n  if (\"isAdmin_present\" in f) {\n    const roles = Array.isArray(found.roles) ? [...new Set(found.roles.map(String))] : [];\n    const hasAdmin  = roles.includes(\"admin\");\n    const wantAdmin = String(f.isAdmin) === \"true\";\n    if (wantAdmin && !hasAdmin) roles.push(\"admin\");\n    if (!wantAdmin && hasAdmin) roles.splice(roles.indexOf(\"admin\"), 1);\n    changes.roles = roles.length ? roles : [\"user\"];\n  }\n\n  // Aktif/Pasif (radio \"active\" -> \"true\"/\"false\")\n  if (typeof f.active !== \"undefined\") {\n    const wantActive = String(f.active) === \"true\";\n    const current    = found.active ?? true;\n    if (wantActive !== current) changes.active = wantActive;\n  }\n\n  // Şifre (hash'lenmiş değer bu alana gelmiş olmalı)\n  if (f.password && String(f.password).trim().length) {\n    changes.password = f.password;\n  }\n\n  if (!Object.keys(changes).length) {\n    msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n    msg.redirect = `/user-edit/${found._id}`;\n    return [null, msg];\n  }\n\n  // DB updateOne payload'ı\n  msg.payload = [{ _id: found._id }, { $set: changes }];\n\n  // Başarılı HTTP yönlendirmesi\n  msg.statusCode = 302;\n  msg.headers = { Location: \"/user-list\" };\n\n  return [msg, null];\n}\n\n// ---- ACTIVATE / DEACTIVATE\nif (type === \"activate\" || type === \"deactivate\") {\n  changes.active = (type === \"activate\");\n\n  msg.payload = [{ _id: found._id }, { $set: changes }];\n\n  msg.statusCode = 302;\n  msg.headers = { Location: \"/user-list\" };\n\n  return [msg, null];\n}\n\n// ---- Bilinmeyen işlem\nmsg.error = { message: `Bilinmeyen işlem türü: ${type}` };\nmsg.redirect = \"/user-list\";\nreturn [null, msg];\n",
+        "func": "// function 13 — activate/deactivate + update + başarılı işlemde redirect\nconst type  = msg.req?.params?.type ?? \"\";\nconst found = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\n\nif (!found) {\n  msg.error = { message: `İşlem için kullanıcı bulunamadı (ID: ${msg.formData?.id})` };\n  msg.redirect = \"/user-list\";\n  return [null, msg]; // [success, error]\n}\n\n// form verisini normalize et\nconst f = msg.formData || {};\nconst changes = {};\n\n// ---- UPDATE (profil düzenleme)\nif (type === \"update\") {\n  const changes = {};\n\n  // Görünen ad\n  const dn = (f.displayName || \"\").trim();\n  if (dn && dn !== found.displayName) changes.displayName = dn;\n\n  // ROL: ya admin ya user (tek değer)\n  if (\"isAdmin_present\" in f) {\n    const wantAdmin = String(f.isAdmin) === \"true\";\n    changes.roles = wantAdmin ? [\"admin\"] : [\"user\"]; // <<< tek rol\n  }\n\n  // Aktif/Pasif\n  if (typeof f.active !== \"undefined\") {\n    const wantActive = String(f.active) === \"true\";\n    const current = found.active ?? true;\n    if (wantActive !== current) changes.active = wantActive;\n  }\n\n  // Şifre (hash’lenmiş)\n  if (f.password && String(f.password).trim().length) {\n    changes.password = f.password;\n  }\n\n  if (!Object.keys(changes).length) {\n    msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n    msg.redirect = `/user-edit/${found._id}`;\n    return [null, msg];\n  }\n\n  msg.payload = [{ _id: found._id }, { $set: changes }];\n  msg.statusCode = 302;\n  msg.headers = { Location: \"/user-list\" };\n  return [msg, null];\n}\n\n// ---- ACTIVATE / DEACTIVATE\nif (type === \"activate\" || type === \"deactivate\") {\n  changes.active = (type === \"activate\");\n\n  msg.payload = [{ _id: found._id }, { $set: changes }];\n\n  msg.statusCode = 302;\n  msg.headers = { Location: \"/user-list\" };\n\n  return [msg, null];\n}\n\n// ---- Bilinmeyen işlem\nmsg.error = { message: `Bilinmeyen işlem türü: ${type}` };\nmsg.redirect = \"/user-list\";\nreturn [null, msg];\n",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1430,
-        "y": 1140,
+        "x": 1630,
+        "y": 1180,
         "wires": [
             [
                 "b6a0401ccb7c0187"
@@ -2159,8 +2116,8 @@
         "maxTimeMS": "0",
         "handleDocId": false,
         "name": "",
-        "x": 1610,
-        "y": 1120,
+        "x": 1810,
+        "y": 1160,
         "wires": [
             [
                 "388bd9ef3519ee93"
@@ -2174,8 +2131,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 1770,
-        "y": 1120,
+        "x": 1970,
+        "y": 1160,
         "wires": []
     },
     {
@@ -2191,7 +2148,7 @@
         "handleDocId": false,
         "name": "",
         "x": 920,
-        "y": 1260,
+        "y": 1300,
         "wires": [
             [
                 "d8c7a9da715ff676"
@@ -2211,7 +2168,7 @@
         "finalize": "",
         "libs": [],
         "x": 1090,
-        "y": 1260,
+        "y": 1300,
         "wires": [
             [
                 "1251f822538e5dd8"
@@ -2234,7 +2191,7 @@
         "handleDocId": false,
         "name": "",
         "x": 500,
-        "y": 1560,
+        "y": 1740,
         "wires": [
             [
                 "23c69382a41e73a9"
@@ -2246,7 +2203,7 @@
         "type": "function",
         "z": "651af9bb9a46e4b0",
         "name": "function 15",
-        "func": "const fp = msg.formData || {};\nconst identifier = (fp.identifier || fp.username || fp.email || '').toString().trim().toLowerCase();\nconst password   = (fp.password || '').toString();\n\n\nconst user = msg.payload || null;\n\n\nif (!user) {\n  msg.error = { message: \"Kullanıcı adı/e-posta veya şifre hatalı\" };\n  return [null, msg]; // 2. çıkışa gönder\n}\n\n\nconst uName = String(user.username || '').toLowerCase();\nconst uMail = String(user.email || '').toLowerCase();\nif (identifier && identifier !== uName && identifier !== uMail) {\n  msg.error = { message: \"Kullanıcı adı/e-posta veya şifre hatalı\" };\n  return [null, msg];\n}\n\n\nmsg.user = user;                 \nmsg.payload = { password };      \nreturn [msg, null];              \n",
+        "func": "const fp = msg.formData || {};\nconst identifier = (fp.identifier || fp.username || fp.email || '').toString().trim().toLowerCase();\nconst password   = (fp.password || '').toString();\n\n\nconst user = msg.payload || null;\n\n\nif (!user) {\n  msg.payload = { success: false, message: \"Kullanıcı adı/e-posta veya şifre hatalı\" };\n  msg.statusCode = 400; // HTTP 400 Bad Request\n  return [null, msg]; // 2. çıkışa gönder\n}\n\nconst uName = String(user.username || '').toLowerCase();\nconst uMail = String(user.email || '').toLowerCase();\nif (identifier && identifier !== uName && identifier !== uMail) {\n  msg.payload = { success: false, message: \"Kullanıcı adı/e-posta veya şifre hatalı\" };\n  msg.statusCode = 400; // HTTP 400 Bad Request\n  return [null, msg];\n}\n\n\nmsg.user = user;                 \nmsg.payload = { password };      \nreturn [msg, null];              \n",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -2254,13 +2211,13 @@
         "finalize": "",
         "libs": [],
         "x": 670,
-        "y": 1560,
+        "y": 1740,
         "wires": [
             [
                 "ed58fab8df11b349"
             ],
             [
-                "42db88840c0f57de"
+                "2b2157abba6313fe"
             ]
         ]
     },
@@ -2336,5 +2293,213 @@
                 "4e98ad516c31ad46"
             ]
         ]
+    },
+    {
+        "id": "2b2157abba6313fe",
+        "type": "http response",
+        "z": "651af9bb9a46e4b0",
+        "name": "Login Error Response",
+        "statusCode": "400",
+        "headers": {
+            "content-type": "application/json"
+        },
+        "x": 1000,
+        "y": 1780,
+        "wires": []
+    },
+    {
+        "id": "d9c5fb2fbf3b0189",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "UniqueCheck",
+        "func": "// Sadece /user-opt/add için kontrol yap\nconst p = msg.payload || {};\nif ((p.type || '') !== 'add') { return [null, msg]; }\n\n// Orijinal form verisini sakla (az sonra geri koyacağız)\nmsg.register = { ...p };\n\n// Case-insensitive arama için $expr + toLower\nconst uname = String(p.username || '').trim().toLowerCase();\nconst email = String(p.email || '').trim().toLowerCase();\n\nmsg.payload = {\n    $expr: {\n        $or: [\n            { $eq: [{ $toLower: \"$username\" }, uname] },\n            { $eq: [{ $toLower: \"$email\" }, email] }\n        ]\n    }\n};\n\nreturn [msg, null];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 880,
+        "y": 1080,
+        "wires": [
+            [
+                "e8416d08fd2d145b"
+            ],
+            [
+                "fc9042b8d1523bc0"
+            ]
+        ]
+    },
+    {
+        "id": "e8416d08fd2d145b",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "user",
+        "operation": "findOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 1060,
+        "y": 1040,
+        "wires": [
+            [
+                "a2f9234ca65d363f"
+            ]
+        ]
+    },
+    {
+        "id": "a2f9234ca65d363f",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "function 16",
+        "func": "// bulunan dokümanı al (mongodb4 findOne bazen tek obje, bazen array dönebiliyor)\nconst found = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\n\nif (!found) {\n  // Çakışma yok → orijinal payload'ı geri koy ve devam\n  msg.payload = msg.register || msg.payload;\n  return [msg, null];\n}\n\n// Hangi alan(lar) çakışmış?\nconst reqU = (msg.register?.username || '').toLowerCase();\nconst reqE = (msg.register?.email || '').toLowerCase();\n\nconst errors = {};\nif (String(found.username || '').toLowerCase() === reqU) {\n  errors.username = \"Bu kullanıcı adı alınmış.\";\n}\nif (String(found.email || '').toLowerCase() === reqE) {\n  errors.email = \"Bu e-posta kullanılmaktadır.\";\n}\n// emin olmak için, hiçbir key eşleşmezse ikisini de set et\nif (!Object.keys(errors).length) {\n  errors.username = \"Bu kullanıcı adı alınmış.\";\n  errors.email = \"Bu e-posta kullanılmaktadır.\";\n}\n\n// XHR ise JSON 409 dön, değilse /register’a redirect et\nconst isXHR = String(msg.req?.headers?.['x-requested-with'] || '').toLowerCase() === 'xmlhttprequest';\nif (isXHR) {\n  msg.statusCode = 409; // veya 400\n  msg.headers = { 'Content-Type': 'application/json' };\n  msg.payload = { message: \"Bu bilgilerle kayıt oluşturulamadı.\", errors };\n  return [null, msg];\n}\n\n// SSR/normal POST ise geri yönlendir\nmsg.statusCode = 302;\nmsg.headers = { Location: '/register' };\nmsg.payload = '';\nreturn [null, msg];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1230,
+        "y": 1040,
+        "wires": [
+            [
+                "158f6cdbc523a790"
+            ],
+            [
+                "4848370bce242d83"
+            ]
+        ]
+    },
+    {
+        "id": "4848370bce242d83",
+        "type": "http response",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1430,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "ea1d26fd84096912",
+        "type": "http in",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "url": "/user-opt/list",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 1420,
+        "wires": [
+            [
+                "2bdbfa0d8494761e"
+            ]
+        ]
+    },
+    {
+        "id": "2907d6d03e02be62",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "db.user.findTwo()",
+        "func": "msg.payload = {};                 // tüm kullanıcılar\nmsg.sort = { \"stamp.createdAt\": -1 };\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 1420,
+        "wires": [
+            [
+                "9b87694706ea779c"
+            ]
+        ],
+        "outputLabels": [
+            "Success"
+        ]
+    },
+    {
+        "id": "2bdbfa0d8494761e",
+        "type": "subflow:9357c048778312fb",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "x": 330,
+        "y": 1420,
+        "wires": [
+            [
+                "4b2ebf20f31e61db"
+            ]
+        ]
+    },
+    {
+        "id": "4b2ebf20f31e61db",
+        "type": "subflow:8775dfdfd56f79c1",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "x": 520,
+        "y": 1420,
+        "wires": [
+            [
+                "2907d6d03e02be62"
+            ]
+        ]
+    },
+    {
+        "id": "9b87694706ea779c",
+        "type": "mongodb4",
+        "z": "651af9bb9a46e4b0",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "user",
+        "operation": "find",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 910,
+        "y": 1420,
+        "wires": [
+            [
+                "6c06c270b9cd5eb6"
+            ]
+        ]
+    },
+    {
+        "id": "6c06c270b9cd5eb6",
+        "type": "function",
+        "z": "651af9bb9a46e4b0",
+        "name": "map json",
+        "func": "// map json  ( /user-opt/list )\nconst rows = (Array.isArray(msg.payload) ? msg.payload : []).map(u => {\n  const ts = (u.stamp && u.stamp.createdAt) || u.createdAt;\n  const createdAtText = ts ? new Date(ts).toLocaleString(\"tr-TR\", { hour12: false }) : \"\";\n  // rol tekilleme görüntü için (DB’de zaten tekil olacak ama yine de güvence):\n  const roles = Array.isArray(u.roles) ? u.roles : [];\n  const role  = roles.includes(\"admin\") ? [\"admin\"] : [\"user\"];\n\n  return {\n    id: String(u._id),\n    username: u.username,\n    displayName: u.displayName || \"\",\n    email: u.email || \"\",\n    roles: role,\n    active: (u.active !== false),\n    createdAtText\n  };\n});\nmsg.payload = rows; // veya { items: rows }\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 1420,
+        "wires": [
+            [
+                "9e2c5e43db39a222"
+            ]
+        ]
+    },
+    {
+        "id": "9e2c5e43db39a222",
+        "type": "http response",
+        "z": "651af9bb9a46e4b0",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1210,
+        "y": 1420,
+        "wires": []
     }
 ]
