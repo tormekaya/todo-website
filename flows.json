@@ -8,6 +8,14 @@
         "env": []
     },
     {
+        "id": "ce31de18fd4f4005",
+        "type": "tab",
+        "label": "Kategoriler",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
         "id": "4952c48b2f6d6c23",
         "type": "tab",
         "label": "Kullanıcılar",
@@ -19,14 +27,6 @@
         "id": "5053eb1640696108",
         "type": "tab",
         "label": "Login",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
-        "id": "ce31de18fd4f4005",
-        "type": "tab",
-        "label": "Kategoriler",
         "disabled": false,
         "info": "",
         "env": []
@@ -272,10 +272,10 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n  <title>Yapılacaklar</title>\n\n  <!-- Bootstrap & Icons -->\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css\" rel=\"stylesheet\">\n\n  <!-- SurveyJS (jQuery) -->\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n\n  <style>\n    :root {\n      --todo-form-gap: 6px;\n      --todo-gap: 6px;\n      --todo-pad: 12px;\n      --todo-radius: 12px;\n      --todo-border: #e9ecef;\n      --todo-bg: #fff;\n      --done: #16a34a;\n      --pending: #0d6efd;\n    }\n\n    body {\n      background: #f8f9fa\n    }\n\n    .navbar {\n      --bs-navbar-padding-y: .9rem\n    }\n\n    .todos-toolbar {\n      display: flex;\n      gap: 12px;\n      align-items: center;\n      margin-top: 16px;\n      padding: 10px 12px;\n      background: #fff;\n      border: 1px solid var(--todo-border);\n      border-radius: var(--todo-radius);\n    }\n\n    .toolbar-title {\n      font-weight: 700\n    }\n\n    .toolbar-stats {\n      margin-left: auto;\n      display: flex;\n      gap: 8px\n    }\n\n    .stat-pill {\n      background: #f1f3f5;\n      color: #495057;\n      font-size: .85rem;\n      padding: 6px 10px;\n      border-radius: 999px\n    }\n\n    .toolbar-block {\n      margin-bottom: var(--todo-form-gap) !important;\n    }\n\n    .todo-wrap {\n      margin: 0 0 var(--todo-gap) 0 !important;\n      background: var(--todo-bg);\n      border: 1px solid var(--todo-border);\n      border-radius: var(--todo-radius);\n      overflow: hidden;\n    }\n\n    #todoListHost .todo-wrap:last-child {\n      margin-bottom: 0 !important;\n    }\n\n    .todo-row {\n      display: grid;\n      grid-template-columns: 12px 1fr auto;\n      gap: 12px;\n      align-items: center;\n      padding: var(--todo-pad);\n      cursor: pointer;\n    }\n\n    .todo-accent {\n      width: 12px;\n      height: 100%;\n      border-radius: 4px;\n      background: var(--pending)\n    }\n\n    .todo-wrap.done .todo-accent {\n      background: var(--done)\n    }\n\n    .todo-title {\n      font-weight: 600;\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis\n    }\n\n    .todo-title.done {\n      color: #6c757d;\n      text-decoration: line-through\n    }\n\n    .todo-badges {\n      display: flex;\n      gap: 8px;\n      flex-wrap: wrap\n    }\n\n    .todo-badge {\n      display: inline-flex;\n      align-items: center;\n      gap: 6px;\n      background: #f1f3f5;\n      color: #495057;\n      padding: 4px 8px;\n      border-radius: 999px;\n      font-size: .8rem\n    }\n\n    .todo-actions {\n      display: none;\n      padding: 10px 12px;\n      border-top: 1px dashed #e5e7eb;\n      background: #fff\n    }\n\n    .todo-wrap.open .todo-actions {\n      display: block\n    }\n\n    .inline-add .sv-row {\n      display: flex;\n      align-items: center;\n      gap: 12px\n    }\n\n    .inline-add .sv-row>div:has(> .sv-question[data-name=\"newName\"]) {\n      flex: 1 1 auto !important;\n      min-width: 0 !important\n    }\n\n    .inline-add .sv-row>div:has(> .sv-question[data-name=\"addButtons\"]) {\n      flex: 0 0 auto !important\n    }\n\n    .inline-add .sv-question[data-name=\"newName\"],\n    .inline-add .sv-question[data-name=\"addButtons\"] {\n      margin: 0 !important;\n      padding: 0 !important\n    }\n\n    @media (max-width:576px) {\n      .inline-add .sv-row {\n        flex-direction: column;\n        align-items: stretch\n      }\n    }\n\n    .user-fab {\n      position: fixed;\n      right: 18px;\n      bottom: 18px;\n      z-index: 1000;\n      display: flex;\n      align-items: center;\n      gap: 10px;\n      background: #fff;\n      border-radius: 999px;\n      padding: 8px 12px;\n      box-shadow: 0 6px 16px rgba(0, 0, 0, .15);\n      border: 1px solid #eee;\n    }\n\n    .user-fab .avatar {\n      width: 36px;\n      height: 36px;\n      border-radius: 50%;\n      display: flex;\n      align-items: center;\n      justify-content: center;\n      background: #0d6efd;\n      color: #fff;\n    }\n\n    .user-fab .name {\n      line-height: 1.1\n    }\n\n    .admin-btn-48 {\n      width: 48px;\n      height: 48px;\n    }\n\n    .btn-clear {\n      background: #fff !important;\n      color: #6c757d !important;\n      border: 1px solid #ced4da !important;\n    }\n\n    .btn-clear:hover {\n      background: #f8f9fa !important;\n      border-color: #adb5bd !important;\n    }\n\n    .btn-add {\n      background: #0d6efd !important;\n      color: #fff !important;\n      border: 1px solid #0d6efd !important;\n    }\n\n    .btn-add:hover {\n      background: #0b5ed7 !important;\n    }\n\n    /* === Overrides (renk güncellemeleri) === */\n    .todo-badge.date,\n    .todo-badge.who {\n      background: #6c757d !important;\n      /* koyu gri */\n      color: #fff !important;\n    }\n\n    .todo-badge.pending {\n      background: #ffca2c !important;\n      /* koyu gri */\n      color: #fff !important;\n    }\n\n    .todo-badge.done {\n      background: #198754 !important;\n      /* yeşil */\n      color: #fff !important;\n    }\n\n    #statAll {\n      background: #0d6efd !important;\n      /* mavi */\n      color: #fff !important;\n    }\n\n    #statOpen {\n      background: #ffca2c !important;\n      /* açık sarı */\n      color: #664d03 !important;\n      border: 1px solid #ffe69c !important;\n    }\n\n    #statDone {\n      background: #198754 !important;\n      /* yeşil */\n      color: #fff !important;\n    }\n  </style>\n</head>\n\n<body>\n\n  <!-- NAVBAR -->\n  <nav class=\"navbar bg-white border-bottom mb-4\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Yapılacaklar</span>\n      <div class=\"ms-auto\">\n        {{#user.isAdmin}}\n        <a href=\"/user-list\"\n          class=\"btn btn-primary d-flex align-items-center justify-content-center rounded-1 p-0 admin-btn-48\"\n          title=\"Admin Panel\">\n          <i class=\"bi bi-people-fill fs-4\"></i>\n        </a>\n        {{/user.isAdmin}}\n      </div>\n    </div>\n  </nav>\n\n  <div class=\"container\">\n    <div id=\"surveyHost\"></div>\n    {{#error}}<div class=\"alert alert-danger mt-3\">\n      <h4 class=\"m-0\">{{message}}</h4>\n    </div>{{/error}}\n  </div>\n\n  <!-- Sağ altta FAB -->\n  <div class=\"user-fab\">\n    <div class=\"avatar\"><i class=\"bi bi-person-fill fs-5\"></i></div>\n    <div class=\"name small text-muted\" id=\"userLabel\">Kullanıcı</div>\n    <a href=\"/logout\" class=\"btn btn-danger p-0 d-flex align-items-center justify-content-center\"\n      style=\"width:40px;height:40px;border-radius:50%\" title=\"Çıkış\">\n      <i class=\"bi bi-power fs-5\"></i>\n    </a>\n  </div>\n\n  <!-- Backend verileri -->\n  <script>\n    window.__TODOS__ = {{#todosJson}}{{{todosJson}}}{{/todosJson}}{{^todosJson}}[]{{/todosJson}};\n    window.__USER__  = {{#userJson}}{{{userJson}}}{{/userJson}}{{^userJson}}{username:\"misafir\",email:\"\",isAdmin:false}{{/userJson}};\n    if(!Array.isArray(window.__TODOS__)) window.__TODOS__ = [];\n\n    (function(){\n      const u = window.__USER__ || {};\n      const label = [u.username || \"Kullanıcı\", u.email].filter(Boolean).join(\" — \");\n      const el = document.getElementById(\"userLabel\");\n      if(el) el.textContent = label;\n    })();\n  </script>\n\n  <script>\n    (function(){\n    Survey.StylesManager.applyTheme(\"modern\");\n    const isAdmin = !!(window.__USER__ && window.__USER__.isAdmin);\n    const esc = s => String(s ?? \"\").replace(/[&<>\\\"']/g, m=>({ \"&\":\"&amp;\",\"<\":\"&lt;\",\">\":\"&gt;\",\"\\\"\":\"&quot;\",\"'\":\"&#39;\" }[m]));\n    const filterByUser = (all,u)=>{\n      if(u?.isAdmin) return all||[];\n      const n=(u?.username||\"\").toLowerCase(), e=(u?.email||\"\").toLowerCase();\n      return (all||[]).filter(x=> (x?.stamp?.username||\"\").toLowerCase()===n || (x?.stamp?.email||\"\").toLowerCase()===e);\n    };\n\n    function rowHtml(t){\n      const titleCls = t.done ? \"todo-title done\" : \"todo-title\";\n      const datePill = `<span class=\"todo-badge date\"><i class=\"bi bi-calendar2-date\"></i> ${esc(t.dateTime||\"-\")}</span>`;\n      const whoPill  = isAdmin && t?.stamp?.username ? `<span class=\"todo-badge who\"><i class=\"bi bi-person-fill\"></i> ${esc(t.stamp.username)}</span>` : \"\";\n      const statePill= t.done \n        ? `<span class=\"todo-badge done\"><i class=\"bi bi-check2\"></i> Tamamlandı</span>`\n        : `<span class=\"todo-badge pending\"><i class=\"bi bi-hourglass-split\"></i> Beklemede</span>`;\n      const actions  = t.done\n        ? `<button class=\"btn btn-warning btn-open\"><i class=\"bi bi-arrow-counterclockwise\"></i> Yeniden Aç</button>\n           <button class=\"btn btn-danger btn-trash\"><i class=\"bi bi-trash\"></i> Sil</button>`\n        : `<button class=\"btn btn-success btn-complete\"><i class=\"bi bi-check2-square\"></i> Tamamla</button>\n           <button class=\"btn btn-info btn-edit\"><i class=\"bi bi-pencil-square\"></i> Düzenle</button>\n           <button class=\"btn btn-secondary btn-schedule\"><i class=\"bi bi-alarm-fill\"></i> Hatırlat</button>\n           <button class=\"btn btn-danger btn-trash\"><i class=\"bi bi-trash\"></i> Sil</button>`;\n      return `\n        <div class=\"todo-wrap ${t.done?'done':''}\" data-id=\"${t.id}\">\n          <div class=\"todo-row\">\n            <div class=\"todo-accent\" aria-hidden=\"true\"></div>\n            <div>\n              <div class=\"${titleCls}\">${esc(t.name)}</div>\n              <div class=\"todo-badges\">${datePill}${whoPill}${statePill}</div>\n            </div>\n            <i class=\"bi bi-chevron-down text-muted\"></i>\n          </div>\n          <div class=\"todo-actions\"><div class=\"d-flex flex-wrap gap-2 justify-content-end\">${actions}</div></div>\n        </div>`;\n    }\n\n    const surveyJson = {\n      showNavigationButtons:\"none\", showQuestionNumbers:\"off\", widthMode:\"responsive\",\n      pages:[{ name:\"home\", elements:[\n        { type:\"panel\", name:\"newItemPanel\", title:\"Yeni iş ekle\", elements:[\n          { type:\"text\", name:\"newName\", titleLocation:\"hidden\", isRequired:true,\n            placeholder:\"Dosyalar teslim edilecek...\", startWithNewLine:false },\n          { type:\"html\", name:\"addButtons\", startWithNewLine:false, html:\n            `<div class=\"d-flex justify-content-end align-items-center gap-2\">\n               <button type=\"button\" class=\"sv-btn btn-clear\">Temizle</button>\n               <button type=\"button\" class=\"sv-btn btn-add\">Ekle</button>\n             </div>` }\n        ]},\n        { type:\"html\", name:\"toolbar\", cssClasses:{root:\"toolbar-block\"}, html:\n          `<div class=\"todos-toolbar\">\n             <div class=\"toolbar-title\">Yapılacaklar</div>\n             <div class=\"toolbar-stats\">\n               <span class=\"stat-pill\" id=\"statAll\"><i class=\"bi bi-list-task\"></i> Toplam: 0</span>\n               <span class=\"stat-pill\" id=\"statOpen\"><i class=\"bi bi-hourglass-split\"></i> Açık: 0</span>\n               <span class=\"stat-pill\" id=\"statDone\"><i class=\"bi bi-check2-circle\"></i> Tamam: 0</span>\n             </div>\n           </div>` },\n        { type:\"html\", name:\"listHost\", html:`<div id=\"todoListHost\"></div>` },\n        { type:\"html\", name:\"emptyMsg\", html:`<div class=\"text-muted text-center py-4 d-none\" id=\"emptyListMsg\">Henüz kayıt yok…</div>` }\n      ]}]\n    };\n\n    const model = new Survey.Model(surveyJson);\n\n    model.onAfterRenderPanel.add((s,opt)=>{\n      if(opt.panel.name!==\"newItemPanel\") return;\n      opt.htmlElement.classList.add(\"inline-add\");\n      const row = opt.htmlElement.querySelector('.sv-row');\n      const inputWrap = row?.children?.[0]; const btnWrap = row?.children?.[1];\n      if(inputWrap){ inputWrap.style.flex='1 1 auto'; inputWrap.style.minWidth='0'; }\n      if(btnWrap){ btnWrap.style.flex='0 0 auto'; }\n    });\n\n    model.onAfterRenderQuestion.add((s,opt)=>{\n      if(opt.question.name===\"addButtons\"){\n        const host = opt.htmlElement;\n        host.querySelector(\".btn-add\")?.addEventListener(\"click\", ()=>{\n          const name = s.getQuestionByName(\"newName\")?.value?.trim();\n          if(!name) return; postForm(\"/opt/add\",{name});\n        });\n        host.querySelector(\".btn-clear\")?.addEventListener(\"click\", ()=>{\n          s.getQuestionByName(\"newName\").value=\"\";\n        });\n      }\n    });\n\n    model.onAfterRenderPage.add((s)=>{\n      const mine = filterByUser(window.__TODOS__, window.__USER__);\n      const list = mine.slice().sort((a,b)=>(b?.stamp?.createdAt||0)-(a?.stamp?.createdAt||0));\n      const host = document.getElementById(\"todoListHost\");\n      if(host){ host.innerHTML = list.map(rowHtml).join(\"\"); }\n      if(!list.length) document.getElementById(\"emptyListMsg\")?.classList.remove(\"d-none\");\n      const openCnt = list.filter(x=>!x.done).length, doneCnt = list.length-openCnt;\n      document.getElementById('statAll').innerHTML  = `<i class=\"bi bi-list-task\"></i> Toplam: ${list.length}`;\n      document.getElementById('statOpen').innerHTML = `<i class=\"bi bi-hourglass-split\"></i> Açık: ${openCnt}`;\n      document.getElementById('statDone').innerHTML = `<i class=\"bi bi-check2-circle\"></i> Tamam: ${doneCnt}`;\n      host?.querySelectorAll(\".todo-wrap\").forEach(wrap=>{\n        const id = wrap.getAttribute(\"data-id\");\n        wrap.querySelector(\".todo-row\")?.addEventListener(\"click\", ()=> wrap.classList.toggle(\"open\"));\n        wrap.querySelector(\".btn-trash\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();postForm(\"/opt/trash\",{id});});\n        wrap.querySelector(\".btn-complete\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();postForm(\"/opt/complete\",{id});});\n        wrap.querySelector(\".btn-open\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();postForm(\"/opt/open\",{id});});\n        wrap.querySelector(\".btn-edit\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();location.href=\"/edit/\"+encodeURIComponent(id);});\n        wrap.querySelector(\".btn-schedule\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();location.href=\"/schedule/\"+encodeURIComponent(id);});\n      });\n    });\n\n    async function postForm(url,data){\n      const res = await fetch(url,{method:\"POST\",credentials:\"include\",\n        headers:{ \"Content-Type\":\"application/x-www-form-urlencoded\" },\n        body:new URLSearchParams(data)});\n      if(!res.ok){ alert(\"İstek başarısız.\"); return; }\n      location.reload();\n    }\n\n    $(\"#surveyHost\").Survey({ model });\n  })();\n  </script>\n\n  <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
+        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n  <title>Yapılacaklar</title>\n\n  <!-- Bootstrap & Icons -->\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css\" rel=\"stylesheet\">\n\n  <!-- SurveyJS (jQuery) -->\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n\n  <style>\n    :root{\n      --todo-form-gap:6px; --todo-gap:6px; --todo-pad:12px; --todo-radius:12px;\n      --todo-border:#e9ecef; --todo-bg:#fff; --done:#16a34a; --pending:#0d6efd;\n    }\n    body{ background:#f8f9fa }\n    .navbar{ --bs-navbar-padding-y:.9rem }\n\n    .todos-toolbar{ display:flex; gap:12px; align-items:center; margin-top:16px; padding:10px 12px;\n      background:#fff; border:1px solid var(--todo-border); border-radius:var(--todo-radius);}\n    .toolbar-title{ font-weight:700 }\n    .toolbar-stats{ margin-left:auto; display:flex; gap:8px }\n    .stat-pill{ background:#f1f3f5; color:#495057; font-size:.85rem; padding:6px 10px; border-radius:999px }\n    .toolbar-block{ margin-bottom:var(--todo-form-gap) !important; }\n\n    .todo-wrap{ margin:0 0 var(--todo-gap) 0 !important; background:var(--todo-bg);\n      border:1px solid var(--todo-border); border-radius:var(--todo-radius); overflow:hidden; }\n    #todoListHost .todo-wrap:last-child{ margin-bottom:0 !important; }\n\n    .todo-row{ display:grid; grid-template-columns:12px 1fr auto; gap:12px; align-items:center;\n      padding:var(--todo-pad); cursor:pointer; }\n    .todo-accent{ width:12px; height:100%; border-radius:4px; background:var(--pending) }\n    .todo-wrap.done .todo-accent{ background:var(--done) }\n\n    .todo-title{ font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }\n    .todo-title.done{ color:#6c757d; text-decoration:line-through }\n\n    .todo-badges{ display:flex; gap:8px; flex-wrap:wrap }\n    .todo-badge{ display:inline-flex; align-items:center; gap:6px; background:#f1f3f5; color:#495057;\n      padding:4px 8px; border-radius:999px; font-size:.8rem }\n\n    .todo-actions{ display:none; padding:10px 12px; border-top:1px dashed #e5e7eb; background:#fff }\n    .todo-wrap.open .todo-actions{ display:block }\n\n    .inline-add .sv-row{ display:flex; align-items:center; gap:12px }\n    .inline-add .sv-row>div:has(> .sv-question[data-name=\"newName\"]){ flex:1 1 auto !important; min-width:0 !important }\n    .inline-add .sv-row>div:has(> .sv-question[data-name=\"addButtons\"]){ flex:0 0 auto !important }\n    .inline-add .sv-question[data-name=\"newName\"],\n    .inline-add .sv-question[data-name=\"addButtons\"]{ margin:0 !important; padding:0 !important }\n\n    @media (max-width:576px){\n      .inline-add .sv-row{ flex-direction:column; align-items:stretch }\n    }\n\n    .user-fab{ position:fixed; right:18px; bottom:18px; z-index:1000; display:flex; align-items:center; gap:10px;\n      background:#fff; border-radius:999px; padding:8px 12px; box-shadow:0 6px 16px rgba(0,0,0,.15); border:1px solid #eee; }\n    .user-fab .avatar{ width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#0d6efd; color:#fff; }\n    .admin-btn-48{ width:48px; height:48px; }\n\n    .btn-clear{ background:#fff!important; color:#6c757d!important; border:1px solid #ced4da!important; }\n    .btn-clear:hover{ background:#f8f9fa!important; border-color:#adb5bd!important; }\n    .btn-add{ background:#0d6efd!important; color:#fff!important; border:1px solid #0d6efd!important; }\n    .btn-add:hover{ background:#0b5ed7!important; }\n\n    .todo-badge.date,.todo-badge.who{ background:#6c757d!important; color:#fff!important }\n    .todo-badge.pending{ background:#ffca2c!important; color:#fff!important }\n    .todo-badge.done{ background:#198754!important; color:#fff!important }\n    #statAll{ background:#0d6efd!important; color:#fff!important }\n    #statOpen{ background:#ffca2c!important; color:#664d03!important; border:1px solid #ffe69c!important }\n    #statDone{ background:#198754!important; color:#fff!important }\n    \n    /* Kategori Ekle butonu */\n    #btnAddCat {\n      background:#f1f3f5 !important;\n      border:1px solid #f1f3f5 !important;\n      color:#000 !important;\n    }\n    #btnAddCat .bi { color:inherit !important; }\n    #btnAddCat:hover,\n    #btnAddCat:focus {\n      background:#e9ecef !important;\n      border-color:#e9ecef !important;\n      color:#000 !important;\n    }\n\n    /* İşlerdeki etiket yazıları da siyah olsun */\n    .todo-badge { color:#000 !important; }\n  </style>\n</head>\n<body>\n  <!-- NAVBAR -->\n  <nav class=\"navbar bg-white border-bottom mb-4\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Yapılacaklar</span>\n      <div class=\"d-flex gap-4\">\n        {{#user.isAdmin}}\n        <a class=\"btn btn-secondary\" id=\"btnManageCats\" title=\"Kategori Düzenle\">\n          <i class=\"bi bi-tags-fill fs-4\"></i>\n        </a>  \n        <a href=\"/user-list\" class=\"btn btn-primary d-flex align-items-center justify-content-center rounded-1 p-0 admin-btn-48\" title=\"Admin Panel\">\n          <i class=\"bi bi-people-fill fs-4\"></i>\n        </a>\n        {{/user.isAdmin}}\n      </div>\n    </div>\n  </nav>\n\n  <div class=\"container\">\n    <div id=\"surveyHost\"></div>\n    {{#error}}<div class=\"alert alert-danger mt-3\"><h4 class=\"m-0\">{{message}}</h4></div>{{/error}}\n  </div>\n\n  <!-- Sağ altta FAB -->\n  <div class=\"user-fab\">\n    <div class=\"avatar\"><i class=\"bi bi-person-fill fs-5\"></i></div>\n    <div class=\"name small text-muted\" id=\"userLabel\">Kullanıcı</div>\n    <a href=\"/logout\" class=\"btn btn-danger p-0 d-flex align-items-center justify-content-center\" style=\"width:40px;height:40px;border-radius:50%\" title=\"Çıkış\">\n      <i class=\"bi bi-power fs-5\"></i>\n    </a>\n  </div>\n\n  <!-- Backend verileri -->\n  <script>\n    window.__TODOS__ = {{#todosJson}}{{{todosJson}}}{{/todosJson}}{{^todosJson}}[]{{/todosJson}};\n    window.__USER__  = {{#userJson}}{{{userJson}}}{{/userJson}}{{^userJson}}{username:\"misafir\",email:\"\",isAdmin:false}{{/userJson}};\n    if(!Array.isArray(window.__TODOS__)) window.__TODOS__ = [];\n    (function(){\n      const u = window.__USER__ || {};\n      const label = [u.username || \"Kullanıcı\", u.email].filter(Boolean).join(\" — \");\n      const el = document.getElementById(\"userLabel\");\n      if(el) el.textContent = label;\n    })();\n  </script>\n\n  <!-- Kategori verisi -->\n  <script>\n    window.__CATS__ = [];\n    window.__CATMAP__ = {};\n    async function loadCategories(){\n      try{\n        const res = await fetch('/categories', {credentials:'include'});\n        if(!res.ok) return;\n        const arr = await res.json();\n        window.__CATS__ = Array.isArray(arr)?arr:[];\n        window.__CATMAP__ = Object.fromEntries((window.__CATS__||[]).map(c => [String(c._id), c.name]));\n      }catch(e){ console.warn('Kategori yükleme hatası', e); }\n    }\n  </script>\n\n  <script>\n  (async function(){\n    await loadCategories();\n\n    Survey.StylesManager.applyTheme(\"modern\");\n    const isAdmin = !!(window.__USER__ && window.__USER__.isAdmin);\n    const esc = s => String(s ?? \"\").replace(/[&<>\\\"']/g, m=>({ \"&\":\"&amp;\",\"<\":\"&lt;\",\">\":\"&gt;\",\"\\\"\":\"&quot;\",\"'\":\"&#39;\" }[m]));\n    const filterByUser = (all,u)=>{\n      if(u?.isAdmin) return all||[];\n      const n=(u?.username||\"\").toLowerCase(), e=(u?.email||\"\").toLowerCase();\n      return (all||[]).filter(x=> (x?.stamp?.username||\"\").toLowerCase()===n || (x?.stamp?.email||\"\").toLowerCase()===e);\n    };\n\n    function rowHtml(t){\n      const titleCls = t.done ? \"todo-title done\" : \"todo-title\";\n      const datePill = `<span class=\"todo-badge date\"><i class=\"bi bi-calendar2-date\"></i> ${esc(t.dateTime||\"-\")}</span>`;\n      const whoPill  = isAdmin && t?.stamp?.username ? `<span class=\"todo-badge who\"><i class=\"bi bi-person-fill\"></i> ${esc(t.stamp.username)}</span>` : \"\";\n      const statePill= t.done\n        ? `<span class=\"todo-badge done\"><i class=\"bi bi-check2\"></i> Tamamlandı</span>`\n        : `<span class=\"todo-badge pending\"><i class=\"bi bi-hourglass-split\"></i> Beklemede</span>`;\n      const catBadges = (t.categories||[])\n        .map(cid => `<span class=\"todo-badge\"><i class=\"bi bi-tag\"></i> ${esc(window.__CATMAP__[String(cid)]||\"Kategori\")}</span>`)\n        .join(\"\");\n      const actions  = t.done\n        ? `<button class=\"btn btn-warning btn-open\"><i class=\"bi bi-arrow-counterclockwise\"></i> Yeniden Aç</button>\n           <button class=\"btn btn-danger btn-trash\"><i class=\"bi bi-trash\"></i> Sil</button>`\n        : `<button class=\"btn btn-success btn-complete\"><i class=\"bi bi-check2-square\"></i> Tamamla</button>\n           <button class=\"btn btn-info btn-edit\"><i class=\"bi bi-pencil-square\"></i> Düzenle</button>\n           <button class=\"btn btn-secondary btn-schedule\"><i class=\"bi bi-alarm-fill\"></i> Hatırlat</button>\n           <button class=\"btn btn-danger btn-trash\"><i class=\"bi bi-trash\"></i> Sil</button>`;\n      return `\n        <div class=\"todo-wrap ${t.done?'done':''}\" data-id=\"${t.id}\">\n          <div class=\"todo-row\">\n            <div class=\"todo-accent\" aria-hidden=\"true\"></div>\n            <div>\n              <div class=\"${titleCls}\">${esc(t.name)}</div>\n              <div class=\"todo-badges\">${datePill}${whoPill}${statePill}${catBadges}</div>\n            </div>\n            <i class=\"bi bi-chevron-down text-muted\"></i>\n          </div>\n          <div class=\"todo-actions\"><div class=\"d-flex flex-wrap gap-2 justify-content-end\">${actions}</div></div>\n        </div>`;\n    }\n\n    // ====== Survey JSON ======\n    const surveyJson = {\n      showNavigationButtons:\"none\", showQuestionNumbers:\"off\", widthMode:\"responsive\",\n      pages:[{ name:\"home\", elements:[\n        { type:\"panel\", name:\"newItemPanel\", title:\"Yeni iş ekle\", elements:[\n          { type:\"text\", name:\"newName\", titleLocation:\"hidden\", isRequired:true,\n            placeholder:\"Dosyalar teslim edilecek...\", startWithNewLine:false },\n\n          { type:\"html\", name:\"addButtons\", startWithNewLine:false, html:\n            `<div class=\"d-flex justify-content-end align-items-center gap-2\">\n               <button type=\"button\" class=\"sv-btn btn-outline-secondary\" id=\"btnAddCat\">\n                 <i class=\"bi bi-tags\"></i> Kategori Ekle\n               </button>\n               <button type=\"button\" class=\"sv-btn btn-clear\" id=\"btnClear\">Temizle</button>\n               <button type=\"button\" class=\"sv-btn btn-add\">Ekle</button>\n             </div>` },\n\n          <!-- Kategorileri modalda seçiyoruz; burada gizli -->\n          { type:\"tagbox\", name:\"newCats\", visible:false,\n            choices:(window.__CATS__||[]).map(c=>({value:String(c._id), text:c.name})) }\n        ]},\n\n        { type:\"html\", name:\"toolbar\", cssClasses:{root:\"toolbar-block\"}, html:\n          `<div class=\"todos-toolbar\">\n             <div class=\"toolbar-title\">Yapılacaklar</div>\n             <div class=\"toolbar-stats ms-auto\">\n               <span class=\"stat-pill\" id=\"statAll\"><i class=\"bi bi-list-task\"></i> Toplam: 0</span>\n               <span class=\"stat-pill\" id=\"statOpen\"><i class=\"bi bi-hourglass-split\"></i> Açık: 0</span>\n               <span class=\"stat-pill\" id=\"statDone\"><i class=\"bi bi-check2-circle\"></i> Tamam: 0</span>\n             </div>\n           </div>` },\n\n        <!-- Filtre paneli (KALDIRILDI) -->\n\n        { type:\"html\", name:\"listHost\", html:`<div id=\"todoListHost\"></div>` },\n        { type:\"html\", name:\"emptyMsg\", html:`<div class=\"text-muted text-center py-4 d-none\" id=\"emptyListMsg\">Henüz kayıt yok…</div>` }\n      ]}]\n    };\n    const model = new Survey.Model(surveyJson);\n    window.__surveyModel__ = model;\n\n    // Panel hizalama\n    model.onAfterRenderPanel.add((s,opt)=>{\n      if(opt.panel.name!==\"newItemPanel\") return;\n      opt.htmlElement.classList.add(\"inline-add\");\n      const row = opt.htmlElement.querySelector('.sv-row');\n      const inputWrap = row?.children?.[0]; const btnWrap = row?.children?.[1];\n      if(inputWrap){ inputWrap.style.flex='1 1 auto'; inputWrap.style.minWidth='0'; }\n      if(btnWrap){ btnWrap.style.flex='0 0 auto'; }\n    });\n\n    // Buton davranışları + modal aç\n    model.onAfterRenderQuestion.add((s,opt)=>{\n      if (opt.question.name === \"addButtons\") {\n        const host = opt.htmlElement;\n        const btnAdd = host.querySelector(\".btn-add\");\n        const btnClear = host.querySelector(\"#btnClear\") || host.querySelector(\".btn-clear\");\n        const btnCat = host.querySelector(\"#btnAddCat\");\n\n        // EKLE\n        btnAdd?.addEventListener(\"click\", ()=>{\n          const name = s.getQuestionByName(\"newName\")?.value?.trim();\n          const cats = s.getQuestionByName(\"newCats\")?.value || [];\n          if(!name) return;\n          postForm(\"/opt/add\", { name, categories: JSON.stringify(cats) });\n        });\n\n        // TEMİZLE\n        btnClear?.addEventListener(\"click\", (e)=>{\n          e.preventDefault();\n          if (typeof s.setValue === \"function\") {\n            s.setValue(\"newName\", \"\");\n            s.setValue(\"newCats\", []);\n          } else {\n            const qn = s.getQuestionByName(\"newName\");\n            const qc = s.getQuestionByName(\"newCats\");\n            if (qn) qn.value = \"\";\n            if (qc) qc.value = [];\n          }\n\n          // Modal açıksa kutuları sıfırla ve rozeti kaldır\n          const catHost = document.getElementById(\"catList\");\n          if (catHost) {\n            catHost.querySelectorAll(\".cat-check\").forEach(ch => ch.checked = false);\n            if (typeof renderCatListInto === \"function\") renderCatListInto(catHost, []);\n          }\n          document.getElementById(\"btnAddCat\")?.querySelector(\".sel-badge\")?.remove();\n        });\n\n        // KATEGORİ MODALINI AÇ\n        btnCat?.addEventListener(\"click\", ()=>{\n        // Arama kutusunu sıfırla ve listeyi filtresiz çiz\n        const inp = document.getElementById(\"catFilter\");\n        if (inp) inp.value = \"\";\n        renderCatListInto(document.getElementById(\"catList\"), null, null, \"\");\n        \n        // Modalı aç\n        const el = document.getElementById(\"catModal\");\n        const modal = window.bootstrap?.Modal\n        ? window.bootstrap.Modal.getOrCreateInstance(el)\n        : new bootstrap.Modal(el);\n        modal.show();\n        });\n      }\n      // toolbar için artık ekstra dinleyici yok\n    });\n\n    // Sayfa render: listeyi çiz\n    model.onAfterRenderPage.add((s)=>{\n      const mine = filterByUser(window.__TODOS__, window.__USER__);\n      const list = mine.slice().sort((a,b)=>(b?.stamp?.createdAt||0)-(a?.stamp?.createdAt||0));\n      renderList(list);\n    });\n\n    function renderList(list){\n      const host = document.getElementById(\"todoListHost\");\n      if(host){ host.innerHTML = list.map(rowHtml).join(\"\"); }\n      const empty = document.getElementById(\"emptyListMsg\");\n      if(!list.length) empty?.classList.remove(\"d-none\"); else empty?.classList.add(\"d-none\");\n      const openCnt = list.filter(x=>!x.done).length, doneCnt = list.length-openCnt;\n      document.getElementById('statAll').innerHTML  = `<i class=\"bi bi-list-task\"></i> Toplam: ${list.length}`;\n      document.getElementById('statOpen').innerHTML = `<i class=\"bi bi-hourglass-split\"></i> Açık: ${openCnt}`;\n      document.getElementById('statDone').innerHTML = `<i class=\"bi bi-check2-circle\"></i> Tamam: ${doneCnt}`;\n      host?.querySelectorAll(\".todo-wrap\").forEach(wrap=>{\n        const id = wrap.getAttribute(\"data-id\");\n        wrap.querySelector(\".todo-row\")?.addEventListener(\"click\", ()=> wrap.classList.toggle(\"open\"));\n        wrap.querySelector(\".btn-trash\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();postForm(\"/opt/trash\",{id});});\n        wrap.querySelector(\".btn-complete\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();postForm(\"/opt/complete\",{id});});\n        wrap.querySelector(\".btn-open\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();postForm(\"/opt/open\",{id});});\n        wrap.querySelector(\".btn-edit\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();location.href=\"/edit/\"+encodeURIComponent(id);});\n        wrap.querySelector(\".btn-schedule\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();location.href=\"/schedule/\"+encodeURIComponent(id);});\n      });\n    }\n\n    async function postForm(url,data){\n      const res = await fetch(url,{method:\"POST\",credentials:\"include\",\n        headers:{ \"Content-Type\":\"application/x-www-form-urlencoded\" },\n        body:new URLSearchParams(data)});\n      if(!res.ok){ alert(\"İstek başarısız.\"); return; }\n      location.reload();\n    }\n\n    $(\"#surveyHost\").Survey({ model });\n  })();\n  </script>\n\n  <!-- Kategori Seç / Oluştur Modal -->\n  <div class=\"modal fade\" id=\"catModal\" tabindex=\"-1\">\n    <div class=\"modal-dialog modal-dialog-scrollable\">\n      <div class=\"modal-content\">\n        <div class=\"modal-header\">\n          <h5 class=\"modal-title\">Kategoriler</h5>\n          <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\"></button>\n        </div>\n\n        <div class=\"modal-body\">\n          <!-- Mevcut kategoriler (çoklu seçim) -->\n          <!-- Mevcut kategoriler (çoklu seçim) -->\n          <div class=\"mb-3\">\n            <label class=\"form-label fw-semibold d-flex align-items-center justify-content-between\">\n              <span>Kategorileri seç</span>\n            \n              <!-- YENİ: temizleme butonlu kutu -->\n              <div class=\"position-relative\" style=\"max-width:200px\">\n                <input id=\"catFilter\" class=\"form-control form-control-sm pe-5\" placeholder=\"Ara...\">\n                <button type=\"button\" id=\"catFilterClear\"\n                        class=\"btn btn-sm position-absolute top-50 end-0 translate-middle-y me-1 px-2 d-none\"\n                        aria-label=\"Temizle\" title=\"Temizle\" style=\"border:none; background:transparent;\">\n                  <i class=\"bi bi-x-lg\"></i>\n                </button>\n              </div>\n            </label>\n          \n            <div id=\"catList\" class=\"border rounded p-2\" style=\"max-height:280px; overflow:auto;\"></div>\n            <small class=\"text-muted\">Birden çok kategori seçebilirsiniz.</small>\n          </div>\n\n          <hr class=\"my-3\">\n\n          <!-- Yeni kategori oluştur -->\n          <div>\n            <label class=\"form-label fw-semibold\">Yeni kategori oluştur</label>\n            <div class=\"d-flex gap-2\">\n              <input class=\"form-control\" id=\"newCatName\" placeholder=\"Kategori adı\">\n              <button class=\"btn btn-primary\" id=\"btnCreateCat\" type=\"button\">\n                <i class=\"bi bi-plus-lg\"></i> Ekle\n              </button>\n            </div>\n            <small class=\"text-muted\">Kaydedince yukarıdaki listede de görünecek.</small>\n          </div>\n        </div>\n\n        <div class=\"modal-footer\">\n          <button class=\"btn btn-secondary\" type=\"button\" data-bs-dismiss=\"modal\">Kapat</button>\n          <button class=\"btn btn-success\" id=\"btnApplyCats\" type=\"button\">Seçimi Uygula</button>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <!-- Kategori Yönet Modal -->\n  <div class=\"modal fade\" id=\"catManageModal\" tabindex=\"-1\" aria-hidden=\"true\">\n    <div class=\"modal-dialog modal-lg modal-dialog-scrollable\">\n      <div class=\"modal-content\">\n        <div class=\"modal-header\">\n          <h5 class=\"modal-title\"><i class=\"bi bi-tags-fill me-2\"></i>Kategori Yönet</h5>\n          <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\"></button>\n        </div>\n  \n        <div class=\"modal-body\">\n          <!-- Arama + Yeni ekle -->\n          <div class=\"d-flex flex-wrap gap-2 mb-3\">\n            <div class=\"input-group\" style=\"max-width:420px;\">\n              <span class=\"input-group-text\"><i class=\"bi bi-search\"></i></span>\n              <input id=\"catSearch\" class=\"form-control\" placeholder=\"Kategori ara...\">\n            </div>\n            <div class=\"ms-auto d-flex gap-2\">\n              <input id=\"catNewName\" class=\"form-control\" placeholder=\"Yeni kategori adı\" style=\"max-width:280px;\">\n              <button id=\"btnCatNew\" class=\"btn btn-primary\"><i class=\"bi bi-plus-lg\"></i> Ekle</button>\n            </div>\n          </div>\n  \n          <!-- Liste -->\n          <div class=\"table-responsive border rounded\">\n            <table class=\"table align-middle m-0\">\n              <thead class=\"table-light\">\n                <tr>\n                  <th style=\"width:56px;\">#</th>\n                  <th>Ad</th>\n                  <th style=\"width:160px;\" class=\"text-end\">İşlemler</th>\n                </tr>\n              </thead>\n              <tbody id=\"catManageTbody\">\n                <!-- JS ile dolacak -->\n              </tbody>\n            </table>\n          </div>\n          <small class=\"text-muted d-block mt-2\">Not: Burada yapılan değişiklikler, “Kategori Ekle” seçim listesine de yansır.</small>\n        </div>\n  \n        <div class=\"modal-footer\">\n          <button class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Kapat</button>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <!-- Modal davranışı -->\n  <script>\n    // Seçili kategorileri üste taşıyan sürüm\n    // Seçili kategorileri üste taşıyan sürüm + FİLTRE desteği\n    function renderCatListInto(container, selectedIds = null, focusId = null, filter = '') {\n    const host = container || document.getElementById(\"catList\");\n    if (!host) return;\n    \n    const cats = window.__CATS__ || [];\n    const kw = String(filter || '').trim().toLowerCase();\n    \n    // --- Seçili id'ler (mevcut mantık)\n    let current;\n    if (Array.isArray(selectedIds)) {\n    current = selectedIds.map(String);\n    } else {\n    const live = Array.from(host.querySelectorAll('.cat-check:checked')).map(ch => ch.value);\n    if (live.length) {\n    current = live;\n    } else {\n    try {\n    const s = window.__surveyModel__;\n    current = (s?.getQuestionByName?.('newCats')?.value || []).map(String);\n    } catch { current = []; }\n    }\n    }\n    const set = new Set(current);\n    \n    // --- Filtreleme (ada göre)\n    const filtered = kw\n    ? cats.filter(c => String(c.name).toLowerCase().includes(kw))\n    : cats;\n    \n    // --- Seçili olanları üste al\n    const chosen = filtered.filter(c => set.has(String(c._id)));\n    const rest = filtered.filter(c => !set.has(String(c._id)));\n    const ordered = [...chosen, ...rest];\n    \n    const prevScroll = host.scrollTop;\n    \n    host.innerHTML = ordered.map(c => {\n    const id = String(c._id);\n    const checked = set.has(id) ? 'checked' : '';\n    return `\n    <label class=\"d-flex align-items-center gap-2 py-1\">\n            <input type=\"checkbox\" class=\"form-check-input cat-check\" value=\"${id}\" ${checked}>\n            <span>${c.name}</span>\n          </label>`;\n    }).join(\"\");\n    \n    // checkbox değişince kendini tekrar çiz (filtre korunur)\n    host.querySelectorAll('.cat-check').forEach(ch => {\n    ch.addEventListener('change', () => {\n    const idsNow = Array.from(host.querySelectorAll('.cat-check:checked')).map(x => x.value);\n    renderCatListInto(host, idsNow, ch.value, kw);\n    });\n    });\n    \n    host.scrollTop = prevScroll;\n    \n    if (focusId) {\n    const toFocus = host.querySelector(`.cat-check[value=\"${focusId}\"]`);\n    toFocus?.focus();\n    }\n    }\n\n    document.addEventListener('DOMContentLoaded', ()=>{\n      const modalEl = document.getElementById('catModal');\n      const modal = modalEl ? new bootstrap.Modal(modalEl) : null;\n\n      // Yeni kategori oluştur → otomatik seç, üste taşı, Survey'ye yaz\n      document.getElementById('btnCreateCat')?.addEventListener('click', async ()=>{\n        const inp = document.getElementById('newCatName');\n        const val = (inp?.value||\"\").trim();\n        if(!val) return;\n\n        const token = document.querySelector('meta[name=\"csrf-token\"]')?.getAttribute('content') || '';\n        const res = await fetch('/categories-opt/add', {\n          method: 'POST',\n          credentials: 'include',\n          headers: {\n            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',\n            ...(token ? {'X-CSRF-Token': token} : {})\n          },\n          body: new URLSearchParams({ name: val })\n        });\n\n        if (!res.ok) {\n          const txt = await res.text().catch(()=> '');\n          alert('Kategori kaydedilemedi.\\n' + (txt||''));\n          return;\n        }\n\n        let createdId = null;\n        try {\n          const data = await res.json();\n          if (data && (data._id || data.id)) createdId = String(data._id || data.id);\n        } catch { /* json değilse sorun yok */ }\n\n        await loadCategories();\n\n        if (!createdId) {\n          const byName = (window.__CATS__||[]).find(c => String(c.name).trim() === val);\n          if (byName) createdId = String(byName._id);\n        }\n\n        // Survey choices güncelle\n        const s = window.__surveyModel__;\n        const choices = (window.__CATS__||[]).map(c=>({value:String(c._id), text:c.name}));\n        s?.getQuestionByName?.('newCats') && (s.getQuestionByName('newCats').choices = choices);\n        // (filterCats tamamen kaldırıldı)\n\n        // Yeni oluşturulanı seçili yap\n        let selected = [];\n        if (s && typeof s.getQuestionByName === 'function') {\n          selected = (s.getQuestionByName('newCats')?.value || []).map(String);\n        }\n        if (createdId && !selected.includes(createdId)) selected.push(createdId);\n\n        if (s && typeof s.setValue === 'function') s.setValue('newCats', selected);\n        else if (s?.getQuestionByName) { const q = s.getQuestionByName('newCats'); if (q) q.value = selected; }\n\n        // Modal listesini güncelle (yeni kategori üste ve tikli), mevcut filtreyi koru\n        const currentFilter = document.getElementById('catFilter')?.value || '';\n        if (typeof renderCatListInto === 'function') {\n        renderCatListInto(document.getElementById('catList'), selected, createdId, currentFilter);\n        }\n\n        // \"Kategori Ekle\" butonu rozeti\n        const btnCat = document.getElementById('btnAddCat');\n        if (btnCat) {\n          btnCat.querySelector('.sel-badge')?.remove();\n          if (selected.length) {\n            const span = document.createElement('span');\n            span.className = 'sel-badge ms-1 badge rounded-pill text-bg-secondary';\n            span.textContent = selected.length;\n            btnCat.appendChild(span);\n          }\n        }\n\n        if (inp) inp.value = '';\n\n      });\n\n      // Kategori arama kutusu + temizle butonu\n      const catFilterInput = document.getElementById('catFilter');\n      const catFilterClear = document.getElementById('catFilterClear');\n      let catFilterTimer;\n      \n      function applyCatFilter(val){\n      const checkedIds = Array.from(document.querySelectorAll('#catList .cat-check:checked')).map(x => x.value);\n      renderCatListInto(document.getElementById('catList'), checkedIds, null, val);\n      }\n      \n      catFilterInput?.addEventListener('input', (e) => {\n      clearTimeout(catFilterTimer);\n      const val = e.target.value || '';\n      // X butonunun görünürlüğü\n      if (catFilterClear) catFilterClear.classList.toggle('d-none', val.length === 0);\n      catFilterTimer = setTimeout(() => applyCatFilter(val), 120);\n      });\n      \n      // Enter’a basınca sayfayı submit etmesin, sadece filtre uygulasın\n      catFilterInput?.addEventListener('keydown', (e)=>{\n      if(e.key === 'Enter'){ e.preventDefault(); applyCatFilter(catFilterInput.value || ''); }\n      });\n      \n      // X butonu davranışı\n      catFilterClear?.addEventListener('click', ()=>{\n      if (!catFilterInput) return;\n      catFilterInput.value = '';\n      catFilterClear.classList.add('d-none');\n      applyCatFilter('');\n      catFilterInput.focus();\n      });\n\n      // Seçimi Uygula\n      // TEK dinleyici — DOMContentLoaded bloğunun İÇİNDE olsun ve sadece 1 kez tanımla\n      document.getElementById('btnApplyCats')?.addEventListener('click', () => {\n      // 1) Seçili id'leri topla\n      const checks = Array.from(document.querySelectorAll('#catList .cat-check'));\n      const ids = checks.filter(ch => ch.checked).map(ch => String(ch.value));\n      \n      // 2) Survey'ye yaz\n      const s = window.__surveyModel__;\n      if (s?.setValue) {\n      s.setValue('newCats', ids);\n      } else {\n      const q = s?.getQuestionByName?.('newCats');\n      if (q) q.value = ids;\n      }\n      \n      // 3) \"Kategori Ekle\" butonu rozeti güncelle\n      const btnCat = document.getElementById('btnAddCat');\n      if (btnCat) {\n      btnCat.querySelector('.sel-badge')?.remove();\n      if (ids.length) {\n      const span = document.createElement('span');\n      span.className = 'sel-badge ms-1 badge rounded-pill text-bg-secondary';\n      span.textContent = String(ids.length);\n      btnCat.appendChild(span);\n      }\n      }\n      \n      // 4) Arama filtresini temizle + X butonunu gizle + listeyi filtresiz yeniden çiz\n      const filterInp = document.getElementById('catFilter');\n      if (filterInp) filterInp.value = '';\n      document.getElementById('catFilterClear')?.classList.add('d-none');\n      renderCatListInto(document.getElementById('catList'), ids, null, '');\n      \n      // 5) Modalı kapat\n      const modalEl = document.getElementById('catModal');\n      const inst = modalEl && (window.bootstrap?.Modal?.getOrCreateInstance\n      ? window.bootstrap.Modal.getOrCreateInstance(modalEl)\n      : null);\n      inst?.hide();\n      });\n      });\n  </script>\n\n  <script>\n    (function(){\n    const csrf = document.querySelector('meta[name=\"csrf-token\"]')?.getAttribute('content') || '';\n    const h = (str='') => String(str ?? '').replace(/[&<>\"']/g, m => ({\n      \"&\":\"&amp;\",\"<\":\"&lt;\",\">\":\"&gt;\",\"\\\"\":\"&quot;\",\"'\":\"&#39;\"\n    }[m]));\n  \n    // ---- DB'den liste çek & önbelleği kur\n    async function loadCategories(){\n      try{\n        const res = await fetch('/categories', { credentials:'include' });\n        if(!res.ok) throw new Error('Liste alınamadı');\n        const data = await res.json().catch(()=>[]);\n        window.__CATS__ = Array.isArray(data) ? data : [];\n        window.__CATMAP__ = Object.fromEntries((window.__CATS__||[]).map(c=>[String(c._id), c.name]));\n        return true;\n      }catch(err){\n        alert('Kategori listesi alınamadı.');\n        return false;\n      }\n    }\n  \n    // --- Survey tagbox choices'ı güncelle\n    function refreshSurveyChoices(){\n      try{\n        const s = window.__surveyModel__;\n        if(!s?.getQuestionByName) return;\n        const q = s.getQuestionByName('newCats');\n        if(!q) return;\n        q.choices = (window.__CATS__||[]).map(c=>({value:String(c._id), text:c.name}));\n      }catch{}\n    }\n  \n    // --- Liste render\n    async function renderCatManage(filter=''){\n      const body = document.getElementById('catManageTbody');\n      if(!body) return;\n  \n      if(!Array.isArray(window.__CATS__)) await loadCategories();\n  \n      const all = (window.__CATS__||[]);\n      const kw = (filter||'').trim().toLowerCase();\n      const list = kw ? all.filter(c => String(c.name).toLowerCase().includes(kw)) : all;\n  \n      if(!list.length){\n        body.innerHTML = `<tr><td colspan=\"3\" class=\"text-center text-muted py-4\">Sonuç yok</td></tr>`;\n        return;\n      }\n  \n      body.innerHTML = list.map((c,idx)=>`\n        <tr data-id=\"${h(c._id)}\">\n          <td class=\"text-muted\">${idx+1}</td>\n          <td class=\"cat-name\">\n            <span class=\"cat-name-text\">${h(c.name)}</span>\n          </td>\n          <td class=\"text-end\">\n            <button class=\"btn btn-sm btn-outline-secondary btn-rename\"><i class=\"bi bi-pencil-square\"></i> Düzenle</button>\n            <button class=\"btn btn-sm btn-outline-danger btn-delete\"><i class=\"bi bi-trash\"></i> Sil</button>\n          </td>\n        </tr>\n      `).join('');\n  \n      // Edit / Delete olayları\n      body.querySelectorAll('.btn-rename').forEach(btn=>{\n        btn.addEventListener('click', (e)=>{\n          const tr = e.currentTarget.closest('tr');\n          const id = tr.getAttribute('data-id');\n          const span = tr.querySelector('.cat-name-text');\n          const oldName = span.textContent.trim();\n          if(tr.classList.contains('cat-row-editing')) return;\n  \n          tr.classList.add('cat-row-editing');\n          tr.querySelector('.cat-name').innerHTML = `\n            <div class=\"d-flex gap-2 align-items-center\">\n              <input class=\"form-control form-control-sm\" value=\"${h(oldName)}\">\n              <button class=\"btn btn-sm btn-success btn-save\"><i class=\"bi bi-check-lg\"></i></button>\n              <button class=\"btn btn-sm btn-outline-secondary btn-cancel\"><i class=\"bi bi-x-lg\"></i></button>\n            </div>`;\n  \n          const btnCancel = tr.querySelector('.btn-cancel');\n          const btnSave   = tr.querySelector('.btn-save');\n  \n          btnCancel.addEventListener('click', ()=>{\n            tr.classList.remove('cat-row-editing');\n            tr.querySelector('.cat-name').innerHTML = `<span class=\"cat-name-text\">${h(oldName)}</span>`;\n          });\n  \n          btnSave.addEventListener('click', async ()=>{\n            const input = tr.querySelector('input');\n            const newName = (input.value||'').trim();\n            if(!newName || newName===oldName){ btnCancel.click(); return; }\n  \n            btnSave.disabled = true;\n            const ok = await updateCategory(id, newName, oldName);\n            btnSave.disabled = false;\n  \n            if(ok){\n              await loadCategories();              // <-- DB'den tazele\n              refreshSurveyChoices();\n              renderCatManage(document.getElementById('catSearch')?.value||'');\n            }\n          });\n        });\n      });\n  \n      body.querySelectorAll('.btn-delete').forEach(btn=>{\n        btn.addEventListener('click', async (e)=>{\n          const tr = e.currentTarget.closest('tr');\n          const id = tr.getAttribute('data-id');\n  \n  \n          btn.disabled = true;\n          const ok = await trashCategory(id);\n          btn.disabled = false;\n  \n          if(ok){\n            await loadCategories();                // <-- DB'den tazele\n            refreshSurveyChoices();\n            renderCatManage(document.getElementById('catSearch')?.value||'');\n          }\n        });\n      });\n    }\n  \n    // --- API yardımcıları (Node-RED uçlarına göre)\n    async function updateCategory(id, name, orig){\n      try{\n        const res = await fetch('/categories-opt/update', {\n          method:'POST',\n          credentials:'include',\n          headers:{\n            'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8',\n            ...(csrf ? {'X-CSRF-Token': csrf} : {})\n          },\n          body: new URLSearchParams({ id:String(id), name:String(name), orig:String(orig||'') })\n        });\n        if(!res.ok){\n          const t = await res.text().catch(()=> '');\n          alert('Güncelleme başarısız.\\n'+(t||''));\n          return false;\n        }\n        // mongodb4 updateOne çıktısı: { acknowledged, matchedCount, modifiedCount, ... }\n        const out = await res.json().catch(()=> ({}));\n        // Başarı \"gerçek değişiklik\" olsun:\n        return !!(out?.modifiedCount > 0);\n      }catch(e){\n        alert('Ağ hatası');\n        return false;\n      }\n    }\n  \n    async function trashCategory(id){\n      try{\n        const res = await fetch('/categories-opt/trash', {\n          method:'POST',\n          credentials:'include',\n          headers:{\n            'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8',\n            ...(csrf ? {'X-CSRF-Token': csrf} : {})\n          },\n          body: new URLSearchParams({ id:String(id) })\n        });\n        if(!res.ok){\n          const txt = await res.text().catch(()=> '');\n          alert('Silme başarısız.\\n'+(txt||''));\n          return false;\n        }\n        // mongodb4 deleteOne çıktısı: { acknowledged, deletedCount }\n        const out = await res.json().catch(()=> ({}));\n        return !!(out?.deletedCount > 0);\n      }catch(e){\n        alert('Ağ hatası');\n        return false;\n      }\n    }\n  \n    async function createCategory(name){\n      try{\n        const res = await fetch('/categories-opt/add', {\n          method:'POST',\n          credentials:'include',\n          headers:{\n            'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8',\n            ...(csrf ? {'X-CSRF-Token': csrf} : {})\n          },\n          body: new URLSearchParams({ name:String(name) })\n        });\n        if(!res.ok){\n          const t = await res.text().catch(()=> '');\n          alert('Ekleme başarısız.\\n'+(t||''));\n          return null;\n        }\n        // insertOne çıktısı: { acknowledged, insertedId }\n        const out = await res.json().catch(()=> ({}));\n        const id = out?.insertedId || out?._id || out?.id || null;\n        return id ? String(id) : null;\n      }catch(e){\n        alert('Ağ hatası');\n        return null;\n      }\n    }\n  \n    // --- Modal açma ve olaylar\n    document.getElementById('btnManageCats')?.addEventListener('click', async ()=>{\n      await loadCategories();                // <-- her açılışta DB’den\n      await renderCatManage('');\n      const el = document.getElementById('catManageModal');\n      const m = window.bootstrap?.Modal ? window.bootstrap.Modal.getOrCreateInstance(el) : new bootstrap.Modal(el);\n      m.show();\n      document.getElementById('catSearch')?.focus();\n    });\n  \n    // Arama (debounce)\n    let tSearch;\n    document.getElementById('catSearch')?.addEventListener('input', (e)=>{\n      clearTimeout(tSearch);\n      const v = e.target.value || '';\n      tSearch = setTimeout(()=> renderCatManage(v), 150);\n    });\n  \n    // Yeni kategori ekle\n    document.getElementById('btnCatNew')?.addEventListener('click', async ()=>{\n      const inp = document.getElementById('catNewName');\n      const name = (inp?.value||'').trim();\n      if(!name) return;\n  \n      const newId = await createCategory(name);\n      if(!newId) return;\n  \n      await loadCategories();                // <-- DB’den tazele\n      refreshSurveyChoices();\n      renderCatManage(document.getElementById('catSearch')?.value||'');\n      if(inp) inp.value='';\n    });\n  \n    // Sayfa ilk yüklenirken de listeyi hazırlamak istersen:\n    // loadCategories().then(()=>{ refreshSurveyChoices(); });\n  })();\n  </script>\n\n  <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js\"></script>\n</body>\n</html>\n",
         "output": "str",
         "x": 960,
-        "y": 120,
+        "y": 140,
         "wires": [
             [
                 "5f3b77fa64a6ca14"
@@ -290,7 +290,7 @@
         "statusCode": "",
         "headers": {},
         "x": 1110,
-        "y": 120,
+        "y": 140,
         "wires": []
     },
     {
@@ -306,7 +306,7 @@
         "finalize": "",
         "libs": [],
         "x": 450,
-        "y": 120,
+        "y": 140,
         "wires": [
             [
                 "7b383705f4aaec1f"
@@ -326,7 +326,7 @@
             "32deda87e3d60747"
         ],
         "x": 175,
-        "y": 80,
+        "y": 100,
         "wires": [
             [
                 "6d8042d6f0a12ac0"
@@ -344,7 +344,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 140,
-        "y": 560,
+        "y": 580,
         "wires": [
             [
                 "f55ef5f0d076fe2f"
@@ -361,7 +361,7 @@
             "location": "/"
         },
         "x": 1500,
-        "y": 520,
+        "y": 540,
         "wires": []
     },
     {
@@ -377,7 +377,7 @@
         "finalize": "",
         "libs": [],
         "x": 670,
-        "y": 560,
+        "y": 580,
         "wires": [
             [
                 "93d181d58a920cd0"
@@ -404,7 +404,7 @@
         "finalize": "",
         "libs": [],
         "x": 500,
-        "y": 560,
+        "y": 580,
         "wires": [
             [
                 "f8a16a36a9c0bb02"
@@ -428,7 +428,7 @@
             "c5f4d0120c89df7e"
         ],
         "x": 595,
-        "y": 600,
+        "y": 620,
         "wires": []
     },
     {
@@ -441,7 +441,7 @@
             "c5f4d0120c89df7e"
         ],
         "x": 1135,
-        "y": 580,
+        "y": 600,
         "wires": []
     },
     {
@@ -455,7 +455,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 110,
-        "y": 120,
+        "y": 140,
         "wires": [
             [
                 "6d8042d6f0a12ac0"
@@ -473,7 +473,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 240,
+        "y": 260,
         "wires": [
             [
                 "4a66cc4d80aa2897"
@@ -493,7 +493,7 @@
         "finalize": "",
         "libs": [],
         "x": 510,
-        "y": 240,
+        "y": 260,
         "wires": [
             [
                 "4ebc1649e8305f46"
@@ -515,7 +515,7 @@
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Yapılacaklar — Düzenleme</title>\n\n  <!-- Bootstrap & Icons -->\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css\" rel=\"stylesheet\">\n\n  <!-- SurveyJS (jQuery) -->\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n\n  <style>\n    body { background: #f8f9fa; }\n    /* SurveyJS modern tema: soru başlığını ve yeşil header şeridini gizle */\n    .sv_q_title { display: none !important; }\n    .sd-element__header { display: none !important; }\n  </style>\n</head>\n\n<body class=\"bg-light\">\n  <!-- NAVBAR aynı kalsın -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Yapılacaklar — Düzenleme</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/\">Ana Sayfa</a>\n    </div>\n  </nav>\n\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-8 offset-md-2\">\n        {{#error}}\n        <div class=\"alert alert-danger\">\n          <h4>{{message}}</h4>\n        </div>\n        {{/error}}\n\n        <!-- SurveyJS alanı -->\n        <div id=\"surveyContainer\"></div>\n\n        <!-- Butonlar -->\n        <div class=\"d-flex justify-content-end gap-2 mt-3\">\n          <a class=\"btn btn-danger text-white\" href=\"/\">Vazgeç</a>\n          <button class=\"btn btn-secondary text-white\" type=\"button\" id=\"btnClear\">Temizle</button>\n          <button id=\"btnUpdate\" class=\"btn btn-success text-white px-4\" type=\"button\" disabled>Güncelle</button>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <script>\n    const surveyJson = {\n      questionTitleLocation: \"hidden\",\n      title: \"Düzenleme\",\n      showQuestionNumbers: \"off\",\n      questionTitleLocation: \"hidden\",\n      pages: [\n        {\n          elements: [\n            {\n              type: \"text\",\n              name: \"name\",\n              titleLocation: \"hidden\",\n              isRequired: true,\n              defaultValue: \"{{payload.name}}\",\n              placeholder: \"Dosyalar teslim edilecek...\"\n            }\n          ]\n        }\n      ],\n      showPrevButton: false,\n      showNavigationButtons: false,\n      showCompletedPage: false\n    };\n\n    const survey = new Survey.Model(surveyJson);\n    $(\"#surveyContainer\").Survey({ model: survey });\n\n    survey.textUpdateMode = \"onTyping\";\n\n    const btnUpdate = document.getElementById(\"btnUpdate\");\n    const originalValue = \"{{payload.name}}\".trim();\n\n    function toggleUpdateButton(sender){\n      const currentValue = (sender.data.name || \"\").trim();\n      btnUpdate.disabled = currentValue.length === 0 || currentValue === originalValue;\n    }\n\n    survey.onValueChanged.add(function(sender){ toggleUpdateButton(sender); });\n\n    toggleUpdateButton(survey);\n\n    document.getElementById(\"btnClear\").addEventListener(\"click\", function(){\n      survey.setValue(\"name\", \"\");\n      toggleUpdateButton(survey);\n    });\n\n    btnUpdate.addEventListener(\"click\", function(){\n      if (btnUpdate.disabled) return;\n      const form = document.createElement(\"form\");\n      form.method = \"POST\";\n      form.action = \"/opt/update\";\n\n      const id = document.createElement(\"input\");\n      id.type = \"hidden\";\n      id.name = \"id\";\n      id.value = \"{{payload.id}}\";\n      form.appendChild(id);\n\n      const orig = document.createElement(\"input\");\n      orig.type = \"hidden\";\n      orig.name = \"orig\";\n      orig.value = \"{{payload.name}}\";\n      form.appendChild(orig);\n\n      const name = document.createElement(\"input\");\n      name.type = \"hidden\";\n      name.name = \"name\";\n      name.value = survey.data.name;\n      form.appendChild(name);\n\n      document.body.appendChild(form);\n      form.submit();\n    });\n  </script>\n\n</body>\n\n</html>\n",
         "output": "str",
         "x": 1020,
-        "y": 240,
+        "y": 260,
         "wires": [
             [
                 "16deb591861247c0"
@@ -532,7 +532,7 @@
             "c5f4d0120c89df7e"
         ],
         "x": 955,
-        "y": 280,
+        "y": 300,
         "wires": []
     },
     {
@@ -543,7 +543,7 @@
         "statusCode": "",
         "headers": {},
         "x": 1170,
-        "y": 240,
+        "y": 260,
         "wires": []
     },
     {
@@ -557,7 +557,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 140,
-        "y": 380,
+        "y": 400,
         "wires": [
             [
                 "2cbcf6d6ae4cab8b"
@@ -577,7 +577,7 @@
         "finalize": "",
         "libs": [],
         "x": 530,
-        "y": 380,
+        "y": 400,
         "wires": [
             [
                 "8af76568d2754a77"
@@ -599,7 +599,7 @@
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Hatırlatıcılar</title>\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css\" rel=\"stylesheet\">\n  <link rel=\"stylesheet\" href=\"https://cdn.datatables.net/v/bs5/dt-1.13.8/datatables.min.css\"/>\n  <style>\n    :root { --soft-bg: #f8f9fa; }\n    body { background: var(--soft-bg); }\n    .dt-center { text-align:center; }\n    .nowrap { white-space: nowrap; }\n    #remTable{ table-layout: fixed; }\n    .action-btn{ min-width: 92px; }\n  </style>\n</head>\n<body class=\"bg-light\">\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Hatırlatıcılar</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/\">Ana Sayfa</a>\n    </div>\n  </nav>\n\n  <main class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-10 offset-md-1\">\n        <!-- FORM -->\n        <div class=\"card shadow-sm mb-3\">\n          <div class=\"card-body\">\n            <div class=\"d-flex align-items-center mb-2\">\n              <div class=\"flex-grow-1\"></div>\n              <small class=\"text-muted\">Zaman Dilimi: Europe/Istanbul</small>\n            </div>\n            <form id=\"frm\" action=\"/schedule-opt\" method=\"post\" novalidate>\n              <input type=\"hidden\" name=\"id\" id=\"idHidden\" value=\"{{payload.id}}\">\n              <input type=\"hidden\" name=\"origDt\" id=\"origDtHidden\" value=\"\">\n              <input type=\"hidden\" name=\"origNote\" id=\"origNoteHidden\" value=\"\">\n              <input type=\"hidden\" name=\"scheduleId\" id=\"scheduleIdHidden\" value=\"\">\n              <div class=\"row g-3 align-items-end\">\n                <div class=\"col-md-6\">\n                  <label for=\"dt\" class=\"form-label\">Tarih ve Saat</label>\n                  <input id=\"dt\" name=\"datetime\" type=\"datetime-local\" step=\"60\" class=\"form-control form-control-lg\" aria-label=\"Tarih ve saat\" required>\n                  <div class=\"form-text\">Geçmiş tarih seçilemez.</div>\n                </div>\n                <div class=\"col-12\">\n                  <label for=\"note\" class=\"form-label\">Not</label>\n                  <textarea id=\"note\" name=\"note\" class=\"form-control form-control-lg\" placeholder=\"Not ekleyin…\" rows=\"3\" maxlength=\"500\"></textarea>\n                </div>\n                <div class=\"col-12 d-flex justify-content-end gap-2\">\n                  <a href=\"/\" class=\"btn btn-danger\">Vazgeç</a>\n                  <button id=\"btnClear\" class=\"btn btn-secondary\" type=\"button\">Temizle</button>\n                  <button id=\"btnPlan\" class=\"btn btn-success\" type=\"submit\">Planla</button>\n                </div>\n              </div>\n            </form>\n          </div>\n        </div>\n\n        <!-- LİSTE -->\n        <div class=\"card shadow-sm\">\n          <div class=\"card-header bg-white d-flex align-items-center justify-content-between\">\n            <h5 class=\"m-0 text-muted\">Yaklaşan hatırlatıcılar</h5>\n          </div>\n          <div class=\"card-body p-0\">\n            <div class=\"table-responsive\">\n              <table id=\"remTable\" class=\"table table-striped table-hover m-0 align-middle\">\n                <thead class=\"table-light\">\n                  <tr>\n                    <th style=\"width:40%\">Not</th>\n                    <th class=\"nowrap\" style=\"width:20%\">Tarih/Saat</th>\n                    <th class=\"nowrap\" style=\"width:20%\">Kalan Süre</th>\n                    <th class=\"dt-center nowrap\" style=\"width:20%;\" data-orderable=\"false\">İşlemler</th>\n                  </tr>\n                </thead>\n                <tbody></tbody>\n              </table>\n            </div>\n          </div>\n        </div>\n\n      </div>\n    </div>\n  </main>\n\n  <!-- TOAST -->\n  <div class=\"position-fixed bottom-0 end-0 p-3\" style=\"z-index: 1080;\">\n    <div id=\"toast\" class=\"toast align-items-center text-bg-dark border-0\" role=\"status\" aria-live=\"polite\" aria-atomic=\"true\">\n      <div class=\"d-flex\">\n        <div class=\"toast-body\" id=\"toastBody\">İşlem tamam.</div>\n        <button type=\"button\" class=\"btn-close btn-close-white me-2 m-auto\" data-bs-dismiss=\"toast\" aria-label=\"Close\"></button>\n      </div>\n    </div>\n  </div>\n\n  <!-- BACKEND'TEN GÖMÜLEN VERİLER -->\n  <script>\n    window.__TODO__      = {{#todoJson}}{{{todoJson}}}{{/todoJson}}{{^todoJson}}null{{/todoJson}};\n    window.__SCHEDULES__ = {{#schedulesJson}}{{{schedulesJson}}}{{/schedulesJson}}{{^schedulesJson}}[]{{/schedulesJson}};\n  </script>\n\n  <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js\"></script>\n  <script src=\"https://code.jquery.com/jquery-3.7.1.min.js\"></script>\n  <script src=\"https://cdn.datatables.net/v/bs5/dt-1.13.8/datatables.min.js\"></script>\n  <script>\n  (function(){\n    const dtInput  = document.getElementById('dt');\n    const note     = document.getElementById('note');\n    const btnClear = document.getElementById('btnClear');\n    const planBtn  = document.getElementById('btnPlan');\n    const idHidden = document.getElementById('idHidden');\n    const tableEl  = document.getElementById('remTable');\n    const scheduleIdHidden = document.getElementById('scheduleIdHidden');\n\n    const toastEl   = document.getElementById('toast');\n    const toastBody = document.getElementById('toastBody');\n    const toast     = new bootstrap.Toast(toastEl, {delay:2000});\n    function showToast(msg){ toastBody.textContent = msg; toast.show(); }\n\n    const pad = n => String(n).padStart(2,'0');\n    function toLocalInputValue(d){\n      const yy = d.getFullYear();\n      const mm = pad(d.getMonth()+1);\n      const dd = pad(d.getDate());\n      const hh = pad(d.getHours());\n      const mi = pad(d.getMinutes());\n      return `${yy}-${mm}-${dd}T${hh}:${mi}`;\n    }\n    function plusMinutes(date, minutes){ const d=new Date(date.getTime()); d.setMinutes(d.getMinutes()+minutes); d.setSeconds(0,0); return d; }\n    function humanDiff(dStr){\n      const d = new Date(dStr);\n      const diffMs = d - new Date();\n      if(!isFinite(d) || isNaN(d)) return '-';\n      if(diffMs <= 0) return 'Süre doldu';\n      const mins = Math.round(diffMs/60000);\n      if(mins < 60) return `${mins} dk`;\n      const hrs = Math.floor(mins/60); const rem = mins%60;\n      if(hrs < 24) return `${hrs} sa ${rem} dk`;\n      const days = Math.floor(hrs/24);\n      return `${days} gün ${hrs%24} sa`;\n    }\n    const esc = s => String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('\"','&quot;').replaceAll(\"'\",\"&#39;\");\n\n    const now = new Date();\n    dtInput.value = toLocalInputValue(plusMinutes(now, 10));\n    dtInput.min   = toLocalInputValue(now);\n    dtInput.addEventListener('change', function(){\n      const chosen = new Date(dtInput.value);\n      const now2 = new Date();\n      if (!isFinite(chosen) || chosen < now2) {\n        dtInput.value = toLocalInputValue(plusMinutes(now2, 1));\n      }\n    });\n\n    btnClear.addEventListener('click', function(){\n      dtInput.value = '';\n      note.value = '';\n      scheduleIdHidden.value = '';\n      document.getElementById('origDtHidden').value = '';\n      document.getElementById('origNoteHidden').value = '';\n      planBtn.textContent = 'Planla';\n      dtInput.focus();\n    });\n\n    document.getElementById('frm').addEventListener('submit', async function(e){\n      e.preventDefault();\n      const id   = idHidden.value || (window.__TODO__ && window.__TODO__.id);\n      const dval = dtInput.value;\n      const nval = (note.value||'').trim();\n      if(!id){ showToast('Kayıt bulunamadı.'); return; }\n      if(!dval){ showToast('Tarih/Saat gerekli.'); return; }\n      const chosen = new Date(dval);\n      if(!(chosen instanceof Date) || isNaN(chosen)) { showToast('Geçersiz tarih.'); return; }\n      if(chosen < new Date()) { showToast('Geçmişe planlanamaz.'); return; }\n\n      const res = await fetch('/schedule-opt',{\n        method:'POST', credentials:'include',\n        headers:{'Content-Type':'application/x-www-form-urlencoded'},\n        body:new URLSearchParams({ id:String(id), datetime:dval, note:nval, scheduleId: scheduleIdHidden.value || '', origDt: document.getElementById('origDtHidden').value || '', origNote: document.getElementById('origNoteHidden').value || '' })\n      });\n      if(!res.ok){ showToast('İstek başarısız.'); return; }\n      location.reload();\n    });\n\n    let dataTable = null;\n    function drawTable(){\n      if(dataTable){ dataTable.clear().destroy(); }\n      const tbody = tableEl.querySelector('tbody');\n      tbody.innerHTML = '';\n      const items = (Array.isArray(window.__SCHEDULES__)? window.__SCHEDULES__: [])\n        .slice().sort((a,b)=> String(a.datetime).localeCompare(String(b.datetime)));\n      for(const r of items){\n        const tr = document.createElement('tr');\n        const text = r.note ? esc(r.note) : 'Hatırlatıcı';\n        tr.innerHTML = `\n          <td class=\"text-truncate\" style=\"max-width:0;\" title=\"${text}\">${text}</td>\n          <td class=\"nowrap\" data-order=\"${esc(r.datetime)}\">${esc(String(r.datetime).replace('T',' '))}</td>\n          <td class=\"nowrap\">${humanDiff(r.datetime)}</td>\n          <td class=\"dt-center\">\n            <div class=\"d-flex justify-content-center gap-2 flex-wrap\">\n                <button class=\"btn btn-outline-primary action-btn\" type=\"button\"\n                        data-role=\"edit\"\n                        data-id=\"${esc(String(r._id||r.scheduleId||''))}\"\n                        data-dt=\"${esc(String(r.datetime))}\"\n                        data-note=\"${esc(String(r.note||''))}\">\n                  <i class=\"bi bi-pencil-square\"></i> Düzenle\n                </button>\n                <form class=\"d-inline\" method=\"post\" action=\"/schedule-opt\">\n                  <input type=\"hidden\" name=\"mode\" value=\"delete\">\n                  <input type=\"hidden\" name=\"id\" value=\"${esc(String(r.todoId||window.__TODO__?.id||''))}\">\n                  <input type=\"hidden\" name=\"scheduleId\" value=\"${esc(String(r._id||r.scheduleId||''))}\">\n                  <button class=\"btn btn-outline-danger action-btn\" type=\"submit\">\n                    <i class=\"bi bi-trash\"></i> Sil\n                  </button>\n                </form>\n              </div>\n          </td>`;\n        tbody.appendChild(tr);\n      }\n      dataTable = new window.jQuery(tableEl).DataTable({\n        order: [[1,'asc']], paging:true, pageLength:10, lengthChange:false,\n        searching:false, info:false, columnDefs:[{targets:3, orderable:false}],\n        language:{ emptyTable:'Kayıt yok.', paginate:{ previous:'Previous', next:'Next' } }\n      });\n    }\n\n    tableEl.addEventListener('click', (e)=>{\n    const btn = e.target.closest('button[data-role=\"edit\"]');\n    if(!btn) return;\n    e.preventDefault();\n    \n    const sid = btn.getAttribute('data-id') || '';\n    const r = (window.__SCHEDULES__||[]).find(\n    x => String(x._id||x.scheduleId||'') === sid\n    );\n    if(!r) return;\n    \n    // hedef todo id’si (güvenli değilse boş bırakır)\n    idHidden.value = window.__TODO__?.id || '';\n    \n    // form alanlarını doldur\n    dtInput.value = String(r.datetime||'').slice(0,16);\n    note.value = r.note || '';\n    \n    // GÜNCELLEME MODU: scheduleId + orijinal değerleri kaydet\n    scheduleIdHidden.value = sid;\n    document.getElementById('origDtHidden').value = dtInput.value || '';\n    document.getElementById('origNoteHidden').value = note.value || '';\n    \n    // UI\n    planBtn.textContent = 'Güncelle';\n    dtInput.focus();\n    });\n\n    tableEl.addEventListener('submit', function(e){\n      const f = e.target.closest('form[action=\"/schedule-opt\"]');\n      if(!f) return;\n      e.preventDefault();\n      const fd = new FormData(f);\n      fetch('/schedule-opt',{\n        method:'POST', credentials:'include',\n        headers:{'Content-Type':'application/x-www-form-urlencoded'},\n        body:new URLSearchParams(fd)\n      }).then(res=>{\n        if(!res.ok) throw new Error('fail');\n        location.reload();\n      }).catch(()=> showToast('İstek başarısız.'));\n    });\n\n    drawTable();\n  })();\n  </script>\n</body>\n</html>\n",
         "output": "str",
         "x": 1080,
-        "y": 360,
+        "y": 380,
         "wires": [
             [
                 "c001fccb8fb4cf85"
@@ -616,7 +616,7 @@
             "c5f4d0120c89df7e"
         ],
         "x": 1015,
-        "y": 420,
+        "y": 440,
         "wires": []
     },
     {
@@ -627,7 +627,7 @@
         "statusCode": "",
         "headers": {},
         "x": 1230,
-        "y": 360,
+        "y": 380,
         "wires": []
     },
     {
@@ -636,7 +636,7 @@
         "z": "1d53f30b926d0909",
         "name": "",
         "x": 270,
-        "y": 120,
+        "y": 140,
         "wires": [
             [
                 "9e7745c31875caa6"
@@ -649,7 +649,7 @@
         "z": "1d53f30b926d0909",
         "name": "",
         "x": 310,
-        "y": 240,
+        "y": 260,
         "wires": [
             [
                 "414d44229aa0ed03"
@@ -662,7 +662,7 @@
         "z": "1d53f30b926d0909",
         "name": "",
         "x": 330,
-        "y": 380,
+        "y": 400,
         "wires": [
             [
                 "b8be420b120246f5"
@@ -675,7 +675,7 @@
         "z": "1d53f30b926d0909",
         "name": "",
         "x": 330,
-        "y": 560,
+        "y": 580,
         "wires": [
             [
                 "c8e03f51ac6bfb33"
@@ -695,7 +695,7 @@
         "handleDocId": true,
         "name": "",
         "x": 620,
-        "y": 120,
+        "y": 140,
         "wires": [
             [
                 "fdcf576ad7ef630b"
@@ -715,7 +715,7 @@
         "handleDocId": false,
         "name": "",
         "x": 700,
-        "y": 240,
+        "y": 260,
         "wires": [
             [
                 "a1e1269d2a6b4d4c"
@@ -735,7 +735,7 @@
         "finalize": "",
         "libs": [],
         "x": 860,
-        "y": 240,
+        "y": 260,
         "wires": [
             [
                 "b38fb814b875aebb"
@@ -758,7 +758,7 @@
         "handleDocId": false,
         "name": "",
         "x": 720,
-        "y": 380,
+        "y": 400,
         "wires": [
             [
                 "b3bffd50b8d5c4d7"
@@ -778,7 +778,7 @@
         "finalize": "",
         "libs": [],
         "x": 900,
-        "y": 380,
+        "y": 400,
         "wires": [
             [
                 "a35e8f26138c2a60"
@@ -801,7 +801,7 @@
         "finalize": "",
         "libs": [],
         "x": 1010,
-        "y": 580,
+        "y": 600,
         "wires": [
             [
                 "9736330931d8ab79"
@@ -827,7 +827,7 @@
         "handleDocId": false,
         "name": "",
         "x": 840,
-        "y": 520,
+        "y": 540,
         "wires": [
             [
                 "af5fc661d33623d3"
@@ -844,7 +844,7 @@
             "location": "/"
         },
         "x": 1000,
-        "y": 520,
+        "y": 540,
         "wires": []
     },
     {
@@ -860,7 +860,7 @@
         "handleDocId": false,
         "name": "",
         "x": 840,
-        "y": 580,
+        "y": 600,
         "wires": [
             [
                 "813b033439558352"
@@ -880,7 +880,7 @@
         "handleDocId": false,
         "name": "",
         "x": 1330,
-        "y": 480,
+        "y": 500,
         "wires": [
             [
                 "91308c72ec45a46b"
@@ -897,7 +897,7 @@
             "18dc3105a4edec0c"
         ],
         "x": 1135,
-        "y": 640,
+        "y": 660,
         "wires": []
     },
     {
@@ -913,7 +913,7 @@
         "handleDocId": false,
         "name": "",
         "x": 1330,
-        "y": 560,
+        "y": 580,
         "wires": [
             [
                 "91308c72ec45a46b"
@@ -943,7 +943,7 @@
         "repair": false,
         "outputs": 2,
         "x": 1170,
-        "y": 520,
+        "y": 540,
         "wires": [
             [
                 "e82dbbf530f551b8"
@@ -966,7 +966,7 @@
         "finalize": "",
         "libs": [],
         "x": 790,
-        "y": 120,
+        "y": 140,
         "wires": [
             [
                 "2ae9555726c58d4a"
@@ -984,7 +984,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 150,
-        "y": 800,
+        "y": 820,
         "wires": [
             [
                 "f701f5f92d547b4f"
@@ -997,7 +997,7 @@
         "z": "1d53f30b926d0909",
         "name": "",
         "x": 350,
-        "y": 800,
+        "y": 820,
         "wires": [
             [
                 "cbdb6994173bdf89"
@@ -1017,7 +1017,7 @@
         "finalize": "",
         "libs": [],
         "x": 550,
-        "y": 800,
+        "y": 820,
         "wires": [
             [
                 "5926842831fed148"
@@ -1037,7 +1037,7 @@
         "handleDocId": false,
         "name": "",
         "x": 740,
-        "y": 800,
+        "y": 820,
         "wires": [
             [
                 "b028db40bf340376"
@@ -1057,7 +1057,7 @@
         "finalize": "",
         "libs": [],
         "x": 930,
-        "y": 800,
+        "y": 820,
         "wires": [
             [
                 "8b20513b3074ae21"
@@ -1078,7 +1078,7 @@
         "statusCode": "302",
         "headers": {},
         "x": 1500,
-        "y": 760,
+        "y": 780,
         "wires": []
     },
     {
@@ -1094,7 +1094,7 @@
         "handleDocId": false,
         "name": "",
         "x": 1130,
-        "y": 740,
+        "y": 760,
         "wires": [
             [
                 "11372450cde8ab06"
@@ -1114,7 +1114,7 @@
         "handleDocId": false,
         "name": "",
         "x": 1130,
-        "y": 800,
+        "y": 820,
         "wires": [
             [
                 "11372450cde8ab06"
@@ -1134,7 +1134,7 @@
         "finalize": "",
         "libs": [],
         "x": 1320,
-        "y": 760,
+        "y": 780,
         "wires": [
             [
                 "638fcdcf214c899c"
@@ -1151,7 +1151,304 @@
             "18dc3105a4edec0c"
         ],
         "x": 1075,
-        "y": 860,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "8a17d35dfec47d16",
+        "type": "http in",
+        "z": "ce31de18fd4f4005",
+        "name": "",
+        "url": "/categories-opt/:type",
+        "method": "post",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 170,
+        "y": 340,
+        "wires": [
+            [
+                "3685bfd7d557a4df"
+            ]
+        ]
+    },
+    {
+        "id": "4ee1a87518e79ddc",
+        "type": "http response",
+        "z": "ce31de18fd4f4005",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1030,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "cae3a7cac1ed0401",
+        "type": "function",
+        "z": "ce31de18fd4f4005",
+        "name": "validation",
+        "func": "// ---- validation (Outputs: 2) ----\nconst type = (msg.req?.params?.type || \"\").trim();\n\nif (![\"add\", \"update\", \"trash\"].includes(type)) {\n    msg.error = { message: `${type || \"(boş)\"} geçersiz bir parametre.` };\n    return [null, msg]; // HATA\n}\n\nif (type === \"add\" && (!msg.payload?.name || msg.payload.name.trim() === \"\")) {\n    msg.error = { message: \"Kategori adı zorunlu.\" };\n    return [null, msg]; // HATA\n}\n\nif ((type === \"update\" || type === \"trash\") && (!msg.payload?.id || msg.payload.id.toString().trim() === \"\")) {\n    msg.error = { message: \"id zorunlu.\" };\n    return [null, msg]; // HATA\n}\n\nreturn [msg, null]; // BAŞARI\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 340,
+        "wires": [
+            [
+                "6a93a54accf53b71"
+            ],
+            [
+                "32deda87e3d60747"
+            ]
+        ]
+    },
+    {
+        "id": "1d5518f3b2714e92",
+        "type": "mongodb4",
+        "z": "ce31de18fd4f4005",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "categories",
+        "operation": "findOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": true,
+        "name": "",
+        "x": 880,
+        "y": 380,
+        "wires": [
+            [
+                "7ef91cb0c74bc108"
+            ]
+        ]
+    },
+    {
+        "id": "3685bfd7d557a4df",
+        "type": "subflow:9357c048778312fb",
+        "z": "ce31de18fd4f4005",
+        "name": "",
+        "x": 390,
+        "y": 340,
+        "wires": [
+            [
+                "cae3a7cac1ed0401"
+            ]
+        ]
+    },
+    {
+        "id": "6996ef9ac9c8704f",
+        "type": "mongodb4",
+        "z": "ce31de18fd4f4005",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "categories",
+        "operation": "updateOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": true,
+        "name": "",
+        "x": 1250,
+        "y": 340,
+        "wires": [
+            [
+                "3b8d76a699667744"
+            ]
+        ]
+    },
+    {
+        "id": "08a61e2f6e727fba",
+        "type": "http in",
+        "z": "ce31de18fd4f4005",
+        "name": "",
+        "url": "/categories",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 140,
+        "wires": [
+            [
+                "9b21e563bcc9ad0b"
+            ]
+        ]
+    },
+    {
+        "id": "ca6087eeac820f68",
+        "type": "http response",
+        "z": "ce31de18fd4f4005",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 810,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "bcd158a93b8de50f",
+        "type": "function",
+        "z": "ce31de18fd4f4005",
+        "name": "function 4",
+        "func": "msg.payload = [] ;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 140,
+        "wires": [
+            [
+                "c005219d393b46dc"
+            ]
+        ]
+    },
+    {
+        "id": "c005219d393b46dc",
+        "type": "mongodb4",
+        "z": "ce31de18fd4f4005",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "categories",
+        "operation": "aggregate",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 660,
+        "y": 140,
+        "wires": [
+            [
+                "ca6087eeac820f68"
+            ]
+        ]
+    },
+    {
+        "id": "9b21e563bcc9ad0b",
+        "type": "subflow:9357c048778312fb",
+        "z": "ce31de18fd4f4005",
+        "name": "",
+        "x": 330,
+        "y": 140,
+        "wires": [
+            [
+                "bcd158a93b8de50f"
+            ]
+        ]
+    },
+    {
+        "id": "32deda87e3d60747",
+        "type": "link out",
+        "z": "ce31de18fd4f4005",
+        "name": "link out 10",
+        "mode": "link",
+        "links": [
+            "c5f4d0120c89df7e"
+        ],
+        "x": 655,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "254d8fb0f8e86f22",
+        "type": "mongodb4",
+        "z": "ce31de18fd4f4005",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "categories",
+        "operation": "insertOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": true,
+        "name": "",
+        "x": 880,
+        "y": 300,
+        "wires": [
+            [
+                "4ee1a87518e79ddc"
+            ]
+        ]
+    },
+    {
+        "id": "6a93a54accf53b71",
+        "type": "function",
+        "z": "ce31de18fd4f4005",
+        "name": "function 2",
+        "func": "// ---- function 2 (Outputs: 2) ----\n// OUT1 -> insertOne   |   OUT2 -> findOne\nconst type = (msg.req?.params?.type || \"\").trim();\nconst body = (msg.payload && typeof msg.payload === \"object\")\n  ? msg.payload\n  : (msg.req?.body || {});\n\nmsg.formData = body;\n\nif (type === \"add\") {\n  const name = (body.name || \"\").trim();\n  if (!name) {\n    msg.error = { message: \"Kategori adı zorunlu.\" };\n    return [null, null]; // HATA\n  }\n  msg.payload = { name };\n  return [msg, null]; // -> insertOne\n}\n\n// update | trash: önce findOne\nconst id = (body.id || body._id || \"\").toString().trim();\nif (!id) {\n  msg.error = { message: \"id geçersiz.\" };\n  return [null, null]; // HATA\n}\n\nmsg.payload = { _id: id };\nreturn [null, msg]; // -> findOne\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 340,
+        "wires": [
+            [
+                "254d8fb0f8e86f22"
+            ],
+            [
+                "1d5518f3b2714e92"
+            ]
+        ]
+    },
+    {
+        "id": "7ef91cb0c74bc108",
+        "type": "function",
+        "z": "ce31de18fd4f4005",
+        "name": "kategoriIslemleri",
+        "func": "// kategoriIslemleri  (Outputs: 2)\n// OUT1 -> mongodb (update/delete) | OUT2 -> http error\nconst type = (msg.req?.params?.type || \"\").trim();\nconst user = msg.user || {};\n\n// findOne çıktısını normalize et\nconst doc = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\nif (!doc) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, null];\n}\n\n// basit yetki\nconst isAdmin = Array.isArray(user.roles) && user.roles.includes(\"admin\");\nif (doc?.stamp?.username && user?.username && doc.stamp.username !== user.username && !isAdmin) {\n  msg.error = { message: \"Yetkisiz işlem.\" };\n  return [null, null];\n}\n\nconst body = msg.formData || {};\nconst _id = doc?._id || body.id;\nif (!_id) {\n  msg.error = { message: \"Geçersiz id.\" };\n  return [null, null];\n}\n\nif (type === \"update\") {\n  const newName  = (body.name || \"\").trim();\n  const origName = (body.orig || \"\").trim();\n\n  if (!newName) {\n    msg.error = { message: \"Kategori adı boş olamaz.\" };\n    return [null, null];\n  }\n  if (newName === origName) {\n    msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n    return [null, null];\n  }\n\n  msg.payload   = [{ _id }, { $set: { name: newName } }];\n  return [msg, null];\n}\n\nif (type === \"trash\") {\n  msg.payload   = { _id };\n  return [null, msg];\n}\n\nmsg.error = { message: \"Desteklenmeyen işlem.\" };\nreturn [null, null];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 380,
+        "wires": [
+            [
+                "6996ef9ac9c8704f"
+            ],
+            [
+                "450dd7912061bfa5"
+            ]
+        ]
+    },
+    {
+        "id": "450dd7912061bfa5",
+        "type": "mongodb4",
+        "z": "ce31de18fd4f4005",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "categories",
+        "operation": "deleteOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": true,
+        "name": "",
+        "x": 1250,
+        "y": 420,
+        "wires": [
+            [
+                "3b8d76a699667744"
+            ]
+        ]
+    },
+    {
+        "id": "3b8d76a699667744",
+        "type": "http response",
+        "z": "ce31de18fd4f4005",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1430,
+        "y": 380,
         "wires": []
     },
     {
@@ -1848,7 +2145,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 120,
-        "y": 100,
+        "y": 140,
         "wires": [
             [
                 "8c7785adb445f91b"
@@ -1867,7 +2164,7 @@
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Giriş Yap</title>\n\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\" />\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\" />\n\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n</head>\n<body class=\"bg-light\">\n  <div class=\"container mt-5\">\n    <div class=\"row justify-content-center\">\n      <div class=\"col-md-6 col-lg-5\">\n        <div class=\"card shadow-sm\">\n          <div class=\"card-body\">\n            <h5 class=\"mb-3\">Giriş Yap</h5>\n\n            {{#error}} <div class=\"alert alert-danger\">{{message}}</div> {{/error}}\n\n            <div id=\"surveyContainer\"></div>\n\n            <div class=\"text-center mt-3\">\n              Hesabın yok mu? <a href=\"/register\">Kayıt ol</a>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n<script>\n  Survey.StylesManager.applyTheme(\"modern\");\n\n  const surveyJson = {\n    showTitle: false,\n    showCompletedPage: false,\n    showQuestionNumbers: \"off\",\n    completeText: \"Giriş Yap\",\n    widthMode: \"responsive\",\n    elements: [\n      { type:\"text\", name:\"identifier\", title:\"Kullanıcı adı veya E-posta\", isRequired:true, minLength:3,\n        placeholder:\"Kullanıcı Adı veya mail@ornek.com\" },\n      { type:\"text\", name:\"password\", title:\"Şifre\", inputType:\"password\", isRequired:true, minLength:8 }\n    ]\n  };\n\n  const survey = new Survey.Model(surveyJson);\n  let submitting = false;\n\n  survey.onCompleting.add(async (sender, options) => {\n    options.allowComplete = false;\n    if (submitting) return;\n    submitting = true;\n\n    // temizle\n    sender.errors = [];\n    (sender.getAllQuestions?.()||[]).forEach(q => q?.clearErrors?.());\n    sender.isReadOnly = true;\n\n    const payload = sender.data;\n    const url = \"/login\" + (window.location.search || \"\");\n\n    try {\n      const res = await fetch(url, {\n        method: \"POST\",\n        headers: { \"Content-Type\":\"application/json; charset=utf-8\", \"Accept\":\"application/json\", \"X-Requested-With\":\"XMLHttpRequest\" },\n        credentials: \"same-origin\",\n        body: JSON.stringify(payload)\n      });\n\n      if (res.ok) {\n        const qs = new URLSearchParams(window.location.search);\n        let next = qs.get(\"next\") || \"/\";\n        try { const data = await res.clone().json(); if (data?.next) next = data.next; } catch(_){}\n        if (res.redirected && res.url) window.location.assign(res.url); else window.location.assign(next);\n        return;\n      }\n\n      let message = \"Kullanıcı adı/e-posta veya şifre hatalı.\";\n      let fieldErrors = null;\n      try { const err = await res.clone().json(); message = err?.message || message; fieldErrors = err?.errors||null; } catch(_){}\n\n      const pwdQ = sender.getQuestionByName(\"password\");\n      if (pwdQ) {\n        (\"value\" in pwdQ) ? (pwdQ.value = \"\") : sender.setValue(\"password\",\"\");\n        pwdQ.addError?.(new Survey.CustomError(fieldErrors?.password || \"Hatalı şifre girdiniz.\"));\n        setTimeout(()=>pwdQ.focus?.(),0);\n      }\n\n      if (fieldErrors) {\n        Object.entries(fieldErrors).forEach(([name, text])=>{\n          if (name===\"password\") return;\n          const q = sender.getQuestionByName(name);\n          q?.addError?.(new Survey.CustomError(String(text)));\n        });\n      }\n\n      sender.errors = [{ text: message }];\n\n    } catch (e) {\n      sender.errors = [{ text: \"Sunucuya ulaşılamadı. Lütfen tekrar deneyin.\" }];\n      console.error(e);\n    } finally {\n      submitting = false;\n      sender.isReadOnly = false;\n    }\n  });\n\n  $(function(){ $(\"#surveyContainer\").Survey({ model: survey }); });\n</script>\n</body>\n</html>\n",
         "output": "str",
         "x": 440,
-        "y": 100,
+        "y": 140,
         "wires": [
             [
                 "0f88d4f9899d9885"
@@ -1882,7 +2179,7 @@
         "statusCode": "",
         "headers": {},
         "x": 730,
-        "y": 100,
+        "y": 140,
         "wires": []
     },
     {
@@ -1896,7 +2193,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 400,
+        "y": 440,
         "wires": [
             [
                 "898343caa6e3f92c"
@@ -1913,7 +2210,7 @@
             "location": "/login"
         },
         "x": 760,
-        "y": 400,
+        "y": 440,
         "wires": []
     },
     {
@@ -1930,7 +2227,7 @@
         "signvar": "payload",
         "storetoken": "payload",
         "x": 1220,
-        "y": 220,
+        "y": 260,
         "wires": [
             [
                 "f59872569465a1b9"
@@ -1948,7 +2245,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 240,
+        "y": 280,
         "wires": [
             [
                 "bcf4da036ac5b43b"
@@ -1968,7 +2265,7 @@
         "finalize": "",
         "libs": [],
         "x": 1050,
-        "y": 220,
+        "y": 260,
         "wires": [
             [
                 "0f7d31954dc9a188"
@@ -1996,7 +2293,7 @@
             }
         ],
         "x": 340,
-        "y": 240,
+        "y": 280,
         "wires": [
             [
                 "a1e33ed13fcde42a"
@@ -2017,7 +2314,7 @@
         "outputs": 1,
         "rounds": 10,
         "x": 880,
-        "y": 220,
+        "y": 260,
         "wires": [
             [
                 "e8c57f2b754850cc"
@@ -2034,7 +2331,7 @@
             "location": "/"
         },
         "x": 1560,
-        "y": 220,
+        "y": 260,
         "wires": []
     },
     {
@@ -2048,7 +2345,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 520,
+        "y": 560,
         "wires": [
             [
                 "8637acb46830d49a"
@@ -2063,7 +2360,7 @@
         "statusCode": "",
         "headers": {},
         "x": 750,
-        "y": 520,
+        "y": 560,
         "wires": []
     },
     {
@@ -2078,7 +2375,7 @@
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Kayıt Ol</title>\n\n  <!-- Bootstrap -->\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\" />\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\" />\n\n  <!-- SurveyJS (jQuery sürümü) -->\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n\n  <style>\n    .card { border-radius: .75rem; }\n    .card-body { padding: 1.5rem 1.5rem .75rem; }\n    .sv-root-modern .sv-container { padding: 0; }\n    .sv-root-modern .sv-question { margin-bottom: .5rem; }\n    .sv-root-modern .sv-title { margin-bottom: .25rem; font-size: 1rem; }\n    .sv-root-modern .sv-input,\n    .sv-root-modern input[type=\"text\"].sv-text,\n    .sv-root-modern input[type=\"password\"].sv-text { padding: .375rem .5rem; }\n    .pw-label { font-size: .9rem; }\n\n    /* ========================\n       BUTON STİLLERİ (KESİN)\n       ======================== */\n\n    /* ActionBar: TEMİZLE (beyaz/outline) */\n    .sv-action-bar .sv-action-bar-item[data-name=\"act-reset\"] .sv-btn {\n      background-color: #fff !important;\n      color: #6c757d !important;                  /* gri yazı */\n      border: 1px solid #ced4da !important;\n    }\n    .sv-action-bar .sv-action-bar-item[data-name=\"act-reset\"] .sv-btn:hover {\n      background-color: #f8f9fa !important;\n      border-color: #adb5bd !important;\n    }\n\n    /* ActionBar: KAYIT OL (primary) */\n    .sv-action-bar .sv-action-bar-item[data-name=\"act-submit\"] .sv-btn {\n      background-color: var(--sjs-primary-backcolor, #0d6efd) !important;\n      color: var(--sjs-primary-forecolor, #fff) !important;\n      border: 1px solid var(--sjs-primary-backcolor, #0d6efd) !important;\n    }\n    .sv-action-bar .sv-action-bar-item[data-name=\"act-submit\"] .sv-btn:hover {\n      background-color: var(--sjs-primary-backcolor-dark, #0b5ed7) !important;\n      border-color: var(--sjs-primary-backcolor-dark, #0b5ed7) !important;\n    }\n\n    /* Fallback HTML: aynı görünümler */\n    #btnReset {\n      background-color: #fff !important;\n      color: #6c757d !important;\n      border: 1px solid #ced4da !important;\n    }\n    #btnReset:hover {\n      background-color: #f8f9fa !important;\n      border-color: #adb5bd !important;\n    }\n    #btnSubmit {\n      background-color: var(--sjs-primary-backcolor, #0d6efd) !important;\n      color: var(--sjs-primary-forecolor, #fff) !important;\n      border: 1px solid var(--sjs-primary-backcolor, #0d6efd) !important;\n    }\n    #btnSubmit:hover {\n      background-color: var(--sjs-primary-backcolor-dark, #0b5ed7) !important;\n      border-color: var(--sjs-primary-backcolor-dark, #0b5ed7) !important;\n    }\n  </style>\n</head>\n<body class=\"bg-light\">\n  <div class=\"container mt-4 pb-5\">\n    <div class=\"row justify-content-center\">\n      <div class=\"col-md-10 col-lg-8\">\n        <div class=\"card shadow-sm\">\n          <div class=\"card-body\">\n            <h5 class=\"mb-3\">Kayıt Ol</h5>\n\n            {{#error}} <div class=\"alert alert-danger\">{{message}}</div> {{/error}}\n\n            <!-- SurveyJS form alanı -->\n            <div id=\"surveyContainer\"></div>\n\n            <!-- Alt sıra: solda parola gücü, sağda (Survey) butonlar -->\n            <div class=\"d-flex align-items-center justify-content-between mt-2\">\n              <div class=\"text-muted pw-label\">Parola gücü: <span id=\"pwLabel\">—</span></div>\n              <div id=\"svBtnsHost\"></div>\n            </div>\n\n            <div class=\"text-center mt-3\">\n              Zaten hesabın var mı? <a href=\"/login\">Giriş yap</a>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n<script>\n  Survey.StylesManager.applyTheme(\"modern\");\n\n  // --- Parola politikası ve skorlayıcı ---\n  const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,64}$/;\n  function scorePassword(p){ let s=0; if(!p) return 0;\n    s += Math.min(6, new Set(p).size);\n    s += /[a-z]/.test(p); s += /[A-Z]/.test(p);\n    s += /\\d/.test(p);    s += /[^A-Za-z0-9]/.test(p);\n    s += Math.min(4, Math.floor(p.length/3));\n    return s;\n  }\n  function pwLabel(sc){\n    if(sc>=9) return {text:\"çok güçlü\", cls:\"color:#198754\"};\n    if(sc>=7) return {text:\"güçlü\",      cls:\"color:#198754\"};\n    if(sc>=5) return {text:\"orta\",       cls:\"color:#fd7e14\"};\n    return          {text:\"zayıf\",       cls:\"color:#dc3545\"};\n  }\n\n  // --- Form şeması (Survey butonları kapalı) ---\n  const surveyJson = {\n    showQuestionNumbers: \"off\",\n    questionTitleLocation: \"left\",\n    widthMode: \"responsive\",\n    showNavigationButtons: \"none\",\n    showCompletedPage: false,\n    elements: [\n      { type:\"text\", name:\"username\", title:\"Kullanıcı Adı \", isRequired:true,\n        minLength:3, placeholder:\"(3–32, harf/rakam/._)\", width:\"45%\" },\n      { type:\"text\", name:\"displayName\", title:\"Ad Soyad \", isRequired:true,\n        startWithNewLine:false, width:\"35%\",\n        validators:[{ type:\"regex\", regex:\"^(?=.*\\\\S).{2,}$\", text:\"Lütfen ad soyad girin.\" }] },\n      { type:\"text\", name:\"email\", title:\"E-posta \", inputType:\"email\", isRequired:true,\n        startWithNewLine:false, placeholder:\"mail@ornek.com\",\n        validators:[{ type:\"email\", text:\"Geçerli bir e-posta girin.\" }] },\n\n      { type:\"text\", name:\"password\", title:\"Şifre \", inputType:\"password\", isRequired:true, minLength:8,\n        validators:[{ type:\"regex\", regex: PWD_REGEX.source,\n          text:\"En az 8 karakter; küçük+BÜYÜK+rakam+özel karakter olmalı.\" }],\n        description: \"Şifre ipucu: En az 8 karakter; küçük+BÜYÜK+rakam+özel karakter (!@#$%...) içermeli.\",\n  descriptionLocation: \"underInput\"  },\n\n      { type:\"text\", name:\"password2\", title:\"Şifre (tekrar) \", inputType:\"password\", isRequired:true,\n        startWithNewLine:false,\n        validators:[{ type:\"expression\", expression:\"{password} = {password2}\",\n          text:\"Parolalar eşleşmiyor.\" }] }\n    ]\n  };\n\n  const survey = new Survey.Model(surveyJson);\n\n  // Inline parola gücü\n  survey.onValueChanged.add((s,opt)=>{\n    if(opt.name===\"password\"){\n      const lbl=document.getElementById(\"pwLabel\");\n      if(lbl){ const info=pwLabel(scorePassword(opt.value||\"\"));\n        lbl.textContent=info.text; lbl.style=info.cls; }\n    }\n  });\n\n  // Uzak benzersizlik kontrolü (opsiyonel)\n  let uniqTimer=null;\n  survey.onValueChanged.add((s,opt)=>{\n    if(opt.name!==\"username\" && opt.name!==\"email\") return;\n    clearTimeout(uniqTimer);\n    uniqTimer = setTimeout(()=>remoteUniqueInline(opt.name), 350);\n  });\n\n  async function remoteUniqueInline(field){\n    const q = survey.getQuestionByName(field);\n    if(!q) return;\n    try { q.clearErrors && q.clearErrors(); } catch(_) {}\n    const val = String(survey.data?.[field]||\"\").trim();\n    if(!val) return;\n\n    const qs = new URLSearchParams();\n    if (field===\"username\") qs.set(\"username\", val);\n    if (field===\"email\")    qs.set(\"email\", val);\n    try{\n      const res = await fetch(\"/user-opt/check-unique?\"+qs.toString(), { credentials:\"same-origin\" });\n      if(!res.ok) return;\n      const data = await res.json(); // { username: true/false, email: true/false }\n      if (field===\"username\" && data.username === false) {\n        q.addError(new Survey.CustomError(\"Bu kullanıcı adı zaten kayıtlı.\"));\n      }\n      if (field===\"email\" && data.email === false) {\n        q.addError(new Survey.CustomError(\"Bu e-posta zaten kayıtlı.\"));\n      }\n    }catch{}\n  }\n\n  // Yardımcı: alan hatası yaz\n  function setFieldErrors(map){\n    if(!map) return;\n    for(const [name,msg] of Object.entries(map)){\n      const q = survey.getQuestionByName(name);\n      if(q) q.addError(new Survey.CustomError(String(msg)));\n    }\n  }\n\n  // POST helper\n  async function postJSON(url, data) {\n    const res = await fetch(url, {\n      method: \"POST\",\n      headers: { \"Content-Type\":\"application/json; charset=utf-8\", \"Accept\":\"application/json\" },\n      credentials: \"same-origin\",\n      body: JSON.stringify(data)\n    });\n    return res;\n  }\n\n  // Reset\n  function doReset(){\n    try { survey.clearErrors && survey.clearErrors(); } catch(_) {}\n    survey.data = {};\n    const lbl=document.getElementById(\"pwLabel\");\n    if(lbl){ lbl.textContent=\"—\"; lbl.style=\"\"; }\n    setTimeout(()=>survey.getQuestionByName(\"username\")?.focus?.(true),0);\n  }\n\n  // Kayıt gönderimi\n  async function onSubmit(){\n    if (survey.hasErrors && survey.hasErrors(true)) return;\n\n    const payload = { ...survey.data };\n    [\"username\",\"displayName\",\"email\"].forEach(k=>{\n      if(payload[k]!=null) payload[k]=String(payload[k]).trim();\n    });\n    delete payload.password2;\n\n    // Sunucu tarafı benzersizlik\n    try{\n      const checkQs = new URLSearchParams({ username: payload.username||\"\", email: payload.email||\"\" });\n      const chk = await fetch(\"/user-opt/check-unique?\"+checkQs.toString(), { credentials:\"same-origin\" });\n      if (chk.ok) {\n        const info = await chk.json();\n        const errs = {};\n        if (info.username === false) errs.username = \"Bu kullanıcı adı zaten kayıtlı.\";\n        if (info.email === false)    errs.email    = \"Bu e-posta zaten kayıtlı.\";\n        if (Object.keys(errs).length){ setFieldErrors(errs); return; }\n      }\n    }catch{}\n\n    let res;\n    try{\n      res = await postJSON(\"/user-opt/add\", payload);\n    }catch(e){\n      survey.errors = [{ text: \"Sunucuya ulaşılamadı. Lütfen tekrar deneyin.\" }];\n      return;\n    }\n\n    if (res.ok){\n      try {\n        const data = await res.clone().json();\n        const next = data?.next || \"/login\";\n        window.location.assign(next);\n      } catch {\n        window.location.assign(\"/login\");\n      }\n      return;\n    }\n\n    let message = \"Kayıt oluşturulamadı.\";\n    let fieldErrors = null;\n    try {\n      const err = await res.clone().json();\n      if (err?.message) message = err.message;\n      if (err?.errors && typeof err.errors === \"object\") fieldErrors = err.errors;\n    } catch {}\n\n    if ((res.status === 409 || res.status === 400) && !fieldErrors) {\n      fieldErrors = {};\n      fieldErrors.username = fieldErrors.username || \"Bu kullanıcı adı zaten kayıtlı.\";\n      fieldErrors.email    = fieldErrors.email    || \"Bu e-posta zaten kayıtlı.\";\n    }\n\n    setFieldErrors(fieldErrors);\n    survey.errors = [{ text: message }];\n  }\n\n  // Survey render + BUTONLAR (ActionBar varsa onu, yoksa fallback)\n  document.addEventListener(\"DOMContentLoaded\", function(){\n    $(\"#surveyContainer\").Survey({ model: survey });\n\n    const host = document.getElementById(\"svBtnsHost\");\n    if (!host) return;\n\n    if (Survey.ActionBar && Survey.Action) {\n      // Survey ActionBar\n      const actions = [\n        new Survey.Action({ id:\"act-reset\",  title:\"Temizle\",  tooltip:\"Formu temizle\",  action: doReset }),\n        new Survey.Action({ id:\"act-submit\", title:\"Kayıt Ol\", tooltip:\"Kayıt oluştur\", action: onSubmit })\n      ];\n      const bar = new Survey.ActionBar(actions);\n      bar.render(host);\n    } else {\n      // Fallback: Survey buton sınıflarıyla HTML\n      host.innerHTML = `\n        <div class=\"sv-action-bar\">\n          <button type=\"button\" id=\"btnReset\"  class=\"sv-btn sv-footer__prev-btn me-2\">Temizle</button>\n          <button type=\"button\" id=\"btnSubmit\" class=\"sv-btn sv-footer__complete-btn\">\n            <span class=\"sv-action-bar-item__title\">Kayıt Ol</span>\n          </button>\n        </div>`;\n      document.getElementById(\"btnReset\").addEventListener(\"click\", doReset);\n      document.getElementById(\"btnSubmit\").addEventListener(\"click\", onSubmit);\n    }\n  });\n</script>\n</body>\n</html>\n",
         "output": "str",
         "x": 460,
-        "y": 520,
+        "y": 560,
         "wires": [
             [
                 "84be4beb553cbe26"
@@ -2098,7 +2395,7 @@
         "finalize": "",
         "libs": [],
         "x": 450,
-        "y": 400,
+        "y": 440,
         "wires": [
             [
                 "78a062b04551d6e3"
@@ -2126,7 +2423,7 @@
         "repair": false,
         "outputs": 2,
         "x": 310,
-        "y": 560,
+        "y": 600,
         "wires": [
             [
                 "8637acb46830d49a"
@@ -2145,7 +2442,7 @@
             "7817b550669eb8a2"
         ],
         "x": 215,
-        "y": 560,
+        "y": 600,
         "wires": [
             [
                 "5a5879c9b2e4a128"
@@ -2162,7 +2459,7 @@
             "126ead5b72b171f3"
         ],
         "x": 405,
-        "y": 600,
+        "y": 640,
         "wires": []
     },
     {
@@ -2178,7 +2475,7 @@
         "finalize": "",
         "libs": [],
         "x": 1390,
-        "y": 220,
+        "y": 260,
         "wires": [
             [
                 "86740e96f67da72b"
@@ -2198,7 +2495,7 @@
         "handleDocId": false,
         "name": "",
         "x": 500,
-        "y": 240,
+        "y": 280,
         "wires": [
             [
                 "23c69382a41e73a9"
@@ -2218,7 +2515,7 @@
         "finalize": "",
         "libs": [],
         "x": 690,
-        "y": 240,
+        "y": 280,
         "wires": [
             [
                 "ed58fab8df11b349"
@@ -2238,304 +2535,7 @@
             "content-type": "application/json"
         },
         "x": 1040,
-        "y": 280,
-        "wires": []
-    },
-    {
-        "id": "8a17d35dfec47d16",
-        "type": "http in",
-        "z": "ce31de18fd4f4005",
-        "name": "",
-        "url": "/categories-opt/:type",
-        "method": "post",
-        "upload": false,
-        "skipBodyParsing": false,
-        "swaggerDoc": "",
-        "x": 170,
-        "y": 340,
-        "wires": [
-            [
-                "3685bfd7d557a4df"
-            ]
-        ]
-    },
-    {
-        "id": "4ee1a87518e79ddc",
-        "type": "http response",
-        "z": "ce31de18fd4f4005",
-        "name": "",
-        "statusCode": "",
-        "headers": {},
-        "x": 1030,
-        "y": 300,
-        "wires": []
-    },
-    {
-        "id": "cae3a7cac1ed0401",
-        "type": "function",
-        "z": "ce31de18fd4f4005",
-        "name": "validation",
-        "func": "// ---- validation (Outputs: 2) ----\nvar type = (msg.req && msg.req.params && msg.req.params.type) || \"\";\n\nfunction hasOwn(o,k){return o && Object.prototype.hasOwnProperty.call(o,k);}\nfunction readField(k){\n  var v = undefined;\n  if (msg.payload && hasOwn(msg.payload,k)) v = msg.payload[k];\n  if ((v===undefined||v===null) && msg.req && msg.req.body && hasOwn(msg.req.body,k)) v = msg.req.body[k];\n  return v;\n}\nfunction hasFields(arr){\n  for (var i=0;i<arr.length;i++){\n    var v = readField(arr[i]);\n    if (v===undefined || v===null || (typeof v===\"string\" && v.trim()===\"\")) return false;\n  }\n  return true;\n}\n\nif ([\"add\",\"update\",\"trash\"].indexOf(type) === -1){\n  msg.error = { message: (type||\"(boş)\") + \" geçersiz bir parametre.\" };\n  return [null, msg]; // HATA\n}\n\nif (type === \"add\" && !hasFields([\"name\"])) { msg.error = { message:\"Kategori adı zorunlu.\" }; return [null, msg]; }\nif ((type === \"update\" || type === \"trash\") && !hasFields([\"id\"])) { msg.error = { message:\"id zorunlu.\" }; return [null, msg]; }\n\nreturn [msg, null]; // BAŞARI\n",
-        "outputs": 2,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 560,
-        "y": 340,
-        "wires": [
-            [
-                "6a93a54accf53b71"
-            ],
-            [
-                "32deda87e3d60747"
-            ]
-        ]
-    },
-    {
-        "id": "1d5518f3b2714e92",
-        "type": "mongodb4",
-        "z": "ce31de18fd4f4005",
-        "clientNode": "071adb762f609302",
-        "mode": "collection",
-        "collection": "categories",
-        "operation": "findOne",
-        "output": "toArray",
-        "maxTimeMS": "0",
-        "handleDocId": false,
-        "name": "",
-        "x": 880,
-        "y": 380,
-        "wires": [
-            [
-                "7ef91cb0c74bc108"
-            ]
-        ]
-    },
-    {
-        "id": "3685bfd7d557a4df",
-        "type": "subflow:9357c048778312fb",
-        "z": "ce31de18fd4f4005",
-        "name": "",
-        "x": 390,
-        "y": 340,
-        "wires": [
-            [
-                "cae3a7cac1ed0401"
-            ]
-        ]
-    },
-    {
-        "id": "6996ef9ac9c8704f",
-        "type": "mongodb4",
-        "z": "ce31de18fd4f4005",
-        "clientNode": "071adb762f609302",
-        "mode": "collection",
-        "collection": "categories",
-        "operation": "updateOne",
-        "output": "toArray",
-        "maxTimeMS": "0",
-        "handleDocId": false,
-        "name": "",
-        "x": 1250,
-        "y": 340,
-        "wires": [
-            [
-                "3b8d76a699667744"
-            ]
-        ]
-    },
-    {
-        "id": "08a61e2f6e727fba",
-        "type": "http in",
-        "z": "ce31de18fd4f4005",
-        "name": "",
-        "url": "/categories",
-        "method": "get",
-        "upload": false,
-        "skipBodyParsing": false,
-        "swaggerDoc": "",
-        "x": 140,
-        "y": 180,
-        "wires": [
-            [
-                "9b21e563bcc9ad0b"
-            ]
-        ]
-    },
-    {
-        "id": "ca6087eeac820f68",
-        "type": "http response",
-        "z": "ce31de18fd4f4005",
-        "name": "",
-        "statusCode": "",
-        "headers": {},
-        "x": 810,
-        "y": 180,
-        "wires": []
-    },
-    {
-        "id": "bcd158a93b8de50f",
-        "type": "function",
-        "z": "ce31de18fd4f4005",
-        "name": "function 4",
-        "func": "msg.payload = [] ;\n\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 500,
-        "y": 180,
-        "wires": [
-            [
-                "c005219d393b46dc"
-            ]
-        ]
-    },
-    {
-        "id": "c005219d393b46dc",
-        "type": "mongodb4",
-        "z": "ce31de18fd4f4005",
-        "clientNode": "071adb762f609302",
-        "mode": "collection",
-        "collection": "categories",
-        "operation": "aggregate",
-        "output": "toArray",
-        "maxTimeMS": "0",
-        "handleDocId": false,
-        "name": "",
-        "x": 660,
-        "y": 180,
-        "wires": [
-            [
-                "ca6087eeac820f68"
-            ]
-        ]
-    },
-    {
-        "id": "9b21e563bcc9ad0b",
-        "type": "subflow:9357c048778312fb",
-        "z": "ce31de18fd4f4005",
-        "name": "",
-        "x": 330,
-        "y": 180,
-        "wires": [
-            [
-                "bcd158a93b8de50f"
-            ]
-        ]
-    },
-    {
-        "id": "32deda87e3d60747",
-        "type": "link out",
-        "z": "ce31de18fd4f4005",
-        "name": "link out 10",
-        "mode": "link",
-        "links": [
-            "c5f4d0120c89df7e"
-        ],
-        "x": 655,
-        "y": 400,
-        "wires": []
-    },
-    {
-        "id": "254d8fb0f8e86f22",
-        "type": "mongodb4",
-        "z": "ce31de18fd4f4005",
-        "clientNode": "071adb762f609302",
-        "mode": "collection",
-        "collection": "categories",
-        "operation": "insertOne",
-        "output": "toArray",
-        "maxTimeMS": "0",
-        "handleDocId": false,
-        "name": "",
-        "x": 880,
-        "y": 300,
-        "wires": [
-            [
-                "4ee1a87518e79ddc"
-            ]
-        ]
-    },
-    {
-        "id": "6a93a54accf53b71",
-        "type": "function",
-        "z": "ce31de18fd4f4005",
-        "name": "function 2",
-        "func": "// function 2  (Outputs: 2)\n// OUT1 -> insertOne   |   OUT2 -> findOne\nvar type = (msg.req && msg.req.params && msg.req.params.type) || \"\";\nvar body = (msg.payload && typeof msg.payload === 'object') ? msg.payload\n          : (msg.req && msg.req.body) || {};\nmsg.formData = body;\n\n// ObjectId yardımcı\nvar OID = (global.get && global.get('mongodb') && global.get('mongodb').ObjectId)\n          || (msg._mongo && msg._mongo.ObjectId);\nfunction toObjectId(v){\n  var s = String(v||'').trim();\n  if (!s) return null;\n  if (!OID) return s;\n  try { return new OID(s); } catch(e){ return s; }\n}\n\nif (type === 'add') {\n  var name = (body.name || '').trim();\n  msg.payload = { name: name };\n  return [msg, null];           // -> insertOne\n}\n\n// update | trash: önce findOne\nvar id = body.id || body._id;\nvar _id = toObjectId(id);\nif (!_id){ msg.error = { message: 'id geçersiz' }; return [null, null]; }\nmsg.payload = { _id: _id };\nreturn [null, msg];             // -> findOne\n",
-        "outputs": 2,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 720,
-        "y": 340,
-        "wires": [
-            [
-                "254d8fb0f8e86f22"
-            ],
-            [
-                "1d5518f3b2714e92"
-            ]
-        ]
-    },
-    {
-        "id": "7ef91cb0c74bc108",
-        "type": "function",
-        "z": "ce31de18fd4f4005",
-        "name": "kategoriIslemleri",
-        "func": "// kategoriIslemleri  (Outputs: 2)  OUT1->mongodb (update/delete) | OUT2->http error\nconst type = (msg.req && msg.req.params && msg.req.params.type) || \"\";\nconst user = msg.user || {};\n\n// findOne çıktısını normalize et\nconst doc = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\nif (!doc) { msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" }; return [null, msg]; }\n\n// basit yetki\nconst isAdmin = Array.isArray(user.roles) && user.roles.indexOf(\"admin\") > -1;\nif (doc?.stamp?.username && user?.username && doc.stamp.username !== user.username && !isAdmin) {\n  msg.error = { message: \"Yetkisiz işlem.\" }; return [null, msg];\n}\n\nvar body = msg.formData || {};\nvar OID = (global.get && global.get('mongodb') && global.get('mongodb').ObjectId)\n          || (msg._mongo && msg._mongo.ObjectId);\nfunction toObjectId(v){ try { return OID ? new OID(String(v)) : v; } catch(e){ return v; } }\n\nconst _id = toObjectId(doc._id || body.id);\n\nif (type === \"trash\") {\n  msg.operation = \"deleteOne\";\n  msg.payload   = [{ _id: _id }];\n  return [msg, null];\n}\n\nif (type === \"update\") {\n  const newName = (body.name || \"\").trim();\n  const origVal = (body.orig || \"\").trim();\n  if (!newName) { msg.error = { message: \"Kategori adı boş olamaz.\" }; return [null, msg]; }\n  if (newName === origVal) { msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" }; return [null, msg]; }\n\n  msg.operation = \"updateOne\";\n  msg.payload   = [{ _id: _id }, { $set: { name: newName } }];\n  return [msg, null];\n}\n\nmsg.error = { message: \"Desteklenmeyen işlem.\" };\nreturn [null, msg];\n",
-        "outputs": 2,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1060,
-        "y": 380,
-        "wires": [
-            [
-                "6996ef9ac9c8704f"
-            ],
-            [
-                "450dd7912061bfa5"
-            ]
-        ]
-    },
-    {
-        "id": "450dd7912061bfa5",
-        "type": "mongodb4",
-        "z": "ce31de18fd4f4005",
-        "clientNode": "071adb762f609302",
-        "mode": "collection",
-        "collection": "categories",
-        "operation": "deleteOne",
-        "output": "toArray",
-        "maxTimeMS": "0",
-        "handleDocId": false,
-        "name": "",
-        "x": 1250,
-        "y": 420,
-        "wires": [
-            [
-                "3b8d76a699667744"
-            ]
-        ]
-    },
-    {
-        "id": "3b8d76a699667744",
-        "type": "http response",
-        "z": "ce31de18fd4f4005",
-        "name": "",
-        "statusCode": "",
-        "headers": {},
-        "x": 1430,
-        "y": 380,
+        "y": 320,
         "wires": []
     },
     {
@@ -2564,7 +2564,7 @@
         "inputs": 1,
         "hasButton": false,
         "x": 180,
-        "y": 360,
+        "y": 440,
         "wires": [
             [
                 "d6134361a15b1330"
@@ -2593,7 +2593,7 @@
         "payload": "{}",
         "payloadType": "json",
         "x": 130,
-        "y": 260,
+        "y": 340,
         "wires": [
             [
                 "4957ed9e50014e41"
@@ -2614,7 +2614,7 @@
         "name": "",
         "dname": "",
         "x": 810,
-        "y": 360,
+        "y": 440,
         "wires": []
     },
     {
@@ -2630,7 +2630,7 @@
         "finalize": "",
         "libs": [],
         "x": 500,
-        "y": 360,
+        "y": 440,
         "wires": [
             [
                 "1e3410a2c0801097"
@@ -2649,7 +2649,7 @@
         "template": "<p>{{todo.name}} işi için hatırlatma.</p>\n\n{{#todo.schedule.formData.note}}\n  <p style=\"white-space:pre-wrap;\"><strong>Not:</strong> {{{todo.schedule.formData.note}}}</p>\n{{/todo.schedule.formData.note}}\n{{^todo.schedule.formData.note}}\n  {{#todo.lastNote}}\n    <p style=\"white-space:pre-wrap;\"><strong>Not:</strong> {{{todo.lastNote}}}</p>\n  {{/todo.lastNote}}\n{{/todo.schedule.formData.note}}\n",
         "output": "str",
         "x": 660,
-        "y": 360,
+        "y": 440,
         "wires": [
             [
                 "6deb06d96837b126"
@@ -2667,7 +2667,7 @@
             "c85f8a5a8f2e81bc"
         ],
         "x": 65,
-        "y": 360,
+        "y": 440,
         "wires": [
             [
                 "463e1db29a4e8833"
@@ -2684,7 +2684,7 @@
             "18dc3105a4edec0c"
         ],
         "x": 775,
-        "y": 260,
+        "y": 340,
         "wires": []
     },
     {
@@ -2700,7 +2700,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 360,
+        "y": 440,
         "wires": [
             [
                 "0b9f34182300bc33"
@@ -2724,7 +2724,7 @@
         "onceDelay": "0.2",
         "topic": "",
         "x": 130,
-        "y": 60,
+        "y": 140,
         "wires": [
             [
                 "a812e4a7bdb7b2cc"
@@ -2744,7 +2744,7 @@
         "handleDocId": false,
         "name": "",
         "x": 840,
-        "y": 60,
+        "y": 140,
         "wires": [
             [
                 "6d730899a4d541dd"
@@ -2764,7 +2764,7 @@
         "handleDocId": false,
         "name": "",
         "x": 480,
-        "y": 60,
+        "y": 140,
         "wires": [
             [
                 "42e20be815dfa074"
@@ -2784,7 +2784,7 @@
         "finalize": "",
         "libs": [],
         "x": 300,
-        "y": 60,
+        "y": 140,
         "wires": [
             [
                 "a15711b91a686a0d"
@@ -2804,7 +2804,7 @@
         "finalize": "",
         "libs": [],
         "x": 660,
-        "y": 60,
+        "y": 140,
         "wires": [
             [
                 "b50b71bef2ac91e5"
@@ -2824,7 +2824,7 @@
         "handleDocId": false,
         "name": "",
         "x": 450,
-        "y": 260,
+        "y": 340,
         "wires": [
             [
                 "f81c142f4742637a"
@@ -2844,7 +2844,7 @@
         "finalize": "",
         "libs": [],
         "x": 290,
-        "y": 260,
+        "y": 340,
         "wires": [
             [
                 "193b96b36f8bb8a4"
@@ -2864,7 +2864,7 @@
         "finalize": "",
         "libs": [],
         "x": 630,
-        "y": 260,
+        "y": 340,
         "wires": [
             [
                 "dcacbd7ada1430a0"
@@ -2888,7 +2888,7 @@
         "onceDelay": "0.2",
         "topic": "",
         "x": 130,
-        "y": 160,
+        "y": 240,
         "wires": [
             [
                 "9105942e3472c470"
@@ -2909,7 +2909,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 1000,
-        "y": 60,
+        "y": 140,
         "wires": []
     },
     {
@@ -2925,7 +2925,7 @@
         "handleDocId": false,
         "name": "",
         "x": 810,
-        "y": 160,
+        "y": 240,
         "wires": [
             [
                 "818b6de1786b5082"
@@ -2945,7 +2945,7 @@
         "finalize": "",
         "libs": [],
         "x": 630,
-        "y": 160,
+        "y": 240,
         "wires": [
             [
                 "4ea6a2624de56531"
@@ -2966,7 +2966,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 1000,
-        "y": 160,
+        "y": 240,
         "wires": []
     },
     {
@@ -2982,7 +2982,7 @@
         "handleDocId": false,
         "name": "",
         "x": 470,
-        "y": 160,
+        "y": 240,
         "wires": [
             [
                 "158e65610cc8457c"
@@ -3002,7 +3002,7 @@
         "finalize": "",
         "libs": [],
         "x": 300,
-        "y": 160,
+        "y": 240,
         "wires": [
             [
                 "5bda306b9b8fe551"
