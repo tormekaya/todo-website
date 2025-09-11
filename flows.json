@@ -8,14 +8,6 @@
         "env": []
     },
     {
-        "id": "ce31de18fd4f4005",
-        "type": "tab",
-        "label": "Kategoriler",
-        "disabled": false,
-        "info": "",
-        "env": []
-    },
-    {
         "id": "4952c48b2f6d6c23",
         "type": "tab",
         "label": "Kullanıcılar",
@@ -27,6 +19,14 @@
         "id": "5053eb1640696108",
         "type": "tab",
         "label": "Login",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ce31de18fd4f4005",
+        "type": "tab",
+        "label": "Kategoriler",
         "disabled": false,
         "info": "",
         "env": []
@@ -272,10 +272,10 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n  <title>Yapılacaklar</title>\n\n  <!-- Bootstrap & Icons -->\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css\" rel=\"stylesheet\">\n\n  <!-- SurveyJS (jQuery) -->\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n\n  <style>\n    :root{\n      --todo-form-gap:6px; --todo-gap:6px; --todo-pad:12px; --todo-radius:12px;\n      --todo-border:#e9ecef; --todo-bg:#fff; --done:#16a34a; --pending:#0d6efd;\n    }\n    body{ background:#f8f9fa }\n    .navbar{ --bs-navbar-padding-y:.9rem }\n\n    .todos-toolbar{ display:flex; gap:12px; align-items:center; margin-top:16px; padding:10px 12px;\n      background:#fff; border:1px solid var(--todo-border); border-radius:var(--todo-radius);}\n    .toolbar-title{ font-weight:700 }\n    .toolbar-stats{ margin-left:auto; display:flex; gap:8px }\n    .stat-pill{ background:#f1f3f5; color:#495057; font-size:.85rem; padding:6px 10px; border-radius:999px }\n    .toolbar-block{ margin-bottom:var(--todo-form-gap) !important; }\n\n    .todo-wrap{ margin:0 0 var(--todo-gap) 0 !important; background:var(--todo-bg);\n      border:1px solid var(--todo-border); border-radius:var(--todo-radius); overflow:hidden; }\n    #todoListHost .todo-wrap:last-child{ margin-bottom:0 !important; }\n\n    .todo-row{ display:grid; grid-template-columns:12px 1fr auto; gap:12px; align-items:center;\n      padding:var(--todo-pad); cursor:pointer; }\n    .todo-accent{ width:12px; height:100%; border-radius:4px; background:var(--pending) }\n    .todo-wrap.done .todo-accent{ background:var(--done) }\n\n    .todo-title{ font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }\n    .todo-title.done{ color:#6c757d; text-decoration:line-through }\n\n    .todo-badges{ display:flex; gap:8px; flex-wrap:wrap }\n    .todo-badge{ display:inline-flex; align-items:center; gap:6px; background:#f1f3f5; color:#495057;\n      padding:4px 8px; border-radius:999px; font-size:.8rem }\n\n    .todo-actions{ display:none; padding:10px 12px; border-top:1px dashed #e5e7eb; background:#fff }\n    .todo-wrap.open .todo-actions{ display:block }\n\n    .inline-add .sv-row{ display:flex; align-items:center; gap:12px }\n    .inline-add .sv-row>div:has(> .sv-question[data-name=\"newName\"]){ flex:1 1 auto !important; min-width:0 !important }\n    .inline-add .sv-row>div:has(> .sv-question[data-name=\"addButtons\"]){ flex:0 0 auto !important }\n    .inline-add .sv-question[data-name=\"newName\"],\n    .inline-add .sv-question[data-name=\"addButtons\"]{ margin:0 !important; padding:0 !important }\n\n    @media (max-width:576px){\n      .inline-add .sv-row{ flex-direction:column; align-items:stretch }\n    }\n\n    .user-fab{ position:fixed; right:18px; bottom:18px; z-index:1000; display:flex; align-items:center; gap:10px;\n      background:#fff; border-radius:999px; padding:8px 12px; box-shadow:0 6px 16px rgba(0,0,0,.15); border:1px solid #eee; }\n    .user-fab .avatar{ width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#0d6efd; color:#fff; }\n    .admin-btn-48{ width:48px; height:48px; }\n\n    .btn-clear{ background:#fff!important; color:#6c757d!important; border:1px solid #ced4da!important; }\n    .btn-clear:hover{ background:#f8f9fa!important; border-color:#adb5bd!important; }\n    .btn-add{ background:#0d6efd!important; color:#fff!important; border:1px solid #0d6efd!important; }\n    .btn-add:hover{ background:#0b5ed7!important; }\n\n    .todo-badge.date,.todo-badge.who{ background:#6c757d!important; color:#fff!important }\n    .todo-badge.pending{ background:#ffca2c!important; color:#fff!important }\n    .todo-badge.done{ background:#198754!important; color:#fff!important }\n    #statAll{ background:#0d6efd!important; color:#fff!important }\n    #statOpen{ background:#ffca2c!important; color:#664d03!important; border:1px solid #ffe69c!important }\n    #statDone{ background:#198754!important; color:#fff!important }\n    \n    /* Kategori Ekle butonu */\n    #btnAddCat {\n      background:#f1f3f5 !important;\n      border:1px solid #f1f3f5 !important;\n      color:#000 !important;\n    }\n    #btnAddCat .bi { color:inherit !important; }\n    #btnAddCat:hover,\n    #btnAddCat:focus {\n      background:#e9ecef !important;\n      border-color:#e9ecef !important;\n      color:#000 !important;\n    }\n\n    /* İşlerdeki etiket yazıları da siyah olsun */\n    .todo-badge { color:#000 !important; }\n  </style>\n</head>\n<body>\n  <!-- NAVBAR -->\n  <nav class=\"navbar bg-white border-bottom mb-4\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Yapılacaklar</span>\n      <div class=\"d-flex gap-4\">\n        {{#user.isAdmin}}\n        <a class=\"btn btn-secondary\" id=\"btnManageCats\" title=\"Kategori Düzenle\">\n          <i class=\"bi bi-tags-fill fs-4\"></i>\n        </a>  \n        <a href=\"/user-list\" class=\"btn btn-primary d-flex align-items-center justify-content-center rounded-1 p-0 admin-btn-48\" title=\"Admin Panel\">\n          <i class=\"bi bi-people-fill fs-4\"></i>\n        </a>\n        {{/user.isAdmin}}\n      </div>\n    </div>\n  </nav>\n\n  <div class=\"container\">\n    <div id=\"surveyHost\"></div>\n    {{#error}}<div class=\"alert alert-danger mt-3\"><h4 class=\"m-0\">{{message}}</h4></div>{{/error}}\n  </div>\n\n  <!-- Sağ altta FAB -->\n  <div class=\"user-fab\">\n    <div class=\"avatar\"><i class=\"bi bi-person-fill fs-5\"></i></div>\n    <div class=\"name small text-muted\" id=\"userLabel\">Kullanıcı</div>\n    <a href=\"/logout\" class=\"btn btn-danger p-0 d-flex align-items-center justify-content-center\" style=\"width:40px;height:40px;border-radius:50%\" title=\"Çıkış\">\n      <i class=\"bi bi-power fs-5\"></i>\n    </a>\n  </div>\n\n  <!-- Backend verileri -->\n  <script>\n    window.__TODOS__ = {{#todosJson}}{{{todosJson}}}{{/todosJson}}{{^todosJson}}[]{{/todosJson}};\n    window.__USER__  = {{#userJson}}{{{userJson}}}{{/userJson}}{{^userJson}}{username:\"misafir\",email:\"\",isAdmin:false}{{/userJson}};\n    if(!Array.isArray(window.__TODOS__)) window.__TODOS__ = [];\n    (function(){\n      const u = window.__USER__ || {};\n      const label = [u.username || \"Kullanıcı\", u.email].filter(Boolean).join(\" — \");\n      const el = document.getElementById(\"userLabel\");\n      if(el) el.textContent = label;\n    })();\n  </script>\n\n  <!-- Kategori verisi -->\n  <script>\n    window.__CATS__ = [];\n    window.__CATMAP__ = {};\n    async function loadCategories(){\n      try{\n        const res = await fetch('/categories', {credentials:'include'});\n        if(!res.ok) return;\n        const arr = await res.json();\n        window.__CATS__ = Array.isArray(arr)?arr:[];\n        window.__CATMAP__ = Object.fromEntries((window.__CATS__||[]).map(c => [String(c._id), c.name]));\n      }catch(e){ console.warn('Kategori yükleme hatası', e); }\n    }\n  </script>\n\n  <script>\n  (async function(){\n    await loadCategories();\n\n    Survey.StylesManager.applyTheme(\"modern\");\n    const isAdmin = !!(window.__USER__ && window.__USER__.isAdmin);\n    const esc = s => String(s ?? \"\").replace(/[&<>\\\"']/g, m=>({ \"&\":\"&amp;\",\"<\":\"&lt;\",\">\":\"&gt;\",\"\\\"\":\"&quot;\",\"'\":\"&#39;\" }[m]));\n    const filterByUser = (all,u)=>{\n      if(u?.isAdmin) return all||[];\n      const n=(u?.username||\"\").toLowerCase(), e=(u?.email||\"\").toLowerCase();\n      return (all||[]).filter(x=> (x?.stamp?.username||\"\").toLowerCase()===n || (x?.stamp?.email||\"\").toLowerCase()===e);\n    };\n\n    function rowHtml(t){\n      const titleCls = t.done ? \"todo-title done\" : \"todo-title\";\n      const datePill = `<span class=\"todo-badge date\"><i class=\"bi bi-calendar2-date\"></i> ${esc(t.dateTime||\"-\")}</span>`;\n      const whoPill  = isAdmin && t?.stamp?.username ? `<span class=\"todo-badge who\"><i class=\"bi bi-person-fill\"></i> ${esc(t.stamp.username)}</span>` : \"\";\n      const statePill= t.done\n        ? `<span class=\"todo-badge done\"><i class=\"bi bi-check2\"></i> Tamamlandı</span>`\n        : `<span class=\"todo-badge pending\"><i class=\"bi bi-hourglass-split\"></i> Beklemede</span>`;\n      const catBadges = (t.categories||[])\n        .map(cid => `<span class=\"todo-badge\"><i class=\"bi bi-tag\"></i> ${esc(window.__CATMAP__[String(cid)]||\"Kategori\")}</span>`)\n        .join(\"\");\n      const actions  = t.done\n        ? `<button class=\"btn btn-warning btn-open\"><i class=\"bi bi-arrow-counterclockwise\"></i> Yeniden Aç</button>\n           <button class=\"btn btn-danger btn-trash\"><i class=\"bi bi-trash\"></i> Sil</button>`\n        : `<button class=\"btn btn-success btn-complete\"><i class=\"bi bi-check2-square\"></i> Tamamla</button>\n           <button class=\"btn btn-info btn-edit\"><i class=\"bi bi-pencil-square\"></i> Düzenle</button>\n           <button class=\"btn btn-secondary btn-schedule\"><i class=\"bi bi-alarm-fill\"></i> Hatırlat</button>\n           <button class=\"btn btn-danger btn-trash\"><i class=\"bi bi-trash\"></i> Sil</button>`;\n      return `\n        <div class=\"todo-wrap ${t.done?'done':''}\" data-id=\"${t.id}\">\n          <div class=\"todo-row\">\n            <div class=\"todo-accent\" aria-hidden=\"true\"></div>\n            <div>\n              <div class=\"${titleCls}\">${esc(t.name)}</div>\n              <div class=\"todo-badges\">${datePill}${whoPill}${statePill}${catBadges}</div>\n            </div>\n            <i class=\"bi bi-chevron-down text-muted\"></i>\n          </div>\n          <div class=\"todo-actions\"><div class=\"d-flex flex-wrap gap-2 justify-content-end\">${actions}</div></div>\n        </div>`;\n    }\n\n    // ====== Survey JSON ======\n    const surveyJson = {\n      showNavigationButtons:\"none\", showQuestionNumbers:\"off\", widthMode:\"responsive\",\n      pages:[{ name:\"home\", elements:[\n        { type:\"panel\", name:\"newItemPanel\", title:\"Yeni iş ekle\", elements:[\n          { type:\"text\", name:\"newName\", titleLocation:\"hidden\", isRequired:true,\n            placeholder:\"Dosyalar teslim edilecek...\", startWithNewLine:false },\n\n          { type:\"html\", name:\"addButtons\", startWithNewLine:false, html:\n            `<div class=\"d-flex justify-content-end align-items-center gap-2\">\n               <button type=\"button\" class=\"sv-btn btn-outline-secondary\" id=\"btnAddCat\">\n                 <i class=\"bi bi-tags\"></i> Kategori Ekle\n               </button>\n               <button type=\"button\" class=\"sv-btn btn-clear\" id=\"btnClear\">Temizle</button>\n               <button type=\"button\" class=\"sv-btn btn-add\">Ekle</button>\n             </div>` },\n\n          <!-- Kategorileri modalda seçiyoruz; burada gizli -->\n          { type:\"tagbox\", name:\"newCats\", visible:false,\n            choices:(window.__CATS__||[]).map(c=>({value:String(c._id), text:c.name})) }\n        ]},\n\n        { type:\"html\", name:\"toolbar\", cssClasses:{root:\"toolbar-block\"}, html:\n          `<div class=\"todos-toolbar\">\n             <div class=\"toolbar-title\">Yapılacaklar</div>\n             <div class=\"toolbar-stats ms-auto\">\n               <span class=\"stat-pill\" id=\"statAll\"><i class=\"bi bi-list-task\"></i> Toplam: 0</span>\n               <span class=\"stat-pill\" id=\"statOpen\"><i class=\"bi bi-hourglass-split\"></i> Açık: 0</span>\n               <span class=\"stat-pill\" id=\"statDone\"><i class=\"bi bi-check2-circle\"></i> Tamam: 0</span>\n             </div>\n           </div>` },\n\n        <!-- Filtre paneli (KALDIRILDI) -->\n\n        { type:\"html\", name:\"listHost\", html:`<div id=\"todoListHost\"></div>` },\n        { type:\"html\", name:\"emptyMsg\", html:`<div class=\"text-muted text-center py-4 d-none\" id=\"emptyListMsg\">Henüz kayıt yok…</div>` }\n      ]}]\n    };\n    const model = new Survey.Model(surveyJson);\n    window.__surveyModel__ = model;\n\n    // Panel hizalama\n    model.onAfterRenderPanel.add((s,opt)=>{\n      if(opt.panel.name!==\"newItemPanel\") return;\n      opt.htmlElement.classList.add(\"inline-add\");\n      const row = opt.htmlElement.querySelector('.sv-row');\n      const inputWrap = row?.children?.[0]; const btnWrap = row?.children?.[1];\n      if(inputWrap){ inputWrap.style.flex='1 1 auto'; inputWrap.style.minWidth='0'; }\n      if(btnWrap){ btnWrap.style.flex='0 0 auto'; }\n    });\n\n    // Buton davranışları + modal aç\n    model.onAfterRenderQuestion.add((s,opt)=>{\n      if (opt.question.name === \"addButtons\") {\n        const host = opt.htmlElement;\n        const btnAdd = host.querySelector(\".btn-add\");\n        const btnClear = host.querySelector(\"#btnClear\") || host.querySelector(\".btn-clear\");\n        const btnCat = host.querySelector(\"#btnAddCat\");\n\n        // EKLE\n        btnAdd?.addEventListener(\"click\", ()=>{\n          const name = s.getQuestionByName(\"newName\")?.value?.trim();\n          const cats = s.getQuestionByName(\"newCats\")?.value || [];\n          if(!name) return;\n          postForm(\"/opt/add\", { name, categories: JSON.stringify(cats) });\n        });\n\n        // TEMİZLE\n        btnClear?.addEventListener(\"click\", (e)=>{\n          e.preventDefault();\n          if (typeof s.setValue === \"function\") {\n            s.setValue(\"newName\", \"\");\n            s.setValue(\"newCats\", []);\n          } else {\n            const qn = s.getQuestionByName(\"newName\");\n            const qc = s.getQuestionByName(\"newCats\");\n            if (qn) qn.value = \"\";\n            if (qc) qc.value = [];\n          }\n\n          // Modal açıksa kutuları sıfırla ve rozeti kaldır\n          const catHost = document.getElementById(\"catList\");\n          if (catHost) {\n            catHost.querySelectorAll(\".cat-check\").forEach(ch => ch.checked = false);\n            if (typeof renderCatListInto === \"function\") renderCatListInto(catHost, []);\n          }\n          document.getElementById(\"btnAddCat\")?.querySelector(\".sel-badge\")?.remove();\n        });\n\n        // KATEGORİ MODALINI AÇ\n        btnCat?.addEventListener(\"click\", ()=>{\n        // Arama kutusunu sıfırla ve listeyi filtresiz çiz\n        const inp = document.getElementById(\"catFilter\");\n        if (inp) inp.value = \"\";\n        renderCatListInto(document.getElementById(\"catList\"), null, null, \"\");\n        \n        // Modalı aç\n        const el = document.getElementById(\"catModal\");\n        const modal = window.bootstrap?.Modal\n        ? window.bootstrap.Modal.getOrCreateInstance(el)\n        : new bootstrap.Modal(el);\n        modal.show();\n        });\n      }\n      // toolbar için artık ekstra dinleyici yok\n    });\n\n    // Sayfa render: listeyi çiz\n    model.onAfterRenderPage.add((s)=>{\n      const mine = filterByUser(window.__TODOS__, window.__USER__);\n      const list = mine.slice().sort((a,b)=>(b?.stamp?.createdAt||0)-(a?.stamp?.createdAt||0));\n      renderList(list);\n    });\n\n    function renderList(list){\n      const host = document.getElementById(\"todoListHost\");\n      if(host){ host.innerHTML = list.map(rowHtml).join(\"\"); }\n      const empty = document.getElementById(\"emptyListMsg\");\n      if(!list.length) empty?.classList.remove(\"d-none\"); else empty?.classList.add(\"d-none\");\n      const openCnt = list.filter(x=>!x.done).length, doneCnt = list.length-openCnt;\n      document.getElementById('statAll').innerHTML  = `<i class=\"bi bi-list-task\"></i> Toplam: ${list.length}`;\n      document.getElementById('statOpen').innerHTML = `<i class=\"bi bi-hourglass-split\"></i> Açık: ${openCnt}`;\n      document.getElementById('statDone').innerHTML = `<i class=\"bi bi-check2-circle\"></i> Tamam: ${doneCnt}`;\n      host?.querySelectorAll(\".todo-wrap\").forEach(wrap=>{\n        const id = wrap.getAttribute(\"data-id\");\n        wrap.querySelector(\".todo-row\")?.addEventListener(\"click\", ()=> wrap.classList.toggle(\"open\"));\n        wrap.querySelector(\".btn-trash\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();postForm(\"/opt/trash\",{id});});\n        wrap.querySelector(\".btn-complete\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();postForm(\"/opt/complete\",{id});});\n        wrap.querySelector(\".btn-open\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();postForm(\"/opt/open\",{id});});\n        wrap.querySelector(\".btn-edit\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();location.href=\"/edit/\"+encodeURIComponent(id);});\n        wrap.querySelector(\".btn-schedule\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();location.href=\"/schedule/\"+encodeURIComponent(id);});\n      });\n    }\n\n    async function postForm(url,data){\n      const res = await fetch(url,{method:\"POST\",credentials:\"include\",\n        headers:{ \"Content-Type\":\"application/x-www-form-urlencoded\" },\n        body:new URLSearchParams(data)});\n      if(!res.ok){ alert(\"İstek başarısız.\"); return; }\n      location.reload();\n    }\n\n    $(\"#surveyHost\").Survey({ model });\n  })();\n  </script>\n\n  <!-- Kategori Seç / Oluştur Modal -->\n  <div class=\"modal fade\" id=\"catModal\" tabindex=\"-1\">\n    <div class=\"modal-dialog modal-dialog-scrollable\">\n      <div class=\"modal-content\">\n        <div class=\"modal-header\">\n          <h5 class=\"modal-title\">Kategoriler</h5>\n          <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\"></button>\n        </div>\n\n        <div class=\"modal-body\">\n          <!-- Mevcut kategoriler (çoklu seçim) -->\n          <!-- Mevcut kategoriler (çoklu seçim) -->\n          <div class=\"mb-3\">\n            <label class=\"form-label fw-semibold d-flex align-items-center justify-content-between\">\n              <span>Kategorileri seç</span>\n            \n              <!-- YENİ: temizleme butonlu kutu -->\n              <div class=\"position-relative\" style=\"max-width:200px\">\n                <input id=\"catFilter\" class=\"form-control form-control-sm pe-5\" placeholder=\"Ara...\">\n                <button type=\"button\" id=\"catFilterClear\"\n                        class=\"btn btn-sm position-absolute top-50 end-0 translate-middle-y me-1 px-2 d-none\"\n                        aria-label=\"Temizle\" title=\"Temizle\" style=\"border:none; background:transparent;\">\n                  <i class=\"bi bi-x-lg\"></i>\n                </button>\n              </div>\n            </label>\n          \n            <div id=\"catList\" class=\"border rounded p-2\" style=\"max-height:280px; overflow:auto;\"></div>\n            <small class=\"text-muted\">Birden çok kategori seçebilirsiniz.</small>\n          </div>\n\n          <hr class=\"my-3\">\n\n          <!-- Yeni kategori oluştur -->\n          <div>\n            <label class=\"form-label fw-semibold\">Yeni kategori oluştur</label>\n            <div class=\"d-flex gap-2\">\n              <input class=\"form-control\" id=\"newCatName\" placeholder=\"Kategori adı\">\n              <button class=\"btn btn-primary\" id=\"btnCreateCat\" type=\"button\">\n                <i class=\"bi bi-plus-lg\"></i> Ekle\n              </button>\n            </div>\n            <small class=\"text-muted\">Kaydedince yukarıdaki listede de görünecek.</small>\n          </div>\n        </div>\n\n        <div class=\"modal-footer\">\n          <button class=\"btn btn-secondary\" type=\"button\" data-bs-dismiss=\"modal\">Kapat</button>\n          <button class=\"btn btn-success\" id=\"btnApplyCats\" type=\"button\">Seçimi Uygula</button>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <!-- Kategori Yönet Modal -->\n  <div class=\"modal fade\" id=\"catManageModal\" tabindex=\"-1\" aria-hidden=\"true\">\n    <div class=\"modal-dialog modal-lg modal-dialog-scrollable\">\n      <div class=\"modal-content\">\n        <div class=\"modal-header\">\n          <h5 class=\"modal-title\"><i class=\"bi bi-tags-fill me-2\"></i>Kategori Yönet</h5>\n          <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\"></button>\n        </div>\n  \n        <div class=\"modal-body\">\n          <!-- Arama + Yeni ekle -->\n          <div class=\"d-flex flex-wrap gap-2 mb-3\">\n            <div class=\"input-group\" style=\"max-width:420px;\">\n              <span class=\"input-group-text\"><i class=\"bi bi-search\"></i></span>\n              <input id=\"catSearch\" class=\"form-control\" placeholder=\"Kategori ara...\">\n            </div>\n            <div class=\"ms-auto d-flex gap-2\">\n              <input id=\"catNewName\" class=\"form-control\" placeholder=\"Yeni kategori adı\" style=\"max-width:280px;\">\n              <button id=\"btnCatNew\" class=\"btn btn-primary\"><i class=\"bi bi-plus-lg\"></i> Ekle</button>\n            </div>\n          </div>\n  \n          <!-- Liste -->\n          <div class=\"table-responsive border rounded\">\n            <table class=\"table align-middle m-0\">\n              <thead class=\"table-light\">\n                <tr>\n                  <th style=\"width:56px;\">#</th>\n                  <th>Ad</th>\n                  <th style=\"width:160px;\" class=\"text-end\">İşlemler</th>\n                </tr>\n              </thead>\n              <tbody id=\"catManageTbody\">\n                <!-- JS ile dolacak -->\n              </tbody>\n            </table>\n          </div>\n          <small class=\"text-muted d-block mt-2\">Not: Burada yapılan değişiklikler, “Kategori Ekle” seçim listesine de yansır.</small>\n        </div>\n  \n        <div class=\"modal-footer\">\n          <button class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Kapat</button>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <!-- Modal davranışı -->\n  <script>\n    // Seçili kategorileri üste taşıyan sürüm\n    // Seçili kategorileri üste taşıyan sürüm + FİLTRE desteği\n    function renderCatListInto(container, selectedIds = null, focusId = null, filter = '') {\n    const host = container || document.getElementById(\"catList\");\n    if (!host) return;\n    \n    const cats = window.__CATS__ || [];\n    const kw = String(filter || '').trim().toLowerCase();\n    \n    // --- Seçili id'ler (mevcut mantık)\n    let current;\n    if (Array.isArray(selectedIds)) {\n    current = selectedIds.map(String);\n    } else {\n    const live = Array.from(host.querySelectorAll('.cat-check:checked')).map(ch => ch.value);\n    if (live.length) {\n    current = live;\n    } else {\n    try {\n    const s = window.__surveyModel__;\n    current = (s?.getQuestionByName?.('newCats')?.value || []).map(String);\n    } catch { current = []; }\n    }\n    }\n    const set = new Set(current);\n    \n    // --- Filtreleme (ada göre)\n    const filtered = kw\n    ? cats.filter(c => String(c.name).toLowerCase().includes(kw))\n    : cats;\n    \n    // --- Seçili olanları üste al\n    const chosen = filtered.filter(c => set.has(String(c._id)));\n    const rest = filtered.filter(c => !set.has(String(c._id)));\n    const ordered = [...chosen, ...rest];\n    \n    const prevScroll = host.scrollTop;\n    \n    host.innerHTML = ordered.map(c => {\n    const id = String(c._id);\n    const checked = set.has(id) ? 'checked' : '';\n    return `\n    <label class=\"d-flex align-items-center gap-2 py-1\">\n            <input type=\"checkbox\" class=\"form-check-input cat-check\" value=\"${id}\" ${checked}>\n            <span>${c.name}</span>\n          </label>`;\n    }).join(\"\");\n    \n    // checkbox değişince kendini tekrar çiz (filtre korunur)\n    host.querySelectorAll('.cat-check').forEach(ch => {\n    ch.addEventListener('change', () => {\n    const idsNow = Array.from(host.querySelectorAll('.cat-check:checked')).map(x => x.value);\n    renderCatListInto(host, idsNow, ch.value, kw);\n    });\n    });\n    \n    host.scrollTop = prevScroll;\n    \n    if (focusId) {\n    const toFocus = host.querySelector(`.cat-check[value=\"${focusId}\"]`);\n    toFocus?.focus();\n    }\n    }\n\n    document.addEventListener('DOMContentLoaded', ()=>{\n      const modalEl = document.getElementById('catModal');\n      const modal = modalEl ? new bootstrap.Modal(modalEl) : null;\n\n      // Yeni kategori oluştur → otomatik seç, üste taşı, Survey'ye yaz\n      document.getElementById('btnCreateCat')?.addEventListener('click', async ()=>{\n        const inp = document.getElementById('newCatName');\n        const val = (inp?.value||\"\").trim();\n        if(!val) return;\n\n        const token = document.querySelector('meta[name=\"csrf-token\"]')?.getAttribute('content') || '';\n        const res = await fetch('/categories-opt/add', {\n          method: 'POST',\n          credentials: 'include',\n          headers: {\n            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',\n            ...(token ? {'X-CSRF-Token': token} : {})\n          },\n          body: new URLSearchParams({ name: val })\n        });\n\n        if (!res.ok) {\n          const txt = await res.text().catch(()=> '');\n          alert('Kategori kaydedilemedi.\\n' + (txt||''));\n          return;\n        }\n\n        let createdId = null;\n        try {\n          const data = await res.json();\n          if (data && (data._id || data.id)) createdId = String(data._id || data.id);\n        } catch { /* json değilse sorun yok */ }\n\n        await loadCategories();\n\n        if (!createdId) {\n          const byName = (window.__CATS__||[]).find(c => String(c.name).trim() === val);\n          if (byName) createdId = String(byName._id);\n        }\n\n        // Survey choices güncelle\n        const s = window.__surveyModel__;\n        const choices = (window.__CATS__||[]).map(c=>({value:String(c._id), text:c.name}));\n        s?.getQuestionByName?.('newCats') && (s.getQuestionByName('newCats').choices = choices);\n        // (filterCats tamamen kaldırıldı)\n\n        // Yeni oluşturulanı seçili yap\n        let selected = [];\n        if (s && typeof s.getQuestionByName === 'function') {\n          selected = (s.getQuestionByName('newCats')?.value || []).map(String);\n        }\n        if (createdId && !selected.includes(createdId)) selected.push(createdId);\n\n        if (s && typeof s.setValue === 'function') s.setValue('newCats', selected);\n        else if (s?.getQuestionByName) { const q = s.getQuestionByName('newCats'); if (q) q.value = selected; }\n\n        // Modal listesini güncelle (yeni kategori üste ve tikli), mevcut filtreyi koru\n        const currentFilter = document.getElementById('catFilter')?.value || '';\n        if (typeof renderCatListInto === 'function') {\n        renderCatListInto(document.getElementById('catList'), selected, createdId, currentFilter);\n        }\n\n        // \"Kategori Ekle\" butonu rozeti\n        const btnCat = document.getElementById('btnAddCat');\n        if (btnCat) {\n          btnCat.querySelector('.sel-badge')?.remove();\n          if (selected.length) {\n            const span = document.createElement('span');\n            span.className = 'sel-badge ms-1 badge rounded-pill text-bg-secondary';\n            span.textContent = selected.length;\n            btnCat.appendChild(span);\n          }\n        }\n\n        if (inp) inp.value = '';\n\n      });\n\n      // Kategori arama kutusu + temizle butonu\n      const catFilterInput = document.getElementById('catFilter');\n      const catFilterClear = document.getElementById('catFilterClear');\n      let catFilterTimer;\n      \n      function applyCatFilter(val){\n      const checkedIds = Array.from(document.querySelectorAll('#catList .cat-check:checked')).map(x => x.value);\n      renderCatListInto(document.getElementById('catList'), checkedIds, null, val);\n      }\n      \n      catFilterInput?.addEventListener('input', (e) => {\n      clearTimeout(catFilterTimer);\n      const val = e.target.value || '';\n      // X butonunun görünürlüğü\n      if (catFilterClear) catFilterClear.classList.toggle('d-none', val.length === 0);\n      catFilterTimer = setTimeout(() => applyCatFilter(val), 120);\n      });\n      \n      // Enter’a basınca sayfayı submit etmesin, sadece filtre uygulasın\n      catFilterInput?.addEventListener('keydown', (e)=>{\n      if(e.key === 'Enter'){ e.preventDefault(); applyCatFilter(catFilterInput.value || ''); }\n      });\n      \n      // X butonu davranışı\n      catFilterClear?.addEventListener('click', ()=>{\n      if (!catFilterInput) return;\n      catFilterInput.value = '';\n      catFilterClear.classList.add('d-none');\n      applyCatFilter('');\n      catFilterInput.focus();\n      });\n\n      // Seçimi Uygula\n      // TEK dinleyici — DOMContentLoaded bloğunun İÇİNDE olsun ve sadece 1 kez tanımla\n      document.getElementById('btnApplyCats')?.addEventListener('click', () => {\n      // 1) Seçili id'leri topla\n      const checks = Array.from(document.querySelectorAll('#catList .cat-check'));\n      const ids = checks.filter(ch => ch.checked).map(ch => String(ch.value));\n      \n      // 2) Survey'ye yaz\n      const s = window.__surveyModel__;\n      if (s?.setValue) {\n      s.setValue('newCats', ids);\n      } else {\n      const q = s?.getQuestionByName?.('newCats');\n      if (q) q.value = ids;\n      }\n      \n      // 3) \"Kategori Ekle\" butonu rozeti güncelle\n      const btnCat = document.getElementById('btnAddCat');\n      if (btnCat) {\n      btnCat.querySelector('.sel-badge')?.remove();\n      if (ids.length) {\n      const span = document.createElement('span');\n      span.className = 'sel-badge ms-1 badge rounded-pill text-bg-secondary';\n      span.textContent = String(ids.length);\n      btnCat.appendChild(span);\n      }\n      }\n      \n      // 4) Arama filtresini temizle + X butonunu gizle + listeyi filtresiz yeniden çiz\n      const filterInp = document.getElementById('catFilter');\n      if (filterInp) filterInp.value = '';\n      document.getElementById('catFilterClear')?.classList.add('d-none');\n      renderCatListInto(document.getElementById('catList'), ids, null, '');\n      \n      // 5) Modalı kapat\n      const modalEl = document.getElementById('catModal');\n      const inst = modalEl && (window.bootstrap?.Modal?.getOrCreateInstance\n      ? window.bootstrap.Modal.getOrCreateInstance(modalEl)\n      : null);\n      inst?.hide();\n      });\n      });\n  </script>\n\n  <script>\n    (function(){\n    const csrf = document.querySelector('meta[name=\"csrf-token\"]')?.getAttribute('content') || '';\n    const h = (str='') => String(str ?? '').replace(/[&<>\"']/g, m => ({\n      \"&\":\"&amp;\",\"<\":\"&lt;\",\">\":\"&gt;\",\"\\\"\":\"&quot;\",\"'\":\"&#39;\"\n    }[m]));\n  \n    // ---- DB'den liste çek & önbelleği kur\n    async function loadCategories(){\n      try{\n        const res = await fetch('/categories', { credentials:'include' });\n        if(!res.ok) throw new Error('Liste alınamadı');\n        const data = await res.json().catch(()=>[]);\n        window.__CATS__ = Array.isArray(data) ? data : [];\n        window.__CATMAP__ = Object.fromEntries((window.__CATS__||[]).map(c=>[String(c._id), c.name]));\n        return true;\n      }catch(err){\n        alert('Kategori listesi alınamadı.');\n        return false;\n      }\n    }\n  \n    // --- Survey tagbox choices'ı güncelle\n    function refreshSurveyChoices(){\n      try{\n        const s = window.__surveyModel__;\n        if(!s?.getQuestionByName) return;\n        const q = s.getQuestionByName('newCats');\n        if(!q) return;\n        q.choices = (window.__CATS__||[]).map(c=>({value:String(c._id), text:c.name}));\n      }catch{}\n    }\n  \n    // --- Liste render\n    async function renderCatManage(filter=''){\n      const body = document.getElementById('catManageTbody');\n      if(!body) return;\n  \n      if(!Array.isArray(window.__CATS__)) await loadCategories();\n  \n      const all = (window.__CATS__||[]);\n      const kw = (filter||'').trim().toLowerCase();\n      const list = kw ? all.filter(c => String(c.name).toLowerCase().includes(kw)) : all;\n  \n      if(!list.length){\n        body.innerHTML = `<tr><td colspan=\"3\" class=\"text-center text-muted py-4\">Sonuç yok</td></tr>`;\n        return;\n      }\n  \n      body.innerHTML = list.map((c,idx)=>`\n        <tr data-id=\"${h(c._id)}\">\n          <td class=\"text-muted\">${idx+1}</td>\n          <td class=\"cat-name\">\n            <span class=\"cat-name-text\">${h(c.name)}</span>\n          </td>\n          <td class=\"text-end\">\n            <button class=\"btn btn-sm btn-outline-secondary btn-rename\"><i class=\"bi bi-pencil-square\"></i> Düzenle</button>\n            <button class=\"btn btn-sm btn-outline-danger btn-delete\"><i class=\"bi bi-trash\"></i> Sil</button>\n          </td>\n        </tr>\n      `).join('');\n  \n      // Edit / Delete olayları\n      body.querySelectorAll('.btn-rename').forEach(btn=>{\n        btn.addEventListener('click', (e)=>{\n          const tr = e.currentTarget.closest('tr');\n          const id = tr.getAttribute('data-id');\n          const span = tr.querySelector('.cat-name-text');\n          const oldName = span.textContent.trim();\n          if(tr.classList.contains('cat-row-editing')) return;\n  \n          tr.classList.add('cat-row-editing');\n          tr.querySelector('.cat-name').innerHTML = `\n            <div class=\"d-flex gap-2 align-items-center\">\n              <input class=\"form-control form-control-sm\" value=\"${h(oldName)}\">\n              <button class=\"btn btn-sm btn-success btn-save\"><i class=\"bi bi-check-lg\"></i></button>\n              <button class=\"btn btn-sm btn-outline-secondary btn-cancel\"><i class=\"bi bi-x-lg\"></i></button>\n            </div>`;\n  \n          const btnCancel = tr.querySelector('.btn-cancel');\n          const btnSave   = tr.querySelector('.btn-save');\n  \n          btnCancel.addEventListener('click', ()=>{\n            tr.classList.remove('cat-row-editing');\n            tr.querySelector('.cat-name').innerHTML = `<span class=\"cat-name-text\">${h(oldName)}</span>`;\n          });\n  \n          btnSave.addEventListener('click', async ()=>{\n            const input = tr.querySelector('input');\n            const newName = (input.value||'').trim();\n            if(!newName || newName===oldName){ btnCancel.click(); return; }\n  \n            btnSave.disabled = true;\n            const ok = await updateCategory(id, newName, oldName);\n            btnSave.disabled = false;\n  \n            if(ok){\n              await loadCategories();              // <-- DB'den tazele\n              refreshSurveyChoices();\n              renderCatManage(document.getElementById('catSearch')?.value||'');\n            }\n          });\n        });\n      });\n  \n      body.querySelectorAll('.btn-delete').forEach(btn=>{\n        btn.addEventListener('click', async (e)=>{\n          const tr = e.currentTarget.closest('tr');\n          const id = tr.getAttribute('data-id');\n  \n  \n          btn.disabled = true;\n          const ok = await trashCategory(id);\n          btn.disabled = false;\n  \n          if(ok){\n            await loadCategories();                // <-- DB'den tazele\n            refreshSurveyChoices();\n            renderCatManage(document.getElementById('catSearch')?.value||'');\n          }\n        });\n      });\n    }\n  \n    // --- API yardımcıları (Node-RED uçlarına göre)\n    async function updateCategory(id, name, orig){\n      try{\n        const res = await fetch('/categories-opt/update', {\n          method:'POST',\n          credentials:'include',\n          headers:{\n            'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8',\n            ...(csrf ? {'X-CSRF-Token': csrf} : {})\n          },\n          body: new URLSearchParams({ id:String(id), name:String(name), orig:String(orig||'') })\n        });\n        if(!res.ok){\n          const t = await res.text().catch(()=> '');\n          alert('Güncelleme başarısız.\\n'+(t||''));\n          return false;\n        }\n        // mongodb4 updateOne çıktısı: { acknowledged, matchedCount, modifiedCount, ... }\n        const out = await res.json().catch(()=> ({}));\n        // Başarı \"gerçek değişiklik\" olsun:\n        return !!(out?.modifiedCount > 0);\n      }catch(e){\n        alert('Ağ hatası');\n        return false;\n      }\n    }\n  \n    async function trashCategory(id){\n      try{\n        const res = await fetch('/categories-opt/trash', {\n          method:'POST',\n          credentials:'include',\n          headers:{\n            'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8',\n            ...(csrf ? {'X-CSRF-Token': csrf} : {})\n          },\n          body: new URLSearchParams({ id:String(id) })\n        });\n        if(!res.ok){\n          const txt = await res.text().catch(()=> '');\n          alert('Silme başarısız.\\n'+(txt||''));\n          return false;\n        }\n        // mongodb4 deleteOne çıktısı: { acknowledged, deletedCount }\n        const out = await res.json().catch(()=> ({}));\n        return !!(out?.deletedCount > 0);\n      }catch(e){\n        alert('Ağ hatası');\n        return false;\n      }\n    }\n  \n    async function createCategory(name){\n      try{\n        const res = await fetch('/categories-opt/add', {\n          method:'POST',\n          credentials:'include',\n          headers:{\n            'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8',\n            ...(csrf ? {'X-CSRF-Token': csrf} : {})\n          },\n          body: new URLSearchParams({ name:String(name) })\n        });\n        if(!res.ok){\n          const t = await res.text().catch(()=> '');\n          alert('Ekleme başarısız.\\n'+(t||''));\n          return null;\n        }\n        // insertOne çıktısı: { acknowledged, insertedId }\n        const out = await res.json().catch(()=> ({}));\n        const id = out?.insertedId || out?._id || out?.id || null;\n        return id ? String(id) : null;\n      }catch(e){\n        alert('Ağ hatası');\n        return null;\n      }\n    }\n  \n    // --- Modal açma ve olaylar\n    document.getElementById('btnManageCats')?.addEventListener('click', async ()=>{\n      await loadCategories();                // <-- her açılışta DB’den\n      await renderCatManage('');\n      const el = document.getElementById('catManageModal');\n      const m = window.bootstrap?.Modal ? window.bootstrap.Modal.getOrCreateInstance(el) : new bootstrap.Modal(el);\n      m.show();\n      document.getElementById('catSearch')?.focus();\n    });\n  \n    // Arama (debounce)\n    let tSearch;\n    document.getElementById('catSearch')?.addEventListener('input', (e)=>{\n      clearTimeout(tSearch);\n      const v = e.target.value || '';\n      tSearch = setTimeout(()=> renderCatManage(v), 150);\n    });\n  \n    // Yeni kategori ekle\n    document.getElementById('btnCatNew')?.addEventListener('click', async ()=>{\n      const inp = document.getElementById('catNewName');\n      const name = (inp?.value||'').trim();\n      if(!name) return;\n  \n      const newId = await createCategory(name);\n      if(!newId) return;\n  \n      await loadCategories();                // <-- DB’den tazele\n      refreshSurveyChoices();\n      renderCatManage(document.getElementById('catSearch')?.value||'');\n      if(inp) inp.value='';\n    });\n  \n    // Sayfa ilk yüklenirken de listeyi hazırlamak istersen:\n    // loadCategories().then(()=>{ refreshSurveyChoices(); });\n  })();\n  </script>\n\n  <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js\"></script>\n</body>\n</html>\n",
+        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n  <title>Yapılacaklar</title>\n\n  <!-- Bootstrap & Icons -->\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css\" rel=\"stylesheet\">\n\n  <!-- SurveyJS (jQuery) -->\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n\n  <style>\n    :root{\n      --todo-form-gap:6px; --todo-gap:6px; --todo-pad:12px; --todo-radius:12px;\n      --todo-border:#e9ecef; --todo-bg:#fff; --done:#16a34a; --pending:#0d6efd;\n    }\n    body{ background:#f8f9fa }\n    .navbar{ --bs-navbar-padding-y:.9rem }\n\n    .todos-toolbar{ display:flex; gap:12px; align-items:center; margin-top:16px; padding:10px 12px;\n      background:#fff; border:1px solid var(--todo-border); border-radius:var(--todo-radius);}\n    .toolbar-title{ font-weight:700 }\n    .toolbar-stats{ margin-left:auto; display:flex; gap:8px }\n    .stat-pill{ background:#f1f3f5; color:#495057; font-size:.85rem; padding:6px 10px; border-radius:999px }\n    .toolbar-block{ margin-bottom:var(--todo-form-gap) !important; }\n\n    .todo-wrap{ margin:0 0 var(--todo-gap) 0 !important; background:var(--todo-bg);\n      border:1px solid var(--todo-border); border-radius:var(--todo-radius); overflow:hidden; }\n    #todoListHost .todo-wrap:last-child{ margin-bottom:0 !important; }\n\n    .todo-row{ display:grid; grid-template-columns:12px 1fr auto; gap:12px; align-items:center;\n      padding:var(--todo-pad); cursor:pointer; }\n    .todo-accent{ width:12px; height:100%; border-radius:4px; background:var(--pending) }\n    .todo-wrap.done .todo-accent{ background:var(--done) }\n\n    .todo-title{ font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }\n    .todo-title.done{ color:#6c757d; text-decoration:line-through }\n\n    .todo-badges{ display:flex; gap:8px; flex-wrap:wrap }\n    .todo-badge{ display:inline-flex; align-items:center; gap:6px; background:#f1f3f5; color:#495057;\n      padding:4px 8px; border-radius:999px; font-size:.8rem }\n\n    .todo-actions{ display:none; padding:10px 12px; border-top:1px dashed #e5e7eb; background:#fff }\n    .todo-wrap.open .todo-actions{ display:block }\n\n    .inline-add .sv-row{ display:flex; align-items:center; gap:12px }\n    .inline-add .sv-row>div:has(> .sv-question[data-name=\"newName\"]){ flex:1 1 auto !important; min-width:0 !important }\n    .inline-add .sv-row>div:has(> .sv-question[data-name=\"addButtons\"]){ flex:0 0 auto !important }\n    .inline-add .sv-question[data-name=\"newName\"],\n    .inline-add .sv-question[data-name=\"addButtons\"]{ margin:0 !important; padding:0 !important }\n\n    @media (max-width:576px){\n      .inline-add .sv-row{ flex-direction:column; align-items:stretch }\n    }\n\n    .user-fab{ position:fixed; right:18px; bottom:18px; z-index:1000; display:flex; align-items:center; gap:10px;\n      background:#fff; border-radius:999px; padding:8px 12px; box-shadow:0 6px 16px rgba(0,0,0,.15); border:1px solid #eee; }\n    .user-fab .avatar{ width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#0d6efd; color:#fff; }\n    .admin-btn-48{ width:48px; height:48px; }\n\n    .btn-clear{ background:#fff!important; color:#6c757d!important; border:1px solid #ced4da!important; }\n    .btn-clear:hover{ background:#f8f9fa!important; border-color:#adb5bd!important; }\n    .btn-add{ background:#0d6efd!important; color:#fff!important; border:1px solid #0d6efd!important; }\n    .btn-add:hover{ background:#0b5ed7!important; }\n\n    .todo-badge.date,.todo-badge.who{ background:#6c757d!important; color:#fff!important }\n    .todo-badge.pending{ background:#ffca2c!important; color:#fff!important }\n    .todo-badge.done{ background:#198754!important; color:#fff!important }\n    #statAll{ background:#0d6efd!important; color:#fff!important }\n    #statOpen{ background:#ffca2c!important; color:#664d03!important; border:1px solid #ffe69c!important }\n    #statDone{ background:#198754!important; color:#fff!important }\n    \n    /* Kategori Ekle butonu */\n    #btnAddCat {\n      background:#f1f3f5 !important;\n      border:1px solid #f1f3f5 !important;\n      color:#000 !important;\n    }\n    #btnAddCat .bi { color:inherit !important; }\n    #btnAddCat:hover,\n    #btnAddCat:focus {\n      background:#e9ecef !important;\n      border-color:#e9ecef !important;\n      color:#000 !important;\n    }\n\n    /* İşlerdeki etiket yazıları da siyah olsun */\n    .todo-badge { color:#000 !important; }\n  </style>\n</head>\n<body>\n  <!-- NAVBAR -->\n  <nav class=\"navbar bg-white border-bottom mb-4\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Yapılacaklar</span>\n      <div class=\"d-flex gap-4\">\n        {{#user.isAdmin}}\n        <a class=\"btn btn-secondary\" id=\"btnManageCats\" title=\"Kategori Düzenle\">\n          <i class=\"bi bi-tags-fill fs-4\"></i>\n        </a>  \n        <a href=\"/user-list\" class=\"btn btn-primary d-flex align-items-center justify-content-center rounded-1 p-0 admin-btn-48\" title=\"Admin Panel\">\n          <i class=\"bi bi-people-fill fs-4\"></i>\n        </a>\n        {{/user.isAdmin}}\n      </div>\n    </div>\n  </nav>\n\n  <div class=\"container\">\n    <div id=\"surveyHost\"></div>\n    {{#error}}<div class=\"alert alert-danger mt-3\"><h4 class=\"m-0\">{{message}}</h4></div>{{/error}}\n  </div>\n\n  <!-- Sağ altta FAB -->\n  <div class=\"user-fab\">\n    <div class=\"avatar\"><i class=\"bi bi-person-fill fs-5\"></i></div>\n    <div class=\"name small text-muted\" id=\"userLabel\">Kullanıcı</div>\n    <a href=\"/logout\" class=\"btn btn-danger p-0 d-flex align-items-center justify-content-center\" style=\"width:40px;height:40px;border-radius:50%\" title=\"Çıkış\">\n      <i class=\"bi bi-power fs-5\"></i>\n    </a>\n  </div>\n\n  <!-- Backend verileri -->\n  <script>\n    window.__TODOS__ = {{#todosJson}}{{{todosJson}}}{{/todosJson}}{{^todosJson}}[]{{/todosJson}};\n    window.__USER__  = {{#userJson}}{{{userJson}}}{{/userJson}}{{^userJson}}{username:\"misafir\",email:\"\",isAdmin:false}{{/userJson}};\n    if(!Array.isArray(window.__TODOS__)) window.__TODOS__ = [];\n    (function(){\n      const u = window.__USER__ || {};\n      const label = [u.username || \"Kullanıcı\", u.email].filter(Boolean).join(\" — \");\n      const el = document.getElementById(\"userLabel\");\n      if(el) el.textContent = label;\n    })();\n  </script>\n\n  <!-- Kategori verisi -->\n  <script>\n    window.__CATS__ = [];\n    window.__CATMAP__ = {};\n    async function loadCategories(){\n      try{\n        const res = await fetch('/categories', {credentials:'include'});\n        if(!res.ok) return;\n        const arr = await res.json();\n        window.__CATS__ = Array.isArray(arr)?arr:[];\n        window.__CATMAP__ = Object.fromEntries((window.__CATS__||[]).map(c => [String(c._id), c.name]));\n      }catch(e){ console.warn('Kategori yükleme hatası', e); }\n    }\n  </script>\n\n  <script>\n  (async function(){\n    await loadCategories();\n\n    Survey.StylesManager.applyTheme(\"modern\");\n    const isAdmin = !!(window.__USER__ && window.__USER__.isAdmin);\n    const esc = s => String(s ?? \"\").replace(/[&<>\\\"']/g, m=>({ \"&\":\"&amp;\",\"<\":\"&lt;\",\">\":\"&gt;\",\"\\\"\":\"&quot;\",\"'\":\"&#39;\" }[m]));\n    const filterByUser = (all,u)=>{\n      if(u?.isAdmin) return all||[];\n      const n=(u?.username||\"\").toLowerCase(), e=(u?.email||\"\").toLowerCase();\n      return (all||[]).filter(x=> (x?.stamp?.username||\"\").toLowerCase()===n || (x?.stamp?.email||\"\").toLowerCase()===e);\n    };\n\n    function rowHtml(t){\n      const titleCls = t.done ? \"todo-title done\" : \"todo-title\";\n      const datePill = `<span class=\"todo-badge date\"><i class=\"bi bi-calendar2-date\"></i> ${esc(t.dateTime||\"-\")}</span>`;\n      const whoPill  = isAdmin && t?.stamp?.username ? `<span class=\"todo-badge who\"><i class=\"bi bi-person-fill\"></i> ${esc(t.stamp.username)}</span>` : \"\";\n      const statePill= t.done\n        ? `<span class=\"todo-badge done\"><i class=\"bi bi-check2\"></i> Tamamlandı</span>`\n        : `<span class=\"todo-badge pending\"><i class=\"bi bi-hourglass-split\"></i> Beklemede</span>`;\n      const catBadges = (t.categories||[])\n        .map(cid => `<span class=\"todo-badge\"><i class=\"bi bi-tag\"></i> ${esc(window.__CATMAP__[String(cid)]||\"Kategori\")}</span>`)\n        .join(\"\");\n      const actions  = t.done\n        ? `<button class=\"btn btn-warning btn-open\"><i class=\"bi bi-arrow-counterclockwise\"></i> Yeniden Aç</button>\n           <button class=\"btn btn-danger btn-trash\"><i class=\"bi bi-trash\"></i> Sil</button>`\n        : `<button class=\"btn btn-success btn-complete\"><i class=\"bi bi-check2-square\"></i> Tamamla</button>\n           <button class=\"btn btn-info btn-edit\"><i class=\"bi bi-pencil-square\"></i> Düzenle</button>\n           <button class=\"btn btn-secondary btn-schedule\"><i class=\"bi bi-alarm-fill\"></i> Hatırlat</button>\n           <button class=\"btn btn-danger btn-trash\"><i class=\"bi bi-trash\"></i> Sil</button>`;\n      return `\n        <div class=\"todo-wrap ${t.done?'done':''}\" data-id=\"${t.id}\">\n          <div class=\"todo-row\">\n            <div class=\"todo-accent\" aria-hidden=\"true\"></div>\n            <div>\n              <div class=\"${titleCls}\">${esc(t.name)}</div>\n              <div class=\"todo-badges\">${datePill}${whoPill}${statePill}${catBadges}</div>\n            </div>\n            <i class=\"bi bi-chevron-down text-muted\"></i>\n          </div>\n          <div class=\"todo-actions\"><div class=\"d-flex flex-wrap gap-2 justify-content-end\">${actions}</div></div>\n        </div>`;\n    }\n\n    // ====== Survey JSON ======\n    const surveyJson = {\n      showNavigationButtons:\"none\", showQuestionNumbers:\"off\", widthMode:\"responsive\",\n      pages:[{ name:\"home\", elements:[\n        { type:\"panel\", name:\"newItemPanel\", title:\"Yeni iş ekle\", elements:[\n          { type:\"text\", name:\"newName\", titleLocation:\"hidden\", isRequired:true,\n            placeholder:\"Dosyalar teslim edilecek...\", startWithNewLine:false },\n\n          { type:\"html\", name:\"addButtons\", startWithNewLine:false, html:\n            `<div class=\"d-flex justify-content-end align-items-center gap-2\">\n               <button type=\"button\" class=\"sv-btn btn-outline-secondary\" id=\"btnAddCat\">\n                 <i class=\"bi bi-tags\"></i> Kategori Ekle\n               </button>\n               <button type=\"button\" class=\"sv-btn btn-clear\" id=\"btnClear\">Temizle</button>\n               <button type=\"button\" class=\"sv-btn btn-add\">Ekle</button>\n             </div>` },\n\n          <!-- Kategorileri modalda seçiyoruz; burada gizli -->\n          { type:\"tagbox\", name:\"newCats\", visible:false,\n            choices:(window.__CATS__||[]).map(c=>({value:String(c._id), text:c.name})) }\n        ]},\n\n        { type:\"html\", name:\"toolbar\", cssClasses:{root:\"toolbar-block\"}, html:\n          `<div class=\"todos-toolbar\">\n             <div class=\"toolbar-title\">Yapılacaklar</div>\n             <div class=\"toolbar-stats ms-auto\">\n               <span class=\"stat-pill\" id=\"statAll\"><i class=\"bi bi-list-task\"></i> Toplam: 0</span>\n               <span class=\"stat-pill\" id=\"statOpen\"><i class=\"bi bi-hourglass-split\"></i> Açık: 0</span>\n               <span class=\"stat-pill\" id=\"statDone\"><i class=\"bi bi-check2-circle\"></i> Tamam: 0</span>\n             </div>\n           </div>` },\n\n        <!-- Filtre paneli (KALDIRILDI) -->\n\n        { type:\"html\", name:\"listHost\", html:`<div id=\"todoListHost\"></div>` },\n        { type:\"html\", name:\"emptyMsg\", html:`<div class=\"text-muted text-center py-4 d-none\" id=\"emptyListMsg\">Henüz kayıt yok…</div>` }\n      ]}]\n    };\n    const model = new Survey.Model(surveyJson);\n    window.__surveyModel__ = model;\n\n    // Panel hizalama\n    model.onAfterRenderPanel.add((s,opt)=>{\n      if(opt.panel.name!==\"newItemPanel\") return;\n      opt.htmlElement.classList.add(\"inline-add\");\n      const row = opt.htmlElement.querySelector('.sv-row');\n      const inputWrap = row?.children?.[0]; const btnWrap = row?.children?.[1];\n      if(inputWrap){ inputWrap.style.flex='1 1 auto'; inputWrap.style.minWidth='0'; }\n      if(btnWrap){ btnWrap.style.flex='0 0 auto'; }\n    });\n\n    // Buton davranışları + modal aç\n    model.onAfterRenderQuestion.add((s, opt) => {\n    if (opt.question.name !== \"addButtons\") return;\n    \n    const host = opt.htmlElement;\n    const btnAdd = host.querySelector(\".btn-add\");\n    const btnClear= host.querySelector(\"#btnClear\") || host.querySelector(\".btn-clear\");\n    const btnCat = host.querySelector(\"#btnAddCat\");\n    \n    // EKLE (aynı kalsın)\n    btnAdd?.addEventListener(\"click\", () => {\n    const name = s.getQuestionByName(\"newName\")?.value?.trim();\n    const cats = s.getQuestionByName(\"newCats\")?.value || [];\n    if (!name) return;\n    postForm(\"/opt/add\", { name, categories: JSON.stringify(cats) });\n    });\n    \n    // TEMİZLE (aynı kalsın)\n    btnClear?.addEventListener(\"click\", (e) => {\n    e.preventDefault();\n    s.setValue?.(\"newName\", \"\");\n    s.setValue?.(\"newCats\", []);\n    const catHost = document.getElementById(\"catList\");\n    if (catHost) {\n    catHost.querySelectorAll(\".cat-check\").forEach(ch => ch.checked = false);\n    renderCatListInto?.(catHost, []);\n    }\n    document.getElementById(\"btnAddCat\")?.querySelector(\".sel-badge\")?.remove();\n    });\n    \n    // *** KATEGORİ MODALI (ARAYI SIFIRLA + FOCUS) ***\n    btnCat?.addEventListener(\"click\", () => {\n    // 1) Aramayı sıfırla\n    __CAT_FILTER = \"\";\n    const search = document.getElementById(\"catSearch\");\n    if (search) search.value = \"\";\n    \n    // 2) Listeyi, şu anki seçili kategorileri dikkate alarak çiz\n    const current = (s.getQuestionByName(\"newCats\")?.value || []).map(String);\n    renderCatListInto(document.getElementById(\"catList\"), current);\n    \n    // 3) Modalı aç\n    const el = document.getElementById(\"catModal\");\n    const modal = window.bootstrap?.Modal\n    ? window.bootstrap.Modal.getOrCreateInstance(el)\n    : new bootstrap.Modal(el);\n    modal.show();\n    \n    // 4) Açıldıktan sonra arama input'una odak ver\n    // setTimeout yerine Bootstrap olayını kullanmak daha sağlamdır:\n    el?.addEventListener(\"shown.bs.modal\", () => search?.focus(), { once: true });\n    });\n    });\n\n    // Sayfa render: listeyi çiz\n    model.onAfterRenderPage.add((s)=>{\n      const mine = filterByUser(window.__TODOS__, window.__USER__);\n      const list = mine.slice().sort((a,b)=>(b?.stamp?.createdAt||0)-(a?.stamp?.createdAt||0));\n      renderList(list);\n    });\n\n    function renderList(list){\n      const host = document.getElementById(\"todoListHost\");\n      if(host){ host.innerHTML = list.map(rowHtml).join(\"\"); }\n      const empty = document.getElementById(\"emptyListMsg\");\n      if(!list.length) empty?.classList.remove(\"d-none\"); else empty?.classList.add(\"d-none\");\n      const openCnt = list.filter(x=>!x.done).length, doneCnt = list.length-openCnt;\n      document.getElementById('statAll').innerHTML  = `<i class=\"bi bi-list-task\"></i> Toplam: ${list.length}`;\n      document.getElementById('statOpen').innerHTML = `<i class=\"bi bi-hourglass-split\"></i> Açık: ${openCnt}`;\n      document.getElementById('statDone').innerHTML = `<i class=\"bi bi-check2-circle\"></i> Tamam: ${doneCnt}`;\n      host?.querySelectorAll(\".todo-wrap\").forEach(wrap=>{\n        const id = wrap.getAttribute(\"data-id\");\n        wrap.querySelector(\".todo-row\")?.addEventListener(\"click\", ()=> wrap.classList.toggle(\"open\"));\n        wrap.querySelector(\".btn-trash\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();postForm(\"/opt/trash\",{id});});\n        wrap.querySelector(\".btn-complete\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();postForm(\"/opt/complete\",{id});});\n        wrap.querySelector(\".btn-open\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();postForm(\"/opt/open\",{id});});\n        wrap.querySelector(\".btn-edit\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();location.href=\"/edit/\"+encodeURIComponent(id);});\n        wrap.querySelector(\".btn-schedule\")?.addEventListener(\"click\",(e)=>{e.stopPropagation();location.href=\"/schedule/\"+encodeURIComponent(id);});\n      });\n    }\n\n    async function postForm(url,data){\n      const res = await fetch(url,{method:\"POST\",credentials:\"include\",\n        headers:{ \"Content-Type\":\"application/x-www-form-urlencoded\" },\n        body:new URLSearchParams(data)});\n      if(!res.ok){ alert(\"İstek başarısız.\"); return; }\n      location.reload();\n    }\n\n    $(\"#surveyHost\").Survey({ model });\n  })();\n  </script>\n\n  <!-- Kategori Seç / Oluştur Modal -->\n  <div class=\"modal fade\" id=\"catModal\" tabindex=\"-1\">\n    <div class=\"modal-dialog modal-dialog-scrollable\">\n      <div class=\"modal-content\">\n        <div class=\"modal-header\">\n          <h5 class=\"modal-title\">Kategoriler</h5>\n          <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\"></button>\n        </div>\n        \n        <div class=\"my-1\"></div>\n\n        <!-- Arama (sticky) -->\n        <div class=\"mb-2 position-sticky top-0 bg-white\" style=\"z-index:1\">\n          <div class=\"input-group input-group-sm\">\n            <span class=\"input-group-text\"><i class=\"bi bi-search\"></i></span>\n            <input type=\"search\" class=\"form-control\" id=\"catSearch\"\n                             placeholder=\"Kategori ara...\" autocomplete=\"off\">\n          </div>\n        </div>\n\n        <div class=\"modal-body\">\n          <!-- Mevcut kategoriler (çoklu seçim) -->\n          <div class=\"mb-3\">\n            <label class=\"form-label fw-semibold\">Kategorileri seç</label>\n            <div id=\"catList\" class=\"border rounded p-2\" style=\"max-height:270px; overflow:auto;\"></div>\n            <small class=\"text-muted\">Birden çok kategori seçebilirsiniz.</small>\n          </div>\n          \n          \n          <hr class=\"my-2\">\n\n          <!-- Yeni kategori oluştur -->\n          <div>\n            <label class=\"form-label fw-semibold\">Yeni kategori oluştur</label>\n            <div class=\"d-flex gap-2\">\n              <input class=\"form-control\" id=\"newCatName\" placeholder=\"Kategori adı\">\n              <button class=\"btn btn-primary\" id=\"btnCreateCat\" type=\"button\">\n                <i class=\"bi bi-plus-lg\"></i> Ekle\n              </button>\n            </div>\n            <small class=\"text-muted\">Kaydedince yukarıdaki listede de görünecek.</small>\n          </div>\n        </div>\n\n        <div class=\"modal-footer\">\n          <button class=\"btn btn-secondary\" type=\"button\" data-bs-dismiss=\"modal\">Kapat</button>\n          <button class=\"btn btn-success\" id=\"btnApplyCats\" type=\"button\">Seçimi Uygula</button>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <!-- Kategori Yönet Modal -->\n  <div class=\"modal fade\" id=\"catManageModal\" tabindex=\"-1\" aria-hidden=\"true\">\n    <div class=\"modal-dialog modal-lg modal-dialog-scrollable\">\n      <div class=\"modal-content\">\n        <div class=\"modal-header\">\n          <h5 class=\"modal-title\"><i class=\"bi bi-tags-fill me-2\"></i>Kategori Yönet</h5>\n          <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\"></button>\n        </div>\n  \n        <div class=\"modal-body\">\n          <!-- Arama + Yeni ekle -->\n          <div class=\"d-flex flex-wrap gap-2 mb-3\">\n            <div class=\"input-group\" style=\"max-width:420px;\">\n              <span class=\"input-group-text\"><i class=\"bi bi-search\"></i></span>\n              <input id=\"catSearch\" class=\"form-control\" placeholder=\"Kategori ara...\">\n            </div>\n            <div class=\"ms-auto d-flex gap-2\">\n              <input id=\"catNewName\" class=\"form-control\" placeholder=\"Yeni kategori adı\" style=\"max-width:280px;\">\n              <button id=\"btnCatNew\" class=\"btn btn-primary\"><i class=\"bi bi-plus-lg\"></i> Ekle</button>\n            </div>\n          </div>\n  \n          <!-- Liste -->\n          <div class=\"table-responsive border rounded\">\n            <table class=\"table align-middle m-0\">\n              <thead class=\"table-light\">\n                <tr>\n                  <th style=\"width:56px;\">#</th>\n                  <th>Ad</th>\n                  <th style=\"width:160px;\" class=\"text-end\">İşlemler</th>\n                </tr>\n              </thead>\n              <tbody id=\"catManageTbody\">\n                <!-- JS ile dolacak -->\n              </tbody>\n            </table>\n          </div>\n          <small class=\"text-muted d-block mt-2\">Not: Burada yapılan değişiklikler, “Kategori Ekle” seçim listesine de yansır.</small>\n        </div>\n  \n        <div class=\"modal-footer\">\n          <button class=\"btn btn-secondary\" data-bs-dismiss=\"modal\">Kapat</button>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <script>\n    // Türkçe uyumlu küçük harf + diakritik temizleme\n    const trLower = (s) =>\n      (s||\"\")\n        .replace(/İ/g,'i').replace(/I/g,'ı')\n        .toLowerCase()\n        .normalize('NFD').replace(/\\p{Diacritic}/gu,'');\n  \n    const escapeHtml = (str) => String(str ?? '').replace(/[&<>\\\"']/g, m =>\n      ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'}[m]));\n  \n    const debounce = (fn, d=120)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), d); }; };\n  \n    // aktif arama metni\n    let __CAT_FILTER = \"\";\n  </script>\n\n  <!-- Modal davranışı -->\n  <script>\n    // Seçili kategorileri üste taşıyan sürüm\n    \n      function renderCatListInto(container, selectedIds = null, focusId = null){\n        const host = container || document.getElementById(\"catList\");\n        if (!host) return;\n    \n        const all = window.__CATS__ || [];\n    \n        // Seçili id'ler (parametre geldiyse onu, yoksa canlı tiklerden oku)\n        let current;\n        if (Array.isArray(selectedIds)) {\n          current = selectedIds.map(String);\n        } else {\n          const live = Array.from(host.querySelectorAll('.cat-check:checked')).map(ch => ch.value);\n          if (live.length) current = live;\n          else {\n            try {\n              const s = window.__surveyModel__;\n              current = (s?.getQuestionByName?.('newCats')?.value || []).map(String);\n            } catch { current = []; }\n          }\n        }\n        const sel = new Set(current);\n    \n        // 1) Filtre\n        const q = (__CAT_FILTER || '').trim();\n        const filtered = q ? all.filter(c => trLower(c.name).includes(trLower(q))) : all;\n    \n        // 2) Seçili olanları üste al\n        const chosen = filtered.filter(c => sel.has(String(c._id)));\n        const rest   = filtered.filter(c => !sel.has(String(c._id)));\n        const ordered = [...chosen, ...rest];\n    \n        const prevScroll = host.scrollTop;\n    \n        // 3) Listeyi yaz (vurgusuz)\n        host.innerHTML = ordered.map(c=>{\n          const id=String(c._id); const checked = sel.has(id) ? 'checked' : '';\n          return `<label class=\"d-flex align-items-center gap-2 py-1\">\n                    <input type=\"checkbox\" class=\"form-check-input cat-check\" value=\"${id}\" ${checked}>\n                    <span>${escapeHtml(c.name)}</span>\n                  </label>`;\n        }).join(\"\") || `<div class=\"text-muted small py-2\">Sonuç yok.</div>`;\n    \n        // 4) Checkbox değişince görünümü tazele\n        host.querySelectorAll('.cat-check').forEach(ch=>{\n          ch.addEventListener('change', () => {\n            const idsNow = Array.from(host.querySelectorAll('.cat-check:checked')).map(x => x.value);\n            renderCatListInto(host, idsNow, ch.value);\n          });\n        });\n    \n        host.scrollTop = prevScroll;\n        if (focusId) host.querySelector(`.cat-check[value=\"${focusId}\"]`)?.focus();\n      }\n    \n\n    document.addEventListener('DOMContentLoaded', ()=>{\n      const modalEl = document.getElementById('catModal');\n      const modal = modalEl ? new bootstrap.Modal(modalEl) : null;\n\n      // Yeni kategori oluştur → otomatik seç, üste taşı, Survey'ye yaz\n      document.getElementById('btnCreateCat')?.addEventListener('click', async ()=>{\n        const inp = document.getElementById('newCatName');\n        const val = (inp?.value||\"\").trim();\n        if(!val) return;\n\n        const token = document.querySelector('meta[name=\"csrf-token\"]')?.getAttribute('content') || '';\n        const res = await fetch('/categories-opt/add', {\n          method: 'POST',\n          credentials: 'include',\n          headers: {\n            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',\n            ...(token ? {'X-CSRF-Token': token} : {})\n          },\n          body: new URLSearchParams({ name: val })\n        });\n\n        if (!res.ok) {\n          const txt = await res.text().catch(()=> '');\n          alert('Kategori kaydedilemedi.\\n' + (txt||''));\n          return;\n        }\n\n        let createdId = null;\n        try {\n          const data = await res.json();\n          if (data && (data._id || data.id)) createdId = String(data._id || data.id);\n        } catch { /* json değilse sorun yok */ }\n\n        await loadCategories();\n\n        if (!createdId) {\n          const byName = (window.__CATS__||[]).find(c => String(c.name).trim() === val);\n          if (byName) createdId = String(byName._id);\n        }\n\n        // Survey choices güncelle\n        const s = window.__surveyModel__;\n        const choices = (window.__CATS__||[]).map(c=>({value:String(c._id), text:c.name}));\n        s?.getQuestionByName?.('newCats') && (s.getQuestionByName('newCats').choices = choices);\n        // (filterCats tamamen kaldırıldı)\n\n        // Yeni oluşturulanı seçili yap\n        let selected = [];\n        if (s && typeof s.getQuestionByName === 'function') {\n          selected = (s.getQuestionByName('newCats')?.value || []).map(String);\n        }\n        if (createdId && !selected.includes(createdId)) selected.push(createdId);\n\n        if (s && typeof s.setValue === 'function') s.setValue('newCats', selected);\n        else if (s?.getQuestionByName) { const q = s.getQuestionByName('newCats'); if (q) q.value = selected; }\n\n        // Modal listesini güncelle (yeni kategori üste ve tikli)\n        if (typeof renderCatListInto === 'function') renderCatListInto(document.getElementById('catList'), selected, createdId);\n\n        // \"Kategori Ekle\" butonu rozeti\n        const btnCat = document.getElementById('btnAddCat');\n        if (btnCat) {\n          btnCat.querySelector('.sel-badge')?.remove();\n          if (selected.length) {\n            const span = document.createElement('span');\n            span.className = 'sel-badge ms-1 badge rounded-pill text-bg-secondary';\n            span.textContent = selected.length;\n            btnCat.appendChild(span);\n          }\n        }\n\n        if (inp) inp.value = '';\n      });\n\n      // Seçimi Uygula\n      document.getElementById('btnApplyCats')?.addEventListener('click', ()=>{\n        const checks = Array.from(document.querySelectorAll('#catList .cat-check'));\n        const ids = checks.filter(ch=>ch.checked).map(ch=>String(ch.value));\n\n        const s = window.__surveyModel__;\n        if (s && typeof s.setValue === 'function') {\n          s.setValue('newCats', ids);\n        } else if (s && typeof s.getQuestionByName === 'function') {\n          const q = s.getQuestionByName('newCats');\n          if (q) q.value = ids;\n        }\n\n        const btnCat = document.getElementById('btnAddCat');\n        if (btnCat) {\n          btnCat.querySelector('.sel-badge')?.remove();\n          if (ids.length) {\n            const span = document.createElement('span');\n            span.className = 'sel-badge ms-1 badge rounded-pill text-bg-secondary';\n            span.textContent = ids.length;\n            btnCat.appendChild(span);\n          }\n        }\n\n        const modalEl = document.getElementById('catModal');\n        if (modalEl && window.bootstrap?.Modal) {\n          const inst = window.bootstrap.Modal.getOrCreateInstance(modalEl);\n          inst?.hide();\n        }\n      });\n\n      // Yazdıkça filtrele\n      document.getElementById(\"catSearch\")?.addEventListener(\"input\",\n      debounce((ev)=>{\n      __CAT_FILTER = ev.target.value || \"\";\n      const s = window.__surveyModel__;\n      const current = (s?.getQuestionByName?.('newCats')?.value || []).map(String);\n      renderCatListInto(document.getElementById(\"catList\"), current);\n      }, 120)\n      );\n      \n\n    });\n  </script>\n\n  <script>\n    (function(){\n    const csrf = document.querySelector('meta[name=\"csrf-token\"]')?.getAttribute('content') || '';\n    const h = (str='') => String(str ?? '').replace(/[&<>\"']/g, m => ({\n      \"&\":\"&amp;\",\"<\":\"&lt;\",\">\":\"&gt;\",\"\\\"\":\"&quot;\",\"'\":\"&#39;\"\n    }[m]));\n  \n    // ---- DB'den liste çek & önbelleği kur\n    async function loadCategories(){\n      try{\n        const res = await fetch('/categories', { credentials:'include' });\n        if(!res.ok) throw new Error('Liste alınamadı');\n        const data = await res.json().catch(()=>[]);\n        window.__CATS__ = Array.isArray(data) ? data : [];\n        window.__CATMAP__ = Object.fromEntries((window.__CATS__||[]).map(c=>[String(c._id), c.name]));\n        return true;\n      }catch(err){\n        alert('Kategori listesi alınamadı.');\n        return false;\n      }\n    }\n  \n    // --- Survey tagbox choices'ı güncelle\n    function refreshSurveyChoices(){\n      try{\n        const s = window.__surveyModel__;\n        if(!s?.getQuestionByName) return;\n        const q = s.getQuestionByName('newCats');\n        if(!q) return;\n        q.choices = (window.__CATS__||[]).map(c=>({value:String(c._id), text:c.name}));\n      }catch{}\n    }\n  \n    // --- Liste render\n    async function renderCatManage(filter=''){\n      const body = document.getElementById('catManageTbody');\n      if(!body) return;\n  \n      if(!Array.isArray(window.__CATS__)) await loadCategories();\n  \n      const all = (window.__CATS__||[]);\n      const kw = (filter||'').trim().toLowerCase();\n      const list = kw ? all.filter(c => String(c.name).toLowerCase().includes(kw)) : all;\n  \n      if(!list.length){\n        body.innerHTML = `<tr><td colspan=\"3\" class=\"text-center text-muted py-4\">Sonuç yok</td></tr>`;\n        return;\n      }\n  \n      body.innerHTML = list.map((c,idx)=>`\n        <tr data-id=\"${h(c._id)}\">\n          <td class=\"text-muted\">${idx+1}</td>\n          <td class=\"cat-name\">\n            <span class=\"cat-name-text\">${h(c.name)}</span>\n          </td>\n          <td class=\"text-end\">\n            <button class=\"btn btn-sm btn-outline-secondary btn-rename\"><i class=\"bi bi-pencil-square\"></i> Düzenle</button>\n            <button class=\"btn btn-sm btn-outline-danger btn-delete\"><i class=\"bi bi-trash\"></i> Sil</button>\n          </td>\n        </tr>\n      `).join('');\n  \n      // Edit / Delete olayları\n      body.querySelectorAll('.btn-rename').forEach(btn=>{\n        btn.addEventListener('click', (e)=>{\n          const tr = e.currentTarget.closest('tr');\n          const id = tr.getAttribute('data-id');\n          const span = tr.querySelector('.cat-name-text');\n          const oldName = span.textContent.trim();\n          if(tr.classList.contains('cat-row-editing')) return;\n  \n          tr.classList.add('cat-row-editing');\n          tr.querySelector('.cat-name').innerHTML = `\n            <div class=\"d-flex gap-2 align-items-center\">\n              <input class=\"form-control form-control-sm\" value=\"${h(oldName)}\">\n              <button class=\"btn btn-sm btn-success btn-save\"><i class=\"bi bi-check-lg\"></i></button>\n              <button class=\"btn btn-sm btn-outline-secondary btn-cancel\"><i class=\"bi bi-x-lg\"></i></button>\n            </div>`;\n  \n          const btnCancel = tr.querySelector('.btn-cancel');\n          const btnSave   = tr.querySelector('.btn-save');\n  \n          btnCancel.addEventListener('click', ()=>{\n            tr.classList.remove('cat-row-editing');\n            tr.querySelector('.cat-name').innerHTML = `<span class=\"cat-name-text\">${h(oldName)}</span>`;\n          });\n  \n          btnSave.addEventListener('click', async ()=>{\n            const input = tr.querySelector('input');\n            const newName = (input.value||'').trim();\n            if(!newName || newName===oldName){ btnCancel.click(); return; }\n  \n            btnSave.disabled = true;\n            const ok = await updateCategory(id, newName, oldName);\n            btnSave.disabled = false;\n  \n            if(ok){\n              await loadCategories();              // <-- DB'den tazele\n              refreshSurveyChoices();\n              renderCatManage(document.getElementById('catSearch')?.value||'');\n            }\n          });\n        });\n      });\n  \n      body.querySelectorAll('.btn-delete').forEach(btn=>{\n        btn.addEventListener('click', async (e)=>{\n          const tr = e.currentTarget.closest('tr');\n          const id = tr.getAttribute('data-id');\n  \n  \n          btn.disabled = true;\n          const ok = await trashCategory(id);\n          btn.disabled = false;\n  \n          if(ok){\n            await loadCategories();                // <-- DB'den tazele\n            refreshSurveyChoices();\n            renderCatManage(document.getElementById('catSearch')?.value||'');\n          }\n        });\n      });\n    }\n  \n    // --- API yardımcıları (Node-RED uçlarına göre)\n    async function updateCategory(id, name, orig){\n      try{\n        const res = await fetch('/categories-opt/update', {\n          method:'POST',\n          credentials:'include',\n          headers:{\n            'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8',\n            ...(csrf ? {'X-CSRF-Token': csrf} : {})\n          },\n          body: new URLSearchParams({ id:String(id), name:String(name), orig:String(orig||'') })\n        });\n        if(!res.ok){\n          const t = await res.text().catch(()=> '');\n          alert('Güncelleme başarısız.\\n'+(t||''));\n          return false;\n        }\n        // mongodb4 updateOne çıktısı: { acknowledged, matchedCount, modifiedCount, ... }\n        const out = await res.json().catch(()=> ({}));\n        // Başarı \"gerçek değişiklik\" olsun:\n        return !!(out?.modifiedCount > 0);\n      }catch(e){\n        alert('Ağ hatası');\n        return false;\n      }\n    }\n  \n    async function trashCategory(id){\n      try{\n        const res = await fetch('/categories-opt/trash', {\n          method:'POST',\n          credentials:'include',\n          headers:{\n            'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8',\n            ...(csrf ? {'X-CSRF-Token': csrf} : {})\n          },\n          body: new URLSearchParams({ id:String(id) })\n        });\n        if(!res.ok){\n          const txt = await res.text().catch(()=> '');\n          alert('Silme başarısız.\\n'+(txt||''));\n          return false;\n        }\n        // mongodb4 deleteOne çıktısı: { acknowledged, deletedCount }\n        const out = await res.json().catch(()=> ({}));\n        return !!(out?.deletedCount > 0);\n      }catch(e){\n        alert('Ağ hatası');\n        return false;\n      }\n    }\n  \n    async function createCategory(name){\n      try{\n        const res = await fetch('/categories-opt/add', {\n          method:'POST',\n          credentials:'include',\n          headers:{\n            'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8',\n            ...(csrf ? {'X-CSRF-Token': csrf} : {})\n          },\n          body: new URLSearchParams({ name:String(name) })\n        });\n        if(!res.ok){\n          const t = await res.text().catch(()=> '');\n          alert('Ekleme başarısız.\\n'+(t||''));\n          return null;\n        }\n        // insertOne çıktısı: { acknowledged, insertedId }\n        const out = await res.json().catch(()=> ({}));\n        const id = out?.insertedId || out?._id || out?.id || null;\n        return id ? String(id) : null;\n      }catch(e){\n        alert('Ağ hatası');\n        return null;\n      }\n    }\n  \n    // --- Modal açma ve olaylar\n    document.getElementById('btnManageCats')?.addEventListener('click', async ()=>{\n      await loadCategories();                // <-- her açılışta DB’den\n      await renderCatManage('');\n      const el = document.getElementById('catManageModal');\n      const m = window.bootstrap?.Modal ? window.bootstrap.Modal.getOrCreateInstance(el) : new bootstrap.Modal(el);\n      m.show();\n      document.getElementById('catSearch')?.focus();\n    });\n  \n    // Arama (debounce)\n    let tSearch;\n    document.getElementById('catSearch')?.addEventListener('input', (e)=>{\n      clearTimeout(tSearch);\n      const v = e.target.value || '';\n      tSearch = setTimeout(()=> renderCatManage(v), 150);\n    });\n  \n    // Yeni kategori ekle\n    document.getElementById('btnCatNew')?.addEventListener('click', async ()=>{\n      const inp = document.getElementById('catNewName');\n      const name = (inp?.value||'').trim();\n      if(!name) return;\n  \n      const newId = await createCategory(name);\n      if(!newId) return;\n  \n      await loadCategories();                // <-- DB’den tazele\n      refreshSurveyChoices();\n      renderCatManage(document.getElementById('catSearch')?.value||'');\n      if(inp) inp.value='';\n    });\n  \n    // Sayfa ilk yüklenirken de listeyi hazırlamak istersen:\n    // loadCategories().then(()=>{ refreshSurveyChoices(); });\n  })();\n  </script>\n\n  <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js\"></script>\n</body>\n</html>\n",
         "output": "str",
         "x": 960,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "5f3b77fa64a6ca14"
@@ -290,7 +290,7 @@
         "statusCode": "",
         "headers": {},
         "x": 1110,
-        "y": 140,
+        "y": 120,
         "wires": []
     },
     {
@@ -306,7 +306,7 @@
         "finalize": "",
         "libs": [],
         "x": 450,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "7b383705f4aaec1f"
@@ -326,7 +326,7 @@
             "32deda87e3d60747"
         ],
         "x": 175,
-        "y": 100,
+        "y": 80,
         "wires": [
             [
                 "6d8042d6f0a12ac0"
@@ -344,7 +344,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 140,
-        "y": 580,
+        "y": 560,
         "wires": [
             [
                 "f55ef5f0d076fe2f"
@@ -377,7 +377,7 @@
         "finalize": "",
         "libs": [],
         "x": 670,
-        "y": 580,
+        "y": 560,
         "wires": [
             [
                 "93d181d58a920cd0"
@@ -396,7 +396,7 @@
         "type": "function",
         "z": "1d53f30b926d0909",
         "name": "validation",
-        "func": "const typeLookup = {\n    trash: {\n        text: \"Silme\",\n        requireArgs: [\"id\"]\n    },\n    complete: {\n        text: \"Tamamlama\",\n        requireArgs: [\"id\"]\n    },\n    open: {\n        text: \"Açma\",\n        requireArgs: [\"id\"]\n    },\n    add: {\n        text: \"Ekleme\",\n        requireArgs: [\"name\"]\n    },\n    update: {\n        text: \"Güncelle\",\n        requireArgs: [\"id\", \"name\", \"orig\"]\n    },\n    schedule: {\n        text: \"Hatırlatıcı\",\n        requireArgs: [\"id\", \"datetime\"]\n    }\n    \n}\n\nif (!Object.keys(typeLookup).includes(msg.req.params.type)) {\n    msg.error = {\n        message: `${msg.req.params.type} geçersiz bir parametre değeridir.`\n    }\n    return [null, msg]\n}\n\nif (!typeLookup[msg.req.params.type].requireArgs.every(arg => msg.payload[arg])) {\n    msg.error = {\n        message: `${typeLookup[msg.req.params.type].text} istediğiniz elemanın ${typeLookup[msg.req.params.type].requireArgs} bilgisi olmalı`\n    }\n    return [null, msg]\n}\n\nif (msg.req.params.type === \"update\") {\n    const newVal = (msg.payload.name || \"\").trim();\n    const origVal = (msg.payload.orig || \"\").trim();\n    if (newVal === origVal) {\n        msg.error = {\n            message: \"Herhangi bir güncelleme yapmadınız.\"\n        };\n        return [null, msg];\n    }\n}\nif (msg.req.params.type === \"schedule\") {\n    const newDt = (msg.payload.datetime || \"\").trim();\n    const origDt = (msg.payload.origDt || \"\").trim();\n    const newNote = (msg.payload.note || \"\").trim();\n    const origNote = (msg.payload.origNote || \"\").trim();\n\n    const ms = Date.parse(newDt);\n\n    if (ms < Date.now()) {\n        msg.error = { message: \"Geçmiş bir zamana planlanamaz.\" };\n        return [null, msg];\n    }\n    if (origDt && newDt === origDt) {\n        msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n        return [null, msg];\n    }\n\n    msg.payload.schedule = { datetime: newDt, epoch: ms };\n}\n\nreturn msg;\n",
+        "func": "const typeLookup = {\n    trash: {\n        text: \"Silme\",\n        requireArgs: [\"id\"]\n    },\n    complete: {\n        text: \"Tamamlama\",\n        requireArgs: [\"id\"]\n    },\n    open: {\n        text: \"Açma\",\n        requireArgs: [\"id\"]\n    },\n    add: {\n        text: \"Ekleme\",\n        requireArgs: [\"name\"]\n    },\n    update: {\n        text: \"Güncelle\",\n        requireArgs: [\"id\", \"name\", \"orig\"]\n    },\n    schedule: {\n        text: \"Hatırlatıcı\",\n        requireArgs: [\"id\", \"datetime\"]\n    }\n    \n}\n\nif (!Object.keys(typeLookup).includes(msg.req.params.type)) {\n    msg.error = {\n        message: `${msg.req.params.type} geçersiz bir parametre değeridir.`\n    }\n    return [null, msg]\n}\n\nif (!typeLookup[msg.req.params.type].requireArgs.every(arg => msg.payload[arg])) {\n    msg.error = {\n        message: `${typeLookup[msg.req.params.type].text} istediğiniz elemanın ${typeLookup[msg.req.params.type].requireArgs} bilgisi olmalı`\n    }\n    return [null, msg]\n}\n\nif (msg.req.params.type === \"update\") {\n    const newName  = (msg.payload.name || \"\").trim();\n    const origName = (msg.payload.orig || \"\").trim();\n\n    const list = v => [].concat(v ?? []).map(String).filter(Boolean).sort();\n\n    const newCats  = JSON.stringify(list(msg.payload.categories));\n    const origCats = JSON.stringify(list(msg.payload.origCats));\n\n    if (newName === origName && newCats === origCats) {\n        msg.error = { message: \"Herhangi bir güncelleme yapmadınız.\" };\n        return [null, msg];\n    }\n}\n\nif (msg.req.params.type === \"schedule\") {\n    const newDt = (msg.payload.datetime || \"\").trim();\n    const origDt = (msg.payload.origDt || \"\").trim();\n    const newNote = (msg.payload.note || \"\").trim();\n    const origNote = (msg.payload.origNote || \"\").trim();\n\n    const ms = Date.parse(newDt);\n\n    if (ms < Date.now()) {\n        msg.error = { message: \"Geçmiş bir zamana planlanamaz.\" };\n        return [null, msg];\n    }\n    if (origDt && newDt === origDt) {\n        msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n        return [null, msg];\n    }\n\n    msg.payload.schedule = { datetime: newDt, epoch: ms };\n}\n\nreturn msg;\n",
         "outputs": 2,
         "timeout": 0,
         "noerr": 0,
@@ -404,7 +404,7 @@
         "finalize": "",
         "libs": [],
         "x": 500,
-        "y": 580,
+        "y": 560,
         "wires": [
             [
                 "f8a16a36a9c0bb02"
@@ -428,7 +428,7 @@
             "c5f4d0120c89df7e"
         ],
         "x": 595,
-        "y": 620,
+        "y": 600,
         "wires": []
     },
     {
@@ -455,7 +455,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 110,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "6d8042d6f0a12ac0"
@@ -473,7 +473,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 260,
+        "y": 240,
         "wires": [
             [
                 "4a66cc4d80aa2897"
@@ -493,7 +493,7 @@
         "finalize": "",
         "libs": [],
         "x": 510,
-        "y": 260,
+        "y": 240,
         "wires": [
             [
                 "4ebc1649e8305f46"
@@ -512,10 +512,10 @@
         "fieldType": "msg",
         "format": "html",
         "syntax": "mustache",
-        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Yapılacaklar — Düzenleme</title>\n\n  <!-- Bootstrap & Icons -->\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css\" rel=\"stylesheet\">\n\n  <!-- SurveyJS (jQuery) -->\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n\n  <style>\n    body { background: #f8f9fa; }\n    /* SurveyJS modern tema: soru başlığını ve yeşil header şeridini gizle */\n    .sv_q_title { display: none !important; }\n    .sd-element__header { display: none !important; }\n  </style>\n</head>\n\n<body class=\"bg-light\">\n  <!-- NAVBAR aynı kalsın -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Yapılacaklar — Düzenleme</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/\">Ana Sayfa</a>\n    </div>\n  </nav>\n\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-8 offset-md-2\">\n        {{#error}}\n        <div class=\"alert alert-danger\">\n          <h4>{{message}}</h4>\n        </div>\n        {{/error}}\n\n        <!-- SurveyJS alanı -->\n        <div id=\"surveyContainer\"></div>\n\n        <!-- Butonlar -->\n        <div class=\"d-flex justify-content-end gap-2 mt-3\">\n          <a class=\"btn btn-danger text-white\" href=\"/\">Vazgeç</a>\n          <button class=\"btn btn-secondary text-white\" type=\"button\" id=\"btnClear\">Temizle</button>\n          <button id=\"btnUpdate\" class=\"btn btn-success text-white px-4\" type=\"button\" disabled>Güncelle</button>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <script>\n    const surveyJson = {\n      questionTitleLocation: \"hidden\",\n      title: \"Düzenleme\",\n      showQuestionNumbers: \"off\",\n      questionTitleLocation: \"hidden\",\n      pages: [\n        {\n          elements: [\n            {\n              type: \"text\",\n              name: \"name\",\n              titleLocation: \"hidden\",\n              isRequired: true,\n              defaultValue: \"{{payload.name}}\",\n              placeholder: \"Dosyalar teslim edilecek...\"\n            }\n          ]\n        }\n      ],\n      showPrevButton: false,\n      showNavigationButtons: false,\n      showCompletedPage: false\n    };\n\n    const survey = new Survey.Model(surveyJson);\n    $(\"#surveyContainer\").Survey({ model: survey });\n\n    survey.textUpdateMode = \"onTyping\";\n\n    const btnUpdate = document.getElementById(\"btnUpdate\");\n    const originalValue = \"{{payload.name}}\".trim();\n\n    function toggleUpdateButton(sender){\n      const currentValue = (sender.data.name || \"\").trim();\n      btnUpdate.disabled = currentValue.length === 0 || currentValue === originalValue;\n    }\n\n    survey.onValueChanged.add(function(sender){ toggleUpdateButton(sender); });\n\n    toggleUpdateButton(survey);\n\n    document.getElementById(\"btnClear\").addEventListener(\"click\", function(){\n      survey.setValue(\"name\", \"\");\n      toggleUpdateButton(survey);\n    });\n\n    btnUpdate.addEventListener(\"click\", function(){\n      if (btnUpdate.disabled) return;\n      const form = document.createElement(\"form\");\n      form.method = \"POST\";\n      form.action = \"/opt/update\";\n\n      const id = document.createElement(\"input\");\n      id.type = \"hidden\";\n      id.name = \"id\";\n      id.value = \"{{payload.id}}\";\n      form.appendChild(id);\n\n      const orig = document.createElement(\"input\");\n      orig.type = \"hidden\";\n      orig.name = \"orig\";\n      orig.value = \"{{payload.name}}\";\n      form.appendChild(orig);\n\n      const name = document.createElement(\"input\");\n      name.type = \"hidden\";\n      name.name = \"name\";\n      name.value = survey.data.name;\n      form.appendChild(name);\n\n      document.body.appendChild(form);\n      form.submit();\n    });\n  </script>\n\n</body>\n\n</html>\n",
+        "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Yapılacaklar — Düzenleme</title>\n\n  <!-- Bootstrap & Icons -->\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\">\n  <link href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css\" rel=\"stylesheet\">\n\n  <!-- SurveyJS (jQuery) -->\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n\n  <style>\n    body {\n      background: #f8f9fa;\n    }\n  \n    /* Ad inputu + Kategori butonunu AYNI SATIRDA tut */\n    .sd-panel[data-name=\"row\"] .sd-row {\n      display: grid !important;\n      grid-template-columns: 1fr auto;\n      /* input genişler, buton sabit */\n      align-items: center;\n      column-gap: 12px;\n    }\n  \n    .sd-panel[data-name=\"row\"] .sd-row>.sd-element {\n      margin: 0 !important;\n    }\n  \n    .sd-panel[data-name=\"row\"] .sd-row>.sd-element[data-name=\"name\"] {\n      width: 100% !important;\n      min-width: 0;\n    }\n  \n    .sd-panel[data-name=\"row\"] .sd-row>.sd-element[data-name=\"editBtns\"] {\n      width: auto !important; \n      max-width: none !important;\n      \n    }\n  \n    /* Buton görünümü: gri arka plan + siyah yazı (ana sayfadaki gibi) */\n    #btnCats {\n      background: #f1f3f5 !important;\n      border: 1px solid #f1f3f5 !important;\n      color: #000 !important;\n    }\n  \n    #btnCats:hover,\n    #btnCats:focus {\n      background: #e9ecef !important;\n      border-color: #e9ecef !important;\n      color: #000 !important;\n      box-shadow: none !important;\n    }\n\n    #catModal .position-sticky{ background: var(--bs-body-bg) !important; }\n    #catModal mark{ padding:0 .15em; border-radius:.2rem; }\n\n  </style>\n\n</head>\n\n<body class=\"bg-light\">\n  <!-- NAVBAR -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center\">\n      <span class=\"navbar-text fw-semibold fs-4\">Yapılacaklar — Düzenleme</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/\">Ana Sayfa</a>\n    </div>\n  </nav>\n\n  <div class=\"container\">\n    <div class=\"row\">\n      <div class=\"col-md-8 offset-md-2\">\n        {{#error}}<div class=\"alert alert-danger\"><h4>{{message}}</h4></div>{{/error}}\n\n        <!-- SurveyJS -->\n        <div id=\"surveyContainer\"></div>\n\n        <!-- Butonlar -->\n        <div class=\"d-flex justify-content-end gap-2 mt-3\">\n          <a class=\"btn btn-danger text-white\" href=\"/\">Vazgeç</a>\n          <button class=\"btn btn-secondary text-white\" type=\"button\" id=\"btnClear\">Temizle</button>\n          <button id=\"btnUpdate\" class=\"btn btn-success text-white px-4\" type=\"button\" disabled>Güncelle</button>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <!-- Backend’ten gelen kayıt -->\n  <script>\n    window.__TODO__ = {\n      id: \"{{payload.id}}\",\n      name: \"{{payload.name}}\",\n      /* sunucuda yoksa [] olur */\n      categories: {{#payload.categoriesJson}}{{{payload.categoriesJson}}}{{/payload.categoriesJson}}{{^payload.categoriesJson}}[]{{/payload.categoriesJson}}\n    };\n  </script>\n\n  <!-- Kategorileri yükle -->\n  <script>\n    window.__CATS__ = [];\n    window.__CATMAP__ = {};\n    async function loadCategories(){\n      try{\n        const res = await fetch('/categories', {credentials:'include'});\n        if(!res.ok) return;\n        const arr = await res.json();\n        window.__CATS__ = Array.isArray(arr)?arr:[];\n        window.__CATMAP__ = Object.fromEntries((window.__CATS__||[]).map(c => [String(c._id), c.name]));\n      }catch(e){ console.warn('Kategori yükleme hatası', e); }\n    }\n  </script>\n\n  <script>\n  (async function(){\n    await loadCategories();\n\n    Survey.StylesManager.applyTheme(\"modern\");\n\n    /* Mevcut yapını bozmadan: name + (aynı satırda) Kategoriler butonu,\n       ve görünmez 'cats' tagbox (seçimleri saklamak için). */\n    const surveyJson = {\n      questionTitleLocation: \"hidden\",\n      title: \"Düzenleme\",\n      showQuestionNumbers: \"off\",\n      pages: [{\n        elements: [\n          { type:\"panel\", name:\"row\", elements:[\n            { type:\"text\", name:\"name\", isRequired:true,\n              defaultValue: \"{{payload.name}}\",\n              placeholder: \"Dosyalar teslim edilecek...\" },\n\n            { type:\"html\", name:\"editBtns\", startWithNewLine:false, html:\n              `<button type=\"button\" class=\"sv-btn btn-outline-secondary\" id=\"btnCats\">\n                 <i class=\"bi bi-tags\"></i> Kategorileri Düzenle\n               </button>` },\n\n            /* görünmez: sadece veriyi tutuyor */\n            { type:\"tagbox\", name:\"cats\", visible:false,\n              choices:(window.__CATS__||[]).map(c=>({value:String(c._id), text:c.name})),\n              defaultValue:(Array.isArray(window.__TODO__?.categories)?window.__TODO__.categories:[]).map(String)\n            }\n          ]}\n        ]\n      }],\n      showPrevButton:false, showNavigationButtons:false, showCompletedPage:false\n    };\n\n    const survey = new Survey.Model(surveyJson);\n    $(\"#surveyContainer\").Survey({ model: survey });\n\n    /* satır hizalaması */\n    survey.onAfterRenderPanel.add((s,opt)=>{\n      if(opt.panel.name!==\"row\") return;\n      opt.htmlElement.classList.add(\"inline-row\");\n    });\n\n    /* Güncelle butonunun aktifliği: ad VEYA kategoriler değişince aktif */\n    const btnUpdate = document.getElementById(\"btnUpdate\");\n    const originalName = (\"{{payload.name}}\").trim();\n    const originalCats = JSON.stringify((window.__TODO__?.categories||[]).map(String).sort());\n\n    function refreshUpdateState(){\n      const name = (survey.getValue(\"name\")||\"\").trim();\n      const cats = (survey.getValue(\"cats\")||[]).map(String).sort();\n      const sameName = (name === originalName);\n      const sameCats = (JSON.stringify(cats) === originalCats);\n      btnUpdate.disabled = !name || (sameName && sameCats);\n    }\n    survey.textUpdateMode = \"onTyping\";\n    survey.onValueChanged.add(refreshUpdateState);\n    refreshUpdateState();\n\n    /* Temizle */\n    document.getElementById(\"btnClear\").addEventListener(\"click\", function(){\n      survey.setValue(\"name\", \"\");\n      survey.setValue(\"cats\", []);\n      refreshUpdateState();\n    });\n\n    /* Kategori butonu → modalı aç, mevcut seçimler tikli gelsin */\n    document.addEventListener(\"click\", (e)=>{\n    if(e.target.id!==\"btnCats\") return;\n    __CAT_FILTER = \"\";\n    const search = document.getElementById(\"catSearch\");\n    if(search) search.value = \"\";\n    renderCatListInto(document.getElementById(\"catList\"),\n    (survey.getValue(\"cats\")||[]).map(String));\n    \n    const el = document.getElementById(\"catModal\");\n    const m = window.bootstrap?.Modal ? window.bootstrap.Modal.getOrCreateInstance(el) : new bootstrap.Modal(el);\n    m.show();\n    \n    // arama kutusuna odak\n    setTimeout(()=> search?.focus(), 150);\n    });\n\n    /* Seçimi Uygula → gizli tagbox'a yaz ve state'i güncelle */\n    document.getElementById(\"btnApplyCats\")?.addEventListener(\"click\", ()=>{\n      const ids = Array.from(document.querySelectorAll(\"#catList .cat-check:checked\")).map(ch=>String(ch.value));\n      survey.setValue(\"cats\", ids);\n      refreshUpdateState();\n      const el = document.getElementById(\"catModal\");\n      if (el && window.bootstrap?.Modal) window.bootstrap.Modal.getOrCreateInstance(el)?.hide();\n    });\n\n    // Yazdıkça filtrele (debounce)\n    document.getElementById(\"catSearch\")?.addEventListener(\"input\",\n    debounce((ev)=>{\n    __CAT_FILTER = ev.target.value || \"\";\n    const current = (survey.getValue(\"cats\")||[]).map(String);\n    renderCatListInto(document.getElementById(\"catList\"), current);\n    }, 120)\n    );\n    \n\n    /* Yeni kategori oluştur (modal içi) */\n    document.getElementById(\"btnCreateCat\")?.addEventListener(\"click\", async ()=>{\n      const inp = document.getElementById(\"newCatName\");\n      const val = (inp?.value||\"\").trim();\n      if(!val) return;\n      const res = await fetch(\"/categories-opt/add\", {\n        method:\"POST\", credentials:\"include\",\n        headers:{ \"Content-Type\":\"application/x-www-form-urlencoded;charset=UTF-8\" },\n        body:new URLSearchParams({ name: val })\n      });\n      if(!res.ok){ alert(\"Kategori eklenemedi\"); return; }\n      let createdId = null; try{ const j=await res.json(); createdId = String(j.insertedId||j._id||j.id||\"\"); }catch{}\n      await loadCategories();\n\n      /* tagbox choices’ı tazele */\n      const q = survey.getQuestionByName(\"cats\");\n      if(q) q.choices = (window.__CATS__||[]).map(c=>({value:String(c._id), text:c.name}));\n\n      /* yeni kategori seçili olsun */\n      const cur = (survey.getValue(\"cats\")||[]).map(String);\n      if(createdId && !cur.includes(createdId)) cur.push(createdId);\n      survey.setValue(\"cats\", cur);\n      renderCatListInto(document.getElementById(\"catList\"), cur, createdId);\n      refreshUpdateState();\n      if(inp) inp.value=\"\";\n    });\n\n    /* Güncelle → /opt/update; categories JSON olarak gider */\n    btnUpdate.addEventListener(\"click\", function(){\n      if (btnUpdate.disabled) return;\n      const form = document.createElement(\"form\");\n      form.method = \"POST\";\n      form.action = \"/opt/update\";\n\n      const hid = (n,v)=>{ const i=document.createElement(\"input\"); i.type=\"hidden\"; i.name=n; i.value=v; form.appendChild(i); };\n\n      hid(\"id\",\"{{payload.id}}\");\n      hid(\"orig\",\"{{payload.name}}\");\n      hid(\"name\", survey.getValue(\"name\")||\"\");\n      \n      // orijinal kategoriler (0 ise boş input gönder)\n      const orig = window.__TODO__.categories || [];\n      if (orig.length === 0) { hid(\"origCats\", \"\"); } else { orig.forEach(c => hid(\"origCats\", c)); }\n      \n      // güncel kategoriler (0 ise boş input gönder)\n      const cats = survey.getValue(\"cats\") || [];\n      if (cats.length === 0) { hid(\"categories\", \"\"); } else { cats.forEach(c => hid(\"categories\", c)); }\n\n      document.body.appendChild(form);\n      form.submit();\n    });\n  })();\n  </script>\n\n  <!-- Kategori Seç / Oluştur Modal -->\n  <div class=\"modal fade\" id=\"catModal\" tabindex=\"-1\">\n    <div class=\"modal-dialog modal-dialog-scrollable\">\n      <div class=\"modal-content\">\n        <div class=\"modal-header\">\n          <h5 class=\"modal-title\">Kategoriler</h5>\n          <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"modal\"></button>\n        </div>\n\n        <div class=\"my-1\"></div>\n\n        <!-- Arama (sticky) -->\n        <div class=\"mb-2 position-sticky top-0 bg-white\" style=\"z-index:1\">\n          <div class=\"input-group input-group-sm\">\n            <span class=\"input-group-text\"><i class=\"bi bi-search\"></i></span>\n            <input type=\"search\" class=\"form-control\" id=\"catSearch\"\n                   placeholder=\"Kategori ara...\" autocomplete=\"off\">\n          </div>\n        </div>\n\n        <div class=\"modal-body\">\n          <!-- Mevcut kategoriler (çoklu seçim) -->\n          <div class=\"mb-3\">\n            <label class=\"form-label fw-semibold\">Kategorileri seç</label>\n            <div id=\"catList\" class=\"border rounded p-2\" style=\"max-height:270px; overflow:auto;\"></div>\n            <small class=\"text-muted\">Birden çok kategori seçebilirsiniz.</small>\n          </div>\n\n          <hr class=\"my-2\">\n\n          <!-- Yeni kategori oluştur -->\n          <div>\n            <label class=\"form-label fw-semibold\">Yeni kategori oluştur</label>\n            <div class=\"d-flex gap-2\">\n              <input class=\"form-control\" id=\"newCatName\" placeholder=\"Kategori adı\">\n              <button class=\"btn btn-primary\" id=\"btnCreateCat\" type=\"button\">\n                <i class=\"bi bi-plus-lg\"></i> Ekle\n              </button>\n            </div>\n            <small class=\"text-muted\">Kaydedince yukarıdaki listede de görünecek.</small>\n          </div>\n        </div>\n\n        <div class=\"modal-footer\">\n          <button class=\"btn btn-secondary\" type=\"button\" data-bs-dismiss=\"modal\">Kapat</button>\n          <button class=\"btn btn-success\" id=\"btnApplyCats\" type=\"button\">Seçimi Uygula</button>\n        </div>\n      </div>\n    </div>\n  </div>\n\n  <script>\n    // Türkçe uyumlu küçük harf + diakritik temizleme\n    const trLower = (s) =>\n      (s||\"\")\n        .replace(/İ/g,'i').replace(/I/g,'ı')\n        .toLowerCase()\n        .normalize('NFD').replace(/\\p{Diacritic}/gu,'');\n  \n    const escapeHtml = (str) => (str||\"\").replace(/[&<>\"']/g, m =>\n      ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',\"'\":'&#39;'}[m]));\n  \n    const highlight = (text, query) => {\n      if(!query) return escapeHtml(text||\"\");\n      const T = trLower(text||\"\"), Q = trLower(query||\"\").trim();\n      const i = T.indexOf(Q);\n      if(i<0) return escapeHtml(text||\"\");\n      return escapeHtml(text.slice(0,i)) + '<mark>' +\n             escapeHtml(text.slice(i,i+Q.length)) +\n             '</mark>' + escapeHtml(text.slice(i+Q.length));\n    };\n  \n    const debounce = (fn, d=120)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), d); }; };\n  \n    // aktif filtre metni\n    let __CAT_FILTER = \"\";\n  </script>\n\n  <!-- Modal yardımcıları -->\n  <script>\n    function renderCatListInto(container, selectedIds = [], focusId = null){\n      const host = container || document.getElementById(\"catList\");\n      if(!host) return;\n      const all = window.__CATS__ || [];\n      const sel = new Set((selectedIds||[]).map(String));\n  \n      // 1) Filtre uygula\n      const q = (__CAT_FILTER || \"\").trim();\n      const filtered = !q ? all\n        : all.filter(c => trLower(c.name).includes(trLower(q)));\n  \n      // 2) Seçili olanları üste al\n      const chosen = filtered.filter(c => sel.has(String(c._id)));\n      const rest   = filtered.filter(c => !sel.has(String(c._id)));\n      const ordered = [...chosen, ...rest];\n  \n      const prevScroll = host.scrollTop;\n  \n      // 3) Listeyi yaz\n      host.innerHTML = ordered.map(c=>{\n        const id=String(c._id); const checked = sel.has(id) ? \"checked\" : \"\";\n        return `<label class=\"d-flex align-items-center gap-2 py-1\">\n                  <input type=\"checkbox\" class=\"form-check-input cat-check\" value=\"${id}\" ${checked}>\n                  <span>${escapeHtml(c.name)}</span>\n                </label>`;\n      }).join(\"\") || `<div class=\"text-muted small py-2\">Sonuç yok.</div>`;\n  \n      // 4) Checkbox değişimlerinde görünümü tazele\n      host.querySelectorAll(\".cat-check\").forEach(ch=>{\n        ch.addEventListener(\"change\", ()=>{\n          const ids = Array.from(host.querySelectorAll(\".cat-check:checked\")).map(x=>x.value);\n          renderCatListInto(host, ids, ch.value);\n        });\n      });\n  \n      host.scrollTop = prevScroll;\n      if (focusId) host.querySelector(`.cat-check[value=\"${focusId}\"]`)?.focus();\n    }\n  </script>\n\n  <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js\"></script>\n</body>\n</html>\n",
         "output": "str",
-        "x": 1020,
-        "y": 260,
+        "x": 1220,
+        "y": 240,
         "wires": [
             [
                 "16deb591861247c0"
@@ -532,7 +532,7 @@
             "c5f4d0120c89df7e"
         ],
         "x": 955,
-        "y": 300,
+        "y": 280,
         "wires": []
     },
     {
@@ -542,8 +542,8 @@
         "name": "",
         "statusCode": "",
         "headers": {},
-        "x": 1170,
-        "y": 260,
+        "x": 1370,
+        "y": 240,
         "wires": []
     },
     {
@@ -557,7 +557,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 140,
-        "y": 400,
+        "y": 380,
         "wires": [
             [
                 "2cbcf6d6ae4cab8b"
@@ -577,7 +577,7 @@
         "finalize": "",
         "libs": [],
         "x": 530,
-        "y": 400,
+        "y": 380,
         "wires": [
             [
                 "8af76568d2754a77"
@@ -616,7 +616,7 @@
             "c5f4d0120c89df7e"
         ],
         "x": 1015,
-        "y": 440,
+        "y": 420,
         "wires": []
     },
     {
@@ -636,7 +636,7 @@
         "z": "1d53f30b926d0909",
         "name": "",
         "x": 270,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "9e7745c31875caa6"
@@ -649,7 +649,7 @@
         "z": "1d53f30b926d0909",
         "name": "",
         "x": 310,
-        "y": 260,
+        "y": 240,
         "wires": [
             [
                 "414d44229aa0ed03"
@@ -662,7 +662,7 @@
         "z": "1d53f30b926d0909",
         "name": "",
         "x": 330,
-        "y": 400,
+        "y": 380,
         "wires": [
             [
                 "b8be420b120246f5"
@@ -675,7 +675,7 @@
         "z": "1d53f30b926d0909",
         "name": "",
         "x": 330,
-        "y": 580,
+        "y": 560,
         "wires": [
             [
                 "c8e03f51ac6bfb33"
@@ -695,7 +695,7 @@
         "handleDocId": true,
         "name": "",
         "x": 620,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "fdcf576ad7ef630b"
@@ -715,7 +715,7 @@
         "handleDocId": false,
         "name": "",
         "x": 700,
-        "y": 260,
+        "y": 240,
         "wires": [
             [
                 "a1e1269d2a6b4d4c"
@@ -735,10 +735,10 @@
         "finalize": "",
         "libs": [],
         "x": 860,
-        "y": 260,
+        "y": 240,
         "wires": [
             [
-                "b38fb814b875aebb"
+                "c29ac909321790c8"
             ],
             [
                 "2713f0cacf4e39f6"
@@ -758,7 +758,7 @@
         "handleDocId": false,
         "name": "",
         "x": 720,
-        "y": 400,
+        "y": 380,
         "wires": [
             [
                 "b3bffd50b8d5c4d7"
@@ -778,7 +778,7 @@
         "finalize": "",
         "libs": [],
         "x": 900,
-        "y": 400,
+        "y": 380,
         "wires": [
             [
                 "a35e8f26138c2a60"
@@ -793,7 +793,7 @@
         "type": "function",
         "z": "1d53f30b926d0909",
         "name": "todoIslemleri",
-        "func": "// function 11 — /opt/:type (trash | complete | open | update | schedule)\n\nconst type = msg.req?.params?.type || \"\";\nconst user = msg.user || { username: \"\", roles: [] };\n\n// findOne çıktısını normalize et\nconst doc = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\n\n// --- ID normalizasyonu\nconst rawFromForm = (msg.formData?.id ?? \"\").toString();\nconst rawFromDoc  = (doc?.id ?? \"\").toString();\nconst rawId = rawFromForm || rawFromDoc;\nconst asNum = Number(rawId);\nconst id = Number.isNaN(asNum) ? rawId : asNum;\n\nif (!doc) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, msg, null];  // [mongo, error, cron]\n}\n\n// --- Basit yetki kontrolü\nconst isAdmin = Array.isArray(user.roles) && user.roles.includes(\"admin\");\nif (doc?.stamp?.username && user?.username && doc.stamp.username !== user.username && !isAdmin) {\n  msg.error = { message: \"Yetkisiz işlem.\" };\n  return [null, msg, null];\n}\n\n// === İşlemler ===\nif (type === \"trash\") {\n  msg.operation = \"deleteOne\";\n  msg.payload   = [{ id }];\n  return [msg, null, null];\n}\n\nif (type === \"complete\") {\n  msg.operation = \"updateOne\";\n  msg.payload   = [{ id }, { $set: { done: true } }];\n  return [msg, null, null];\n}\n\nif (type === \"open\") {\n  msg.operation = \"updateOne\";\n  msg.payload   = [{ id }, { $set: { done: false } }];\n  return [msg, null, null];\n}\n\nif (type === \"update\") {\n  const newName = (msg.formData?.name || \"\").trim();\n  const origVal = (msg.formData?.orig || \"\").trim();\n  if (!newName) {\n    msg.error = { message: \"Görev adı boş olamaz.\" };\n    return [null, msg, null];\n  }\n  if (newName === origVal) {\n    msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n    return [null, msg, null];\n  }\n  msg.operation = \"updateOne\";\n  msg.payload   = [{ id }, { $set: { name: newName } }];\n  return [msg, null, null];\n}\n\nif (type === \"schedule\") {\n  // ——— PLANLAMA ———\n  const whenRaw  = (msg.formData?.datetime || \"\").trim();   // \"YYYY-MM-DDTHH:mm[:ss]\"\n  const noteText = (msg.formData?.note || \"\").trim();\n\n  if (!whenRaw) {\n    msg.error = { message: \"Tarih/saat seçiniz.\" };\n    return [null, msg, null];\n  }\n\n  // saniye ekle (datetime-local saniyesiz gelir)\n  const whenIso = whenRaw.length === 16 ? (whenRaw + \":00\") : whenRaw;\n  const dt = new Date(whenIso);\n\n  if (isNaN(dt.getTime())) {\n    msg.error = { message: \"Geçersiz tarih/saat.\" };\n    return [null, msg, null];\n  }\n\n  // crontinject için doğru seçenek\n  const scheduleOptions = {\n    crontiMethod: \"onDate\",\n    crontiArgs: [dt]   // Date nesnesi/epoch kullanılmalı\n  };\n\n  // --- BENZERSİZ _id üret (aynı dakikada birden fazla hatırlatıcı için) ---\n  let schSeq = (flow.get('schSeq') || 0) + 1;\n  flow.set('schSeq', schSeq);\n  const recId = `${dt.getTime()}-${schSeq}`;   // Örn: \"1756888260000-3\"\n\n  // — Normalize edilmiş plan kaydı —\n  const rec = {\n    _id:   recId, // <<< benzersiz id\n    formData: {\n      datetime: msg.formData.datetime,  // \"YYYY-MM-DDTHH:mm\"\n      note:     noteText\n    },\n    fireAt:   dt.toISOString(),\n    epoch:    dt.getTime(),\n    createdAt: new Date().toISOString()\n  };\n\n  // — akış hafızasına kısa bir kopya (tetik anında erişim için)\n  const shallowTodo = {\n    ...doc,\n    schedule: rec,\n    lastNote: noteText\n  };\n  flow.set(`todo:${id}`, shallowTodo);\n\n  // — DB güncellemesi —\n  const isRehydrate = msg.rehydrate === true;\n  let updateDoc;\n  if (isRehydrate) {\n    // Rehydrate'de ikinci kez push etmeyelim; istersen hiç dokunma da diyebilirsin.\n    updateDoc = { $set: { schedule: rec } };\n  } else {\n    updateDoc = {\n      $set:  { schedule: rec, lastNote: noteText },\n      $push: { scheduleHistory: rec }\n    };\n  }\n\n  const mongoMsg = {\n    ...msg,\n    operation: \"updateOne\",\n    payload: [\n      { id },\n      updateDoc\n    ]\n  };\n\n  // — crontinject’e gidecek mesaj\n  const cronMsg = {\n    topic: `todo:${id}`,\n    payload: scheduleOptions,\n    todo: shallowTodo\n  };\n\n  // 3 çıkış: [mongo, error, cron]\n  return [mongoMsg, null, cronMsg];\n}\n\n// Bilinmeyen işlem\nmsg.error = { message: `Bilinmeyen işlem türü: ${type}` };\nreturn [null, msg, null];\n",
+        "func": "// function 11 — /opt/:type (trash | complete | open | update | schedule)\n\nconst type = msg.req?.params?.type || \"\";\nconst user = msg.user || { username: \"\", roles: [] };\n\n// findOne çıktısını normalize et\nconst doc = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\n\n// --- ID normalizasyonu\nconst rawFromForm = (msg.formData?.id ?? \"\").toString();\nconst rawFromDoc  = (doc?.id ?? \"\").toString();\nconst rawId = rawFromForm || rawFromDoc;\nconst asNum = Number(rawId);\nconst id = Number.isNaN(asNum) ? rawId : asNum;\n\nif (!doc) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, msg, null];  // [mongo, error, cron]\n}\n\n// --- Basit yetki kontrolü\nconst isAdmin = Array.isArray(user.roles) && user.roles.includes(\"admin\");\nif (doc?.stamp?.username && user?.username && doc.stamp.username !== user.username && !isAdmin) {\n  msg.error = { message: \"Yetkisiz işlem.\" };\n  return [null, msg, null];\n}\n\n// === İşlemler ===\nif (type === \"trash\") {\n  msg.operation = \"deleteOne\";\n  msg.payload   = [{ id }];\n  return [msg, null, null];\n}\n\nif (type === \"complete\") {\n  msg.operation = \"updateOne\";\n  msg.payload   = [{ id }, { $set: { done: true } }];\n  return [msg, null, null];\n}\n\nif (type === \"open\") {\n  msg.operation = \"updateOne\";\n  msg.payload   = [{ id }, { $set: { done: false } }];\n  return [msg, null, null];\n}\n\nif (type === \"update\") {\n  const newName  = (msg.formData?.name || \"\").trim();\n  const origName = (msg.formData?.orig || \"\").trim();\n\n  const newCats  = JSON.stringify([].concat(msg.formData?.categories || []).map(String).sort());\n  const origCats = JSON.stringify([].concat(msg.formData?.origCats || []).map(String).sort());\n\n  if (!newName) {\n    msg.error = { message: \"Görev adı boş olamaz.\" };\n    return [null, msg, null];\n  }\n  if (newName === origName && newCats === origCats) {\n    msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n    return [null, msg, null];\n  }\n\n  msg.operation = \"updateOne\";\n  msg.payload   = [{\n    id\n  }, {\n    $set: { \n    name: newName, \n    categories: [].concat(msg.formData?.categories || []).map(String) \n    }\n  }];\n  return [msg, null, null];\n}\n\n\nif (type === \"schedule\") {\n  // ——— PLANLAMA ———\n  const whenRaw  = (msg.formData?.datetime || \"\").trim();   // \"YYYY-MM-DDTHH:mm[:ss]\"\n  const noteText = (msg.formData?.note || \"\").trim();\n\n  if (!whenRaw) {\n    msg.error = { message: \"Tarih/saat seçiniz.\" };\n    return [null, msg, null];\n  }\n\n  // saniye ekle (datetime-local saniyesiz gelir)\n  const whenIso = whenRaw.length === 16 ? (whenRaw + \":00\") : whenRaw;\n  const dt = new Date(whenIso);\n\n  if (isNaN(dt.getTime())) {\n    msg.error = { message: \"Geçersiz tarih/saat.\" };\n    return [null, msg, null];\n  }\n\n  // crontinject için doğru seçenek\n  const scheduleOptions = {\n    crontiMethod: \"onDate\",\n    crontiArgs: [dt]   // Date nesnesi/epoch kullanılmalı\n  };\n\n  // --- BENZERSİZ _id üret (aynı dakikada birden fazla hatırlatıcı için) ---\n  let schSeq = (flow.get('schSeq') || 0) + 1;\n  flow.set('schSeq', schSeq);\n  const recId = `${dt.getTime()}-${schSeq}`;   // Örn: \"1756888260000-3\"\n\n  // — Normalize edilmiş plan kaydı —\n  const rec = {\n    _id:   recId, // <<< benzersiz id\n    formData: {\n      datetime: msg.formData.datetime,  // \"YYYY-MM-DDTHH:mm\"\n      note:     noteText\n    },\n    fireAt:   dt.toISOString(),\n    epoch:    dt.getTime(),\n    createdAt: new Date().toISOString()\n  };\n\n  // — akış hafızasına kısa bir kopya (tetik anında erişim için)\n  const shallowTodo = {\n    ...doc,\n    schedule: rec,\n    lastNote: noteText\n  };\n  flow.set(`todo:${id}`, shallowTodo);\n\n  // — DB güncellemesi —\n  const isRehydrate = msg.rehydrate === true;\n  let updateDoc;\n  if (isRehydrate) {\n    // Rehydrate'de ikinci kez push etmeyelim; istersen hiç dokunma da diyebilirsin.\n    updateDoc = { $set: { schedule: rec } };\n  } else {\n    updateDoc = {\n      $set:  { schedule: rec, lastNote: noteText },\n      $push: { scheduleHistory: rec }\n    };\n  }\n\n  const mongoMsg = {\n    ...msg,\n    operation: \"updateOne\",\n    payload: [\n      { id },\n      updateDoc\n    ]\n  };\n\n  // — crontinject’e gidecek mesaj\n  const cronMsg = {\n    topic: `todo:${id}`,\n    payload: scheduleOptions,\n    todo: shallowTodo\n  };\n\n  // 3 çıkış: [mongo, error, cron]\n  return [mongoMsg, null, cronMsg];\n}\n\n// Bilinmeyen işlem\nmsg.error = { message: `Bilinmeyen işlem türü: ${type}` };\nreturn [null, msg, null];\n",
         "outputs": 3,
         "timeout": 0,
         "noerr": 0,
@@ -827,7 +827,7 @@
         "handleDocId": false,
         "name": "",
         "x": 840,
-        "y": 540,
+        "y": 520,
         "wires": [
             [
                 "af5fc661d33623d3"
@@ -844,7 +844,7 @@
             "location": "/"
         },
         "x": 1000,
-        "y": 540,
+        "y": 520,
         "wires": []
     },
     {
@@ -966,7 +966,7 @@
         "finalize": "",
         "libs": [],
         "x": 790,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "2ae9555726c58d4a"
@@ -984,7 +984,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 150,
-        "y": 820,
+        "y": 800,
         "wires": [
             [
                 "f701f5f92d547b4f"
@@ -997,7 +997,7 @@
         "z": "1d53f30b926d0909",
         "name": "",
         "x": 350,
-        "y": 820,
+        "y": 800,
         "wires": [
             [
                 "cbdb6994173bdf89"
@@ -1017,7 +1017,7 @@
         "finalize": "",
         "libs": [],
         "x": 550,
-        "y": 820,
+        "y": 800,
         "wires": [
             [
                 "5926842831fed148"
@@ -1037,7 +1037,7 @@
         "handleDocId": false,
         "name": "",
         "x": 740,
-        "y": 820,
+        "y": 800,
         "wires": [
             [
                 "b028db40bf340376"
@@ -1057,7 +1057,7 @@
         "finalize": "",
         "libs": [],
         "x": 930,
-        "y": 820,
+        "y": 800,
         "wires": [
             [
                 "8b20513b3074ae21"
@@ -1078,7 +1078,7 @@
         "statusCode": "302",
         "headers": {},
         "x": 1500,
-        "y": 780,
+        "y": 760,
         "wires": []
     },
     {
@@ -1094,7 +1094,7 @@
         "handleDocId": false,
         "name": "",
         "x": 1130,
-        "y": 760,
+        "y": 740,
         "wires": [
             [
                 "11372450cde8ab06"
@@ -1114,7 +1114,7 @@
         "handleDocId": false,
         "name": "",
         "x": 1130,
-        "y": 820,
+        "y": 800,
         "wires": [
             [
                 "11372450cde8ab06"
@@ -1134,7 +1134,7 @@
         "finalize": "",
         "libs": [],
         "x": 1320,
-        "y": 780,
+        "y": 760,
         "wires": [
             [
                 "638fcdcf214c899c"
@@ -1151,305 +1151,28 @@
             "18dc3105a4edec0c"
         ],
         "x": 1075,
-        "y": 880,
+        "y": 860,
         "wires": []
     },
     {
-        "id": "8a17d35dfec47d16",
-        "type": "http in",
-        "z": "ce31de18fd4f4005",
-        "name": "",
-        "url": "/categories-opt/:type",
-        "method": "post",
-        "upload": false,
-        "skipBodyParsing": false,
-        "swaggerDoc": "",
-        "x": 170,
-        "y": 340,
-        "wires": [
-            [
-                "3685bfd7d557a4df"
-            ]
-        ]
-    },
-    {
-        "id": "4ee1a87518e79ddc",
-        "type": "http response",
-        "z": "ce31de18fd4f4005",
-        "name": "",
-        "statusCode": "",
-        "headers": {},
-        "x": 1030,
-        "y": 300,
-        "wires": []
-    },
-    {
-        "id": "cae3a7cac1ed0401",
+        "id": "c29ac909321790c8",
         "type": "function",
-        "z": "ce31de18fd4f4005",
-        "name": "validation",
-        "func": "// ---- validation (Outputs: 2) ----\nconst type = (msg.req?.params?.type || \"\").trim();\n\nif (![\"add\", \"update\", \"trash\"].includes(type)) {\n    msg.error = { message: `${type || \"(boş)\"} geçersiz bir parametre.` };\n    return [null, msg]; // HATA\n}\n\nif (type === \"add\" && (!msg.payload?.name || msg.payload.name.trim() === \"\")) {\n    msg.error = { message: \"Kategori adı zorunlu.\" };\n    return [null, msg]; // HATA\n}\n\nif ((type === \"update\" || type === \"trash\") && (!msg.payload?.id || msg.payload.id.toString().trim() === \"\")) {\n    msg.error = { message: \"id zorunlu.\" };\n    return [null, msg]; // HATA\n}\n\nreturn [msg, null]; // BAŞARI\n",
-        "outputs": 2,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 560,
-        "y": 340,
-        "wires": [
-            [
-                "6a93a54accf53b71"
-            ],
-            [
-                "32deda87e3d60747"
-            ]
-        ]
-    },
-    {
-        "id": "1d5518f3b2714e92",
-        "type": "mongodb4",
-        "z": "ce31de18fd4f4005",
-        "clientNode": "071adb762f609302",
-        "mode": "collection",
-        "collection": "categories",
-        "operation": "findOne",
-        "output": "toArray",
-        "maxTimeMS": "0",
-        "handleDocId": true,
-        "name": "",
-        "x": 880,
-        "y": 380,
-        "wires": [
-            [
-                "7ef91cb0c74bc108"
-            ]
-        ]
-    },
-    {
-        "id": "3685bfd7d557a4df",
-        "type": "subflow:9357c048778312fb",
-        "z": "ce31de18fd4f4005",
-        "name": "",
-        "x": 390,
-        "y": 340,
-        "wires": [
-            [
-                "cae3a7cac1ed0401"
-            ]
-        ]
-    },
-    {
-        "id": "6996ef9ac9c8704f",
-        "type": "mongodb4",
-        "z": "ce31de18fd4f4005",
-        "clientNode": "071adb762f609302",
-        "mode": "collection",
-        "collection": "categories",
-        "operation": "updateOne",
-        "output": "toArray",
-        "maxTimeMS": "0",
-        "handleDocId": true,
-        "name": "",
-        "x": 1250,
-        "y": 340,
-        "wires": [
-            [
-                "3b8d76a699667744"
-            ]
-        ]
-    },
-    {
-        "id": "08a61e2f6e727fba",
-        "type": "http in",
-        "z": "ce31de18fd4f4005",
-        "name": "",
-        "url": "/categories",
-        "method": "get",
-        "upload": false,
-        "skipBodyParsing": false,
-        "swaggerDoc": "",
-        "x": 140,
-        "y": 140,
-        "wires": [
-            [
-                "9b21e563bcc9ad0b"
-            ]
-        ]
-    },
-    {
-        "id": "ca6087eeac820f68",
-        "type": "http response",
-        "z": "ce31de18fd4f4005",
-        "name": "",
-        "statusCode": "",
-        "headers": {},
-        "x": 810,
-        "y": 140,
-        "wires": []
-    },
-    {
-        "id": "bcd158a93b8de50f",
-        "type": "function",
-        "z": "ce31de18fd4f4005",
-        "name": "function 4",
-        "func": "msg.payload = [] ;\n\nreturn msg;",
+        "z": "1d53f30b926d0909",
+        "name": "kategoriHazırla",
+        "func": "// prepareEditPayload\nconst d = msg.payload || {};\nmsg.payload = {\n  id: d.id,\n  name: d.name,\n  // Kategorileri string dizi olarak şablona geç\n  categoriesJson: JSON.stringify((Array.isArray(d.categories) ? d.categories : []).map(String))\n};\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 500,
-        "y": 140,
+        "x": 1040,
+        "y": 240,
         "wires": [
             [
-                "c005219d393b46dc"
+                "b38fb814b875aebb"
             ]
         ]
-    },
-    {
-        "id": "c005219d393b46dc",
-        "type": "mongodb4",
-        "z": "ce31de18fd4f4005",
-        "clientNode": "071adb762f609302",
-        "mode": "collection",
-        "collection": "categories",
-        "operation": "aggregate",
-        "output": "toArray",
-        "maxTimeMS": "0",
-        "handleDocId": false,
-        "name": "",
-        "x": 660,
-        "y": 140,
-        "wires": [
-            [
-                "ca6087eeac820f68"
-            ]
-        ]
-    },
-    {
-        "id": "9b21e563bcc9ad0b",
-        "type": "subflow:9357c048778312fb",
-        "z": "ce31de18fd4f4005",
-        "name": "",
-        "x": 330,
-        "y": 140,
-        "wires": [
-            [
-                "bcd158a93b8de50f"
-            ]
-        ]
-    },
-    {
-        "id": "32deda87e3d60747",
-        "type": "link out",
-        "z": "ce31de18fd4f4005",
-        "name": "link out 10",
-        "mode": "link",
-        "links": [
-            "c5f4d0120c89df7e"
-        ],
-        "x": 655,
-        "y": 400,
-        "wires": []
-    },
-    {
-        "id": "254d8fb0f8e86f22",
-        "type": "mongodb4",
-        "z": "ce31de18fd4f4005",
-        "clientNode": "071adb762f609302",
-        "mode": "collection",
-        "collection": "categories",
-        "operation": "insertOne",
-        "output": "toArray",
-        "maxTimeMS": "0",
-        "handleDocId": true,
-        "name": "",
-        "x": 880,
-        "y": 300,
-        "wires": [
-            [
-                "4ee1a87518e79ddc"
-            ]
-        ]
-    },
-    {
-        "id": "6a93a54accf53b71",
-        "type": "function",
-        "z": "ce31de18fd4f4005",
-        "name": "function 2",
-        "func": "// ---- function 2 (Outputs: 2) ----\n// OUT1 -> insertOne   |   OUT2 -> findOne\nconst type = (msg.req?.params?.type || \"\").trim();\nconst body = (msg.payload && typeof msg.payload === \"object\")\n  ? msg.payload\n  : (msg.req?.body || {});\n\nmsg.formData = body;\n\nif (type === \"add\") {\n  const name = (body.name || \"\").trim();\n  if (!name) {\n    msg.error = { message: \"Kategori adı zorunlu.\" };\n    return [null, null]; // HATA\n  }\n  msg.payload = { name };\n  return [msg, null]; // -> insertOne\n}\n\n// update | trash: önce findOne\nconst id = (body.id || body._id || \"\").toString().trim();\nif (!id) {\n  msg.error = { message: \"id geçersiz.\" };\n  return [null, null]; // HATA\n}\n\nmsg.payload = { _id: id };\nreturn [null, msg]; // -> findOne\n",
-        "outputs": 2,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 720,
-        "y": 340,
-        "wires": [
-            [
-                "254d8fb0f8e86f22"
-            ],
-            [
-                "1d5518f3b2714e92"
-            ]
-        ]
-    },
-    {
-        "id": "7ef91cb0c74bc108",
-        "type": "function",
-        "z": "ce31de18fd4f4005",
-        "name": "kategoriIslemleri",
-        "func": "// kategoriIslemleri  (Outputs: 2)\n// OUT1 -> mongodb (update/delete) | OUT2 -> http error\nconst type = (msg.req?.params?.type || \"\").trim();\nconst user = msg.user || {};\n\n// findOne çıktısını normalize et\nconst doc = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\nif (!doc) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, null];\n}\n\n// basit yetki\nconst isAdmin = Array.isArray(user.roles) && user.roles.includes(\"admin\");\nif (doc?.stamp?.username && user?.username && doc.stamp.username !== user.username && !isAdmin) {\n  msg.error = { message: \"Yetkisiz işlem.\" };\n  return [null, null];\n}\n\nconst body = msg.formData || {};\nconst _id = doc?._id || body.id;\nif (!_id) {\n  msg.error = { message: \"Geçersiz id.\" };\n  return [null, null];\n}\n\nif (type === \"update\") {\n  const newName  = (body.name || \"\").trim();\n  const origName = (body.orig || \"\").trim();\n\n  if (!newName) {\n    msg.error = { message: \"Kategori adı boş olamaz.\" };\n    return [null, null];\n  }\n  if (newName === origName) {\n    msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n    return [null, null];\n  }\n\n  msg.payload   = [{ _id }, { $set: { name: newName } }];\n  return [msg, null];\n}\n\nif (type === \"trash\") {\n  msg.payload   = { _id };\n  return [null, msg];\n}\n\nmsg.error = { message: \"Desteklenmeyen işlem.\" };\nreturn [null, null];\n",
-        "outputs": 2,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1060,
-        "y": 380,
-        "wires": [
-            [
-                "6996ef9ac9c8704f"
-            ],
-            [
-                "450dd7912061bfa5"
-            ]
-        ]
-    },
-    {
-        "id": "450dd7912061bfa5",
-        "type": "mongodb4",
-        "z": "ce31de18fd4f4005",
-        "clientNode": "071adb762f609302",
-        "mode": "collection",
-        "collection": "categories",
-        "operation": "deleteOne",
-        "output": "toArray",
-        "maxTimeMS": "0",
-        "handleDocId": true,
-        "name": "",
-        "x": 1250,
-        "y": 420,
-        "wires": [
-            [
-                "3b8d76a699667744"
-            ]
-        ]
-    },
-    {
-        "id": "3b8d76a699667744",
-        "type": "http response",
-        "z": "ce31de18fd4f4005",
-        "name": "",
-        "statusCode": "",
-        "headers": {},
-        "x": 1430,
-        "y": 380,
-        "wires": []
     },
     {
         "id": "90f7036bef489ba2",
@@ -1463,7 +1186,7 @@
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Kullanıcı Listesi</title>\n\n  <!-- Bootstrap & DataTables CSS -->\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\" />\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\" />\n  <link rel=\"stylesheet\" href=\"https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css\" />\n\n  <!-- SurveyJS (jQuery) -->\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n\n  <style>\n    @media (min-width: 1400px) {\n      .container {\n        max-width: 1320px;\n      }\n    }\n\n    #tblUsers {\n      width: 100% !important;\n    }\n\n    .card {\n      border-radius: .75rem;\n    }\n\n    .badge-role {\n      font-weight: 500;\n    }\n\n    /* Kaydet butonu mavi */\n    .sv-footer__complete-btn {\n      background-color: #0d6efd !important;\n      color: #fff !important;\n      border: 1px solid #0d6efd !important;\n    }\n\n    .sv-footer__complete-btn:hover {\n      background-color: #0b5ed7 !important;\n    }\n\n    /* Temizle butonu beyaz (outline) */\n    #btnReset {\n      background-color: #fff !important;\n      color: #6c757d !important;\n      /* gri yazı */\n      border: 1px solid #ced4da !important;\n    }\n\n    #btnReset:hover {\n      background-color: #f8f9fa !important;\n      border-color: #adb5bd !important;\n    }\n  </style>\n</head>\n\n<body class=\"bg-light\">\n\n  <!-- NAVBAR -->\n  <nav class=\"navbar bg-white border-bottom mb-4 py-3\">\n    <div class=\"container d-flex align-items-center justify-content-between\">\n      <span class=\"navbar-text fw-semibold fs-5\">Admin Panel</span>\n      <a class=\"ms-auto nav-link fw-semibold fs-5\" href=\"/\">Ana Sayfa</a>\n    </div>\n  </nav>\n\n  <div class=\"container pb-5\">\n\n    <!-- Kullanıcı Ekle -->\n    <div class=\"row\">\n      <div class=\"col-12\">\n        <div class=\"card shadow-sm mb-4\">\n          <div class=\"card-body\">\n            <h5 class=\"mb-3\">Kullanıcı Ekle</h5>\n            <div id=\"formHost\"></div>\n\n            <div class=\"d-flex align-items-center justify-content-between mt-2\">\n              <div class=\"text-muted\">Parola gücü: <span id=\"pwLabel\">—</span></div>\n              <div>\n                <!-- SurveyJS butonları -->\n                <input type=\"button\" id=\"btnSubmit\" value=\"Kaydet\" class=\"sv-btn sv-footer__complete-btn\"/>\n                <input type=\"button\" id=\"btnReset\" value=\"Temizle\" class=\"sv-btn sv-footer__next-btn me-2\"/>\n              </div>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n\n    <!-- Kullanıcı Listesi -->\n    <div class=\"row\">\n      <div class=\"col-12\">\n        <div class=\"card shadow-sm\">\n          <div class=\"card-body\">\n            <div class=\"d-flex align-items-center justify-content-between mb-2\">\n              <h5 class=\"mb-0\">Kullanıcı Listesi</h5>\n              <div id=\"listMeta\" class=\"text-muted small\"></div>\n            </div>\n\n            <div class=\"table-responsive\">\n              <table id=\"tblUsers\" class=\"table table-striped table-hover table-sm align-middle\">\n                <thead>\n                  <tr>\n                    <th>ID</th>\n                    <th>Kullanıcı Adı</th>\n                    <th>Ad Soyad</th>\n                    <th>E-posta</th>\n                    <th>Kayıt</th>\n                    <th>Rol</th>\n                    <th>Durum</th>\n                    <th class=\"text-end\">İşlemler</th>\n                  </tr>\n                </thead>\n                <tbody></tbody>\n              </table>\n            </div>\n\n          </div>\n        </div>\n      </div>\n    </div>\n\n  </div><!-- /.container -->\n\n  <!-- Backend’ten gömülen veri -->\n  <script>\n    window.__USERS__ = {{{usersJson}}};\n  </script>\n\n  <!-- DataTables JS -->\n  <script src=\"https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js\"></script>\n  <script src=\"https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js\"></script>\n\n  <script>\n    let survey; \n    let dt;     \n\n    const norm = v => String(v||\"\").trim().toLowerCase();\n    const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,64}$/;\n\n    function scorePassword(p){ let s=0; if(!p) return 0;\n      s += Math.min(6, new Set(p).size);\n      s += /[a-z]/.test(p); s += /[A-Z]/.test(p);\n      s += /\\d/.test(p);    s += /[^A-Za-z0-9]/.test(p);\n      s += Math.min(4, Math.floor(p.length/3));\n      return s;\n    }\n    function pwLabel(sc){\n      if(sc>=9) return {text:\"çok güçlü\", cls:\"color:#198754\"};\n      if(sc>=7) return {text:\"güçlü\",      cls:\"color:#198754\"};\n      if(sc>=5) return {text:\"orta\",       cls:\"color:#fd7e14\"};\n      return          {text:\"zayıf\",       cls:\"color:#dc3545\"};\n    }\n\n    (function initForm(){\n      if (!window.Survey) return;\n      Survey.StylesManager.applyTheme(\"modern\");\n\n      const surveyJson = {\n        showQuestionNumbers: \"off\",\n        questionTitleLocation: \"left\",\n        widthMode: \"responsive\",\n        showNavigationButtons: \"none\",\n        showCompletedPage: false,\n        elements: [\n          { type:\"text\", name:\"username\", title:\"Kullanıcı Adı\", isRequired:true,\n            minLength:3, placeholder:\"(3–32, harf/rakam/._)\" , width:\"40%\"},\n          { type:\"text\", name:\"displayName\", title:\"Ad Soyad\", isRequired:true, startWithNewLine:false,width:\"30%\" },\n          { type:\"text\", name:\"email\", title:\"E-posta\", inputType:\"email\", isRequired:true, startWithNewLine:false,\n            placeholder:\"ornek@site.com\", validators:[{ type:\"email\", text:\"Geçerli bir e-posta girin.\" }] },\n          { type:\"text\", name:\"password\", title:\"Parola\", inputType:\"password\", isRequired:true, minLength:8,\n            validators:[{type:\"regex\", regex: PWD_REGEX.source, text:\"En az 8 karakter; küçük+BÜYÜK+rakam+özel karakter olmalı.\"}],\n            description: \"Şifre ipucu: En az 8 karakter; küçük+BÜYÜK+rakam+özel karakter (!@#$%...) içermeli.\",\n            descriptionLocation: \"underInput\" },\n          { type:\"text\", name:\"password2\", title:\"Parola (Tekrar)\", inputType:\"password\", isRequired:true, startWithNewLine:false,\n            validators:[{ type:\"expression\", expression:\"{password} = {password2}\", text:\"Parolalar eşleşmiyor.\" }] }\n        ]\n      };\n\n      survey = new Survey.Model(surveyJson);\n      $(\"#formHost\").Survey({ model: survey });\n\n      survey.onValueChanged.add((s,opt)=>{\n        if(opt.name===\"password\"){\n          const lbl=document.getElementById(\"pwLabel\");\n          if(lbl){ const info=pwLabel(scorePassword(opt.value||\"\"));\n            lbl.textContent=info.text; lbl.style=info.cls; }\n        }\n        if(opt.name===\"username\" || opt.name===\"email\"){\n          checkUniquenessInline(opt.name, opt.value);\n        }\n      });\n\n      function getExistingSets(){\n        const arr = Array.isArray(window.__USERS__)? window.__USERS__: [];\n        return {\n          usernames: new Set(arr.map(u => norm(u.username))),\n          emails:    new Set(arr.map(u => norm(u.email)))\n        };\n      }\n\n      function checkUniquenessInline(fieldName, fieldValue){\n        const {usernames, emails} = getExistingSets();\n        const q = survey.getQuestionByName(fieldName);\n        if(!q) return;\n        try { q.clearErrors && q.clearErrors(); } catch(_) {}\n        if(fieldName === \"username\" && fieldValue && usernames.has(norm(fieldValue))){\n          q.addError(new Survey.CustomError(\"Bu kullanıcı adı zaten kayıtlı.\"));\n        }\n        if(fieldName === \"email\" && fieldValue && emails.has(norm(fieldValue))){\n          q.addError(new Survey.CustomError(\"Bu e-posta zaten kayıtlı.\"));\n        }\n      }\n\n      async function postJSON(url, data) {\n        const res = await fetch(url, {\n          method: \"POST\",\n          headers: {\"Content-Type\":\"application/json\"},\n          credentials: \"include\",\n          body: JSON.stringify(data)\n        });\n        if(!res.ok) throw new Error(res.statusText || \"İstek başarısız.\");\n        try { return await res.json(); } catch { return null; }\n      }\n\n      document.getElementById(\"btnSubmit\")?.addEventListener(\"click\", handleSubmit);\n      document.getElementById(\"btnReset\") ?.addEventListener(\"click\", handleReset);\n\n      async function handleSubmit(){\n        if (survey.hasErrors && survey.hasErrors(true)) return;\n        const payload = { ...survey.data };\n        [\"username\",\"displayName\",\"email\"].forEach(k=>{\n          if(payload[k]!=null) payload[k]=String(payload[k]).trim();\n        });\n\n        const {usernames, emails} = getExistingSets();\n        let dup = false;\n        if (usernames.has(norm(payload.username))) {\n          survey.getQuestionByName(\"username\")?.addError(new Survey.CustomError(\"Bu kullanıcı adı zaten kayıtlı.\"));\n          dup = true;\n        }\n        if (emails.has(norm(payload.email))) {\n          survey.getQuestionByName(\"email\")?.addError(new Survey.CustomError(\"Bu e-posta zaten kayıtlı.\"));\n          dup = true;\n        }\n        if (dup) return;\n\n        try{\n          await postJSON(\"/user-opt/add\", payload);\n        }catch(e){\n          survey.errors = [{ text: e?.message || \"Kayıt başarısız.\" }];\n          return;\n        }\n\n        const now = new Date();\n        const newRow = {\n          id: Math.random().toString(36).slice(2),\n          username: payload.username,\n          displayName: payload.displayName,\n          email: payload.email,\n          createdAtText: now.toLocaleString(),\n          roles: [\"user\"],\n          active: true\n        };\n        try { dt?.row.add(newRow).draw(false); } catch(_) {}\n        if (Array.isArray(window.__USERS__)) window.__USERS__.push(newRow);\n\n        handleReset();\n      }\n\n      function handleReset(){\n        try { survey.clearErrors && survey.clearErrors(); } catch(_) {}\n        survey.data = {};\n        const lbl=document.getElementById(\"pwLabel\");\n        if(lbl){ lbl.textContent=\"—\"; lbl.style=\"\"; }\n        setTimeout(()=>survey.getQuestionByName(\"username\")?.focus?.(true),0);\n      }\n    })();\n\n    const shortId = (id)=> (id? String(id).slice(0,10)+\"…\" : \"—\");\n\n    $(function(){\n      dt = $(\"#tblUsers\").DataTable({\n        order: [[0, \"asc\"]],\n        pageLength: 10,\n        data: Array.isArray(window.__USERS__) ? window.__USERS__ : [],\n        columns: [\n          { data:\"id\", render:(v)=>`<span class=\"text-muted\">${shortId(v)}</span>` },\n          { data:\"username\" },\n          { data:\"displayName\" },\n          { data:\"email\" },\n          { data:\"createdAtText\", defaultContent:\"—\",\n            render:(v)=>`<span class=\"text-muted small\">${v||\"—\"}</span>` },\n          { data:\"roles\", render:(r)=>{\n              const role = Array.isArray(r)&&r.includes(\"admin\") ? \"admin\" : \"user\";\n              const cls  = role==='admin' ? 'primary' : 'secondary';\n              return `<span class=\"badge text-bg-${cls} badge-role\">${role}</span>`;\n          }},\n          { data:\"active\", render:(v)=> v\n              ? '<span class=\"badge text-bg-success\">Aktif</span>'\n              : '<span class=\"badge text-bg-danger\">Pasif</span>' },\n          { data:null, className:\"text-end\", orderable:false, render:(_,__,row)=>{\n              const q=(k)=>encodeURIComponent(row[k]??\"\");\n              const isActive=!!row.active;\n              const urlEdit=`/user-edit/${q('id')}`;\n              const btnClass=isActive?'btn-outline-danger':'btn-outline-success';\n              const icon=isActive?'bi-power':'bi-check2-circle';\n              const label=isActive?'Pasifleştir':'Aktifleştir';\n              return `\n                <a class=\"btn btn-sm btn-outline-primary me-1\" href=\"${urlEdit}\">\n                  <i class=\"bi bi-pencil-square\"></i> Düzenle\n                </a>\n                <button class=\"btn btn-sm ${btnClass} me-1 btn-toggle\" data-id=\"${q('id')}\" data-active=\"${isActive}\">\n                  <i class=\"bi ${icon}\"></i> ${label}\n                </button>`;\n          }}\n        ]\n      });\n    });\n    $(document).on('click', '.btn-toggle', async function () {\n    const btn = this;\n    const id = btn.getAttribute('data-id');\n    const isActive = String(btn.getAttribute('data-active')) === 'true';\n    const type = isActive ? 'deactivate' : 'activate';\n    // UI: tıklanınca butonu kısa süre disable et\n    btn.disabled = true;\n    try {\n    const res = await fetch(`/user-opt/${type}`, {\n    method: 'POST',\n    credentials: 'include',\n    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },\n    body: new URLSearchParams({ id })\n    });\n    if (!res.ok) throw new Error('İstek başarısız');\n    // Başarılıysa satır verisini yerinde güncelle\n    const $tr = $(btn).closest('tr');\n    const row = dt.row($tr);\n    const data = row.data();\n    data.active = !isActive; // durum değişti\n    row.data(data).draw(false);\n    } catch (e) {\n    alert(e.message || 'İşlem başarısız.');\n    } finally {\n    btn.disabled = false;\n    }\n    });\n  </script>\n\n  <script src=\"/js/bootstrap.bundle.min.js\"></script>\n</body>\n\n</html>",
         "output": "str",
         "x": 1180,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "ec5abb8df0da65db"
@@ -1478,7 +1201,7 @@
         "statusCode": "",
         "headers": {},
         "x": 1330,
-        "y": 140,
+        "y": 120,
         "wires": []
     },
     {
@@ -1494,7 +1217,7 @@
         "finalize": "",
         "libs": [],
         "x": 670,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "f99da836ba8f456d"
@@ -1512,7 +1235,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "608bec346261cb04"
@@ -1530,7 +1253,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 150,
-        "y": 360,
+        "y": 340,
         "wires": [
             [
                 "8a33b0e666b5995f"
@@ -1577,7 +1300,7 @@
         "finalize": "",
         "libs": [],
         "x": 700,
-        "y": 360,
+        "y": 340,
         "wires": [
             [
                 "d9c5fb2fbf3b0189"
@@ -1602,7 +1325,7 @@
             "14819198696d743b"
         ],
         "x": 565,
-        "y": 100,
+        "y": 80,
         "wires": [
             [
                 "4801fcc29ebde45c"
@@ -1618,8 +1341,8 @@
         "links": [
             "8a6d783f9fac6a74"
         ],
-        "x": 815,
-        "y": 400,
+        "x": 795,
+        "y": 380,
         "wires": []
     },
     {
@@ -1632,7 +1355,7 @@
             "126ead5b72b171f3"
         ],
         "x": 1805,
-        "y": 500,
+        "y": 480,
         "wires": []
     },
     {
@@ -1649,7 +1372,7 @@
         "outputs": 1,
         "rounds": 10,
         "x": 1190,
-        "y": 360,
+        "y": 340,
         "wires": [
             [
                 "97440a5695968cc4"
@@ -1667,7 +1390,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 140,
-        "y": 640,
+        "y": 620,
         "wires": [
             [
                 "333ba1b4a05495f7"
@@ -1687,7 +1410,7 @@
         "finalize": "",
         "libs": [],
         "x": 730,
-        "y": 640,
+        "y": 620,
         "wires": [
             [
                 "049f6c44dff76dd4"
@@ -1736,8 +1459,8 @@
         "links": [
             "126ead5b72b171f3"
         ],
-        "x": 1245,
-        "y": 680,
+        "x": 1235,
+        "y": 660,
         "wires": []
     },
     {
@@ -1777,7 +1500,7 @@
         "z": "4952c48b2f6d6c23",
         "name": "",
         "x": 330,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "afee2af02b51714d"
@@ -1790,7 +1513,7 @@
         "z": "4952c48b2f6d6c23",
         "name": "",
         "x": 350,
-        "y": 360,
+        "y": 340,
         "wires": [
             [
                 "acc7c1f55f0a682a"
@@ -1803,7 +1526,7 @@
         "z": "4952c48b2f6d6c23",
         "name": "",
         "x": 330,
-        "y": 640,
+        "y": 620,
         "wires": [
             [
                 "a6a7474d00f800aa"
@@ -1816,7 +1539,7 @@
         "z": "4952c48b2f6d6c23",
         "name": "",
         "x": 500,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "4801fcc29ebde45c"
@@ -1829,7 +1552,7 @@
         "z": "4952c48b2f6d6c23",
         "name": "",
         "x": 520,
-        "y": 640,
+        "y": 620,
         "wires": [
             [
                 "7c83cb4a19389f12"
@@ -1842,7 +1565,7 @@
         "z": "4952c48b2f6d6c23",
         "name": "",
         "x": 530,
-        "y": 360,
+        "y": 340,
         "wires": [
             [
                 "7083b2826db710fa"
@@ -1893,7 +1616,7 @@
         "handleDocId": false,
         "name": "",
         "x": 830,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "83aeb4a66b06d227"
@@ -2007,7 +1730,7 @@
         "handleDocId": false,
         "name": "",
         "x": 920,
-        "y": 640,
+        "y": 620,
         "wires": [
             [
                 "d8c7a9da715ff676"
@@ -2027,7 +1750,7 @@
         "finalize": "",
         "libs": [],
         "x": 1110,
-        "y": 640,
+        "y": 620,
         "wires": [
             [
                 "1251f822538e5dd8"
@@ -2050,7 +1773,7 @@
         "finalize": "",
         "libs": [],
         "x": 1000,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "90f7036bef489ba2"
@@ -2093,7 +1816,7 @@
         "handleDocId": false,
         "name": "",
         "x": 1060,
-        "y": 300,
+        "y": 280,
         "wires": [
             [
                 "a2f9234ca65d363f"
@@ -2113,7 +1836,7 @@
         "finalize": "",
         "libs": [],
         "x": 1240,
-        "y": 300,
+        "y": 280,
         "wires": [
             [
                 "158f6cdbc523a790"
@@ -2131,7 +1854,7 @@
         "statusCode": "",
         "headers": {},
         "x": 1430,
-        "y": 300,
+        "y": 280,
         "wires": []
     },
     {
@@ -2145,7 +1868,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 120,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "8c7785adb445f91b"
@@ -2164,7 +1887,7 @@
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Giriş Yap</title>\n\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\" />\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\" />\n\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n</head>\n<body class=\"bg-light\">\n  <div class=\"container mt-5\">\n    <div class=\"row justify-content-center\">\n      <div class=\"col-md-6 col-lg-5\">\n        <div class=\"card shadow-sm\">\n          <div class=\"card-body\">\n            <h5 class=\"mb-3\">Giriş Yap</h5>\n\n            {{#error}} <div class=\"alert alert-danger\">{{message}}</div> {{/error}}\n\n            <div id=\"surveyContainer\"></div>\n\n            <div class=\"text-center mt-3\">\n              Hesabın yok mu? <a href=\"/register\">Kayıt ol</a>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n<script>\n  Survey.StylesManager.applyTheme(\"modern\");\n\n  const surveyJson = {\n    showTitle: false,\n    showCompletedPage: false,\n    showQuestionNumbers: \"off\",\n    completeText: \"Giriş Yap\",\n    widthMode: \"responsive\",\n    elements: [\n      { type:\"text\", name:\"identifier\", title:\"Kullanıcı adı veya E-posta\", isRequired:true, minLength:3,\n        placeholder:\"Kullanıcı Adı veya mail@ornek.com\" },\n      { type:\"text\", name:\"password\", title:\"Şifre\", inputType:\"password\", isRequired:true, minLength:8 }\n    ]\n  };\n\n  const survey = new Survey.Model(surveyJson);\n  let submitting = false;\n\n  survey.onCompleting.add(async (sender, options) => {\n    options.allowComplete = false;\n    if (submitting) return;\n    submitting = true;\n\n    // temizle\n    sender.errors = [];\n    (sender.getAllQuestions?.()||[]).forEach(q => q?.clearErrors?.());\n    sender.isReadOnly = true;\n\n    const payload = sender.data;\n    const url = \"/login\" + (window.location.search || \"\");\n\n    try {\n      const res = await fetch(url, {\n        method: \"POST\",\n        headers: { \"Content-Type\":\"application/json; charset=utf-8\", \"Accept\":\"application/json\", \"X-Requested-With\":\"XMLHttpRequest\" },\n        credentials: \"same-origin\",\n        body: JSON.stringify(payload)\n      });\n\n      if (res.ok) {\n        const qs = new URLSearchParams(window.location.search);\n        let next = qs.get(\"next\") || \"/\";\n        try { const data = await res.clone().json(); if (data?.next) next = data.next; } catch(_){}\n        if (res.redirected && res.url) window.location.assign(res.url); else window.location.assign(next);\n        return;\n      }\n\n      let message = \"Kullanıcı adı/e-posta veya şifre hatalı.\";\n      let fieldErrors = null;\n      try { const err = await res.clone().json(); message = err?.message || message; fieldErrors = err?.errors||null; } catch(_){}\n\n      const pwdQ = sender.getQuestionByName(\"password\");\n      if (pwdQ) {\n        (\"value\" in pwdQ) ? (pwdQ.value = \"\") : sender.setValue(\"password\",\"\");\n        pwdQ.addError?.(new Survey.CustomError(fieldErrors?.password || \"Hatalı şifre girdiniz.\"));\n        setTimeout(()=>pwdQ.focus?.(),0);\n      }\n\n      if (fieldErrors) {\n        Object.entries(fieldErrors).forEach(([name, text])=>{\n          if (name===\"password\") return;\n          const q = sender.getQuestionByName(name);\n          q?.addError?.(new Survey.CustomError(String(text)));\n        });\n      }\n\n      sender.errors = [{ text: message }];\n\n    } catch (e) {\n      sender.errors = [{ text: \"Sunucuya ulaşılamadı. Lütfen tekrar deneyin.\" }];\n      console.error(e);\n    } finally {\n      submitting = false;\n      sender.isReadOnly = false;\n    }\n  });\n\n  $(function(){ $(\"#surveyContainer\").Survey({ model: survey }); });\n</script>\n</body>\n</html>\n",
         "output": "str",
         "x": 440,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "0f88d4f9899d9885"
@@ -2179,7 +1902,7 @@
         "statusCode": "",
         "headers": {},
         "x": 730,
-        "y": 140,
+        "y": 120,
         "wires": []
     },
     {
@@ -2193,7 +1916,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 440,
+        "y": 420,
         "wires": [
             [
                 "898343caa6e3f92c"
@@ -2210,7 +1933,7 @@
             "location": "/login"
         },
         "x": 760,
-        "y": 440,
+        "y": 420,
         "wires": []
     },
     {
@@ -2226,8 +1949,8 @@
         "key": "",
         "signvar": "payload",
         "storetoken": "payload",
-        "x": 1220,
-        "y": 260,
+        "x": 1180,
+        "y": 240,
         "wires": [
             [
                 "f59872569465a1b9"
@@ -2245,7 +1968,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 280,
+        "y": 260,
         "wires": [
             [
                 "bcf4da036ac5b43b"
@@ -2264,8 +1987,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1050,
-        "y": 260,
+        "x": 1010,
+        "y": 240,
         "wires": [
             [
                 "0f7d31954dc9a188"
@@ -2292,8 +2015,8 @@
                 "module": "bcrypt"
             }
         ],
-        "x": 340,
-        "y": 280,
+        "x": 300,
+        "y": 260,
         "wires": [
             [
                 "a1e33ed13fcde42a"
@@ -2313,8 +2036,8 @@
         "match": "match",
         "outputs": 1,
         "rounds": 10,
-        "x": 880,
-        "y": 260,
+        "x": 840,
+        "y": 240,
         "wires": [
             [
                 "e8c57f2b754850cc"
@@ -2330,8 +2053,8 @@
         "headers": {
             "location": "/"
         },
-        "x": 1560,
-        "y": 260,
+        "x": 1520,
+        "y": 240,
         "wires": []
     },
     {
@@ -2345,7 +2068,7 @@
         "skipBodyParsing": false,
         "swaggerDoc": "",
         "x": 130,
-        "y": 560,
+        "y": 540,
         "wires": [
             [
                 "8637acb46830d49a"
@@ -2360,7 +2083,7 @@
         "statusCode": "",
         "headers": {},
         "x": 750,
-        "y": 560,
+        "y": 540,
         "wires": []
     },
     {
@@ -2375,7 +2098,7 @@
         "template": "<!DOCTYPE html>\n<html lang=\"tr\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n  <title>Kayıt Ol</title>\n\n  <!-- Bootstrap -->\n  <link rel=\"stylesheet\" href=\"/css/bootstrap.min.css\" />\n  <link rel=\"stylesheet\" href=\"/font/bootstrap-icons.min.css\" />\n\n  <!-- SurveyJS (jQuery sürümü) -->\n  <script src=\"https://unpkg.com/jquery\"></script>\n  <script src=\"https://unpkg.com/survey-jquery/survey.jquery.min.js\"></script>\n  <link href=\"https://unpkg.com/survey-jquery/modern.min.css\" rel=\"stylesheet\" />\n\n  <style>\n    .card { border-radius: .75rem; }\n    .card-body { padding: 1.5rem 1.5rem .75rem; }\n    .sv-root-modern .sv-container { padding: 0; }\n    .sv-root-modern .sv-question { margin-bottom: .5rem; }\n    .sv-root-modern .sv-title { margin-bottom: .25rem; font-size: 1rem; }\n    .sv-root-modern .sv-input,\n    .sv-root-modern input[type=\"text\"].sv-text,\n    .sv-root-modern input[type=\"password\"].sv-text { padding: .375rem .5rem; }\n    .pw-label { font-size: .9rem; }\n\n    /* ========================\n       BUTON STİLLERİ (KESİN)\n       ======================== */\n\n    /* ActionBar: TEMİZLE (beyaz/outline) */\n    .sv-action-bar .sv-action-bar-item[data-name=\"act-reset\"] .sv-btn {\n      background-color: #fff !important;\n      color: #6c757d !important;                  /* gri yazı */\n      border: 1px solid #ced4da !important;\n    }\n    .sv-action-bar .sv-action-bar-item[data-name=\"act-reset\"] .sv-btn:hover {\n      background-color: #f8f9fa !important;\n      border-color: #adb5bd !important;\n    }\n\n    /* ActionBar: KAYIT OL (primary) */\n    .sv-action-bar .sv-action-bar-item[data-name=\"act-submit\"] .sv-btn {\n      background-color: var(--sjs-primary-backcolor, #0d6efd) !important;\n      color: var(--sjs-primary-forecolor, #fff) !important;\n      border: 1px solid var(--sjs-primary-backcolor, #0d6efd) !important;\n    }\n    .sv-action-bar .sv-action-bar-item[data-name=\"act-submit\"] .sv-btn:hover {\n      background-color: var(--sjs-primary-backcolor-dark, #0b5ed7) !important;\n      border-color: var(--sjs-primary-backcolor-dark, #0b5ed7) !important;\n    }\n\n    /* Fallback HTML: aynı görünümler */\n    #btnReset {\n      background-color: #fff !important;\n      color: #6c757d !important;\n      border: 1px solid #ced4da !important;\n    }\n    #btnReset:hover {\n      background-color: #f8f9fa !important;\n      border-color: #adb5bd !important;\n    }\n    #btnSubmit {\n      background-color: var(--sjs-primary-backcolor, #0d6efd) !important;\n      color: var(--sjs-primary-forecolor, #fff) !important;\n      border: 1px solid var(--sjs-primary-backcolor, #0d6efd) !important;\n    }\n    #btnSubmit:hover {\n      background-color: var(--sjs-primary-backcolor-dark, #0b5ed7) !important;\n      border-color: var(--sjs-primary-backcolor-dark, #0b5ed7) !important;\n    }\n  </style>\n</head>\n<body class=\"bg-light\">\n  <div class=\"container mt-4 pb-5\">\n    <div class=\"row justify-content-center\">\n      <div class=\"col-md-10 col-lg-8\">\n        <div class=\"card shadow-sm\">\n          <div class=\"card-body\">\n            <h5 class=\"mb-3\">Kayıt Ol</h5>\n\n            {{#error}} <div class=\"alert alert-danger\">{{message}}</div> {{/error}}\n\n            <!-- SurveyJS form alanı -->\n            <div id=\"surveyContainer\"></div>\n\n            <!-- Alt sıra: solda parola gücü, sağda (Survey) butonlar -->\n            <div class=\"d-flex align-items-center justify-content-between mt-2\">\n              <div class=\"text-muted pw-label\">Parola gücü: <span id=\"pwLabel\">—</span></div>\n              <div id=\"svBtnsHost\"></div>\n            </div>\n\n            <div class=\"text-center mt-3\">\n              Zaten hesabın var mı? <a href=\"/login\">Giriş yap</a>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </div>\n\n<script>\n  Survey.StylesManager.applyTheme(\"modern\");\n\n  // --- Parola politikası ve skorlayıcı ---\n  const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,64}$/;\n  function scorePassword(p){ let s=0; if(!p) return 0;\n    s += Math.min(6, new Set(p).size);\n    s += /[a-z]/.test(p); s += /[A-Z]/.test(p);\n    s += /\\d/.test(p);    s += /[^A-Za-z0-9]/.test(p);\n    s += Math.min(4, Math.floor(p.length/3));\n    return s;\n  }\n  function pwLabel(sc){\n    if(sc>=9) return {text:\"çok güçlü\", cls:\"color:#198754\"};\n    if(sc>=7) return {text:\"güçlü\",      cls:\"color:#198754\"};\n    if(sc>=5) return {text:\"orta\",       cls:\"color:#fd7e14\"};\n    return          {text:\"zayıf\",       cls:\"color:#dc3545\"};\n  }\n\n  // --- Form şeması (Survey butonları kapalı) ---\n  const surveyJson = {\n    showQuestionNumbers: \"off\",\n    questionTitleLocation: \"left\",\n    widthMode: \"responsive\",\n    showNavigationButtons: \"none\",\n    showCompletedPage: false,\n    elements: [\n      { type:\"text\", name:\"username\", title:\"Kullanıcı Adı \", isRequired:true,\n        minLength:3, placeholder:\"(3–32, harf/rakam/._)\", width:\"45%\" },\n      { type:\"text\", name:\"displayName\", title:\"Ad Soyad \", isRequired:true,\n        startWithNewLine:false, width:\"35%\",\n        validators:[{ type:\"regex\", regex:\"^(?=.*\\\\S).{2,}$\", text:\"Lütfen ad soyad girin.\" }] },\n      { type:\"text\", name:\"email\", title:\"E-posta \", inputType:\"email\", isRequired:true,\n        startWithNewLine:false, placeholder:\"mail@ornek.com\",\n        validators:[{ type:\"email\", text:\"Geçerli bir e-posta girin.\" }] },\n\n      { type:\"text\", name:\"password\", title:\"Şifre \", inputType:\"password\", isRequired:true, minLength:8,\n        validators:[{ type:\"regex\", regex: PWD_REGEX.source,\n          text:\"En az 8 karakter; küçük+BÜYÜK+rakam+özel karakter olmalı.\" }],\n        description: \"Şifre ipucu: En az 8 karakter; küçük+BÜYÜK+rakam+özel karakter (!@#$%...) içermeli.\",\n  descriptionLocation: \"underInput\"  },\n\n      { type:\"text\", name:\"password2\", title:\"Şifre (tekrar) \", inputType:\"password\", isRequired:true,\n        startWithNewLine:false,\n        validators:[{ type:\"expression\", expression:\"{password} = {password2}\",\n          text:\"Parolalar eşleşmiyor.\" }] }\n    ]\n  };\n\n  const survey = new Survey.Model(surveyJson);\n\n  // Inline parola gücü\n  survey.onValueChanged.add((s,opt)=>{\n    if(opt.name===\"password\"){\n      const lbl=document.getElementById(\"pwLabel\");\n      if(lbl){ const info=pwLabel(scorePassword(opt.value||\"\"));\n        lbl.textContent=info.text; lbl.style=info.cls; }\n    }\n  });\n\n  // Uzak benzersizlik kontrolü (opsiyonel)\n  let uniqTimer=null;\n  survey.onValueChanged.add((s,opt)=>{\n    if(opt.name!==\"username\" && opt.name!==\"email\") return;\n    clearTimeout(uniqTimer);\n    uniqTimer = setTimeout(()=>remoteUniqueInline(opt.name), 350);\n  });\n\n  async function remoteUniqueInline(field){\n    const q = survey.getQuestionByName(field);\n    if(!q) return;\n    try { q.clearErrors && q.clearErrors(); } catch(_) {}\n    const val = String(survey.data?.[field]||\"\").trim();\n    if(!val) return;\n\n    const qs = new URLSearchParams();\n    if (field===\"username\") qs.set(\"username\", val);\n    if (field===\"email\")    qs.set(\"email\", val);\n    try{\n      const res = await fetch(\"/user-opt/check-unique?\"+qs.toString(), { credentials:\"same-origin\" });\n      if(!res.ok) return;\n      const data = await res.json(); // { username: true/false, email: true/false }\n      if (field===\"username\" && data.username === false) {\n        q.addError(new Survey.CustomError(\"Bu kullanıcı adı zaten kayıtlı.\"));\n      }\n      if (field===\"email\" && data.email === false) {\n        q.addError(new Survey.CustomError(\"Bu e-posta zaten kayıtlı.\"));\n      }\n    }catch{}\n  }\n\n  // Yardımcı: alan hatası yaz\n  function setFieldErrors(map){\n    if(!map) return;\n    for(const [name,msg] of Object.entries(map)){\n      const q = survey.getQuestionByName(name);\n      if(q) q.addError(new Survey.CustomError(String(msg)));\n    }\n  }\n\n  // POST helper\n  async function postJSON(url, data) {\n    const res = await fetch(url, {\n      method: \"POST\",\n      headers: { \"Content-Type\":\"application/json; charset=utf-8\", \"Accept\":\"application/json\" },\n      credentials: \"same-origin\",\n      body: JSON.stringify(data)\n    });\n    return res;\n  }\n\n  // Reset\n  function doReset(){\n    try { survey.clearErrors && survey.clearErrors(); } catch(_) {}\n    survey.data = {};\n    const lbl=document.getElementById(\"pwLabel\");\n    if(lbl){ lbl.textContent=\"—\"; lbl.style=\"\"; }\n    setTimeout(()=>survey.getQuestionByName(\"username\")?.focus?.(true),0);\n  }\n\n  // Kayıt gönderimi\n  async function onSubmit(){\n    if (survey.hasErrors && survey.hasErrors(true)) return;\n\n    const payload = { ...survey.data };\n    [\"username\",\"displayName\",\"email\"].forEach(k=>{\n      if(payload[k]!=null) payload[k]=String(payload[k]).trim();\n    });\n    delete payload.password2;\n\n    // Sunucu tarafı benzersizlik\n    try{\n      const checkQs = new URLSearchParams({ username: payload.username||\"\", email: payload.email||\"\" });\n      const chk = await fetch(\"/user-opt/check-unique?\"+checkQs.toString(), { credentials:\"same-origin\" });\n      if (chk.ok) {\n        const info = await chk.json();\n        const errs = {};\n        if (info.username === false) errs.username = \"Bu kullanıcı adı zaten kayıtlı.\";\n        if (info.email === false)    errs.email    = \"Bu e-posta zaten kayıtlı.\";\n        if (Object.keys(errs).length){ setFieldErrors(errs); return; }\n      }\n    }catch{}\n\n    let res;\n    try{\n      res = await postJSON(\"/user-opt/add\", payload);\n    }catch(e){\n      survey.errors = [{ text: \"Sunucuya ulaşılamadı. Lütfen tekrar deneyin.\" }];\n      return;\n    }\n\n    if (res.ok){\n      try {\n        const data = await res.clone().json();\n        const next = data?.next || \"/login\";\n        window.location.assign(next);\n      } catch {\n        window.location.assign(\"/login\");\n      }\n      return;\n    }\n\n    let message = \"Kayıt oluşturulamadı.\";\n    let fieldErrors = null;\n    try {\n      const err = await res.clone().json();\n      if (err?.message) message = err.message;\n      if (err?.errors && typeof err.errors === \"object\") fieldErrors = err.errors;\n    } catch {}\n\n    if ((res.status === 409 || res.status === 400) && !fieldErrors) {\n      fieldErrors = {};\n      fieldErrors.username = fieldErrors.username || \"Bu kullanıcı adı zaten kayıtlı.\";\n      fieldErrors.email    = fieldErrors.email    || \"Bu e-posta zaten kayıtlı.\";\n    }\n\n    setFieldErrors(fieldErrors);\n    survey.errors = [{ text: message }];\n  }\n\n  // Survey render + BUTONLAR (ActionBar varsa onu, yoksa fallback)\n  document.addEventListener(\"DOMContentLoaded\", function(){\n    $(\"#surveyContainer\").Survey({ model: survey });\n\n    const host = document.getElementById(\"svBtnsHost\");\n    if (!host) return;\n\n    if (Survey.ActionBar && Survey.Action) {\n      // Survey ActionBar\n      const actions = [\n        new Survey.Action({ id:\"act-reset\",  title:\"Temizle\",  tooltip:\"Formu temizle\",  action: doReset }),\n        new Survey.Action({ id:\"act-submit\", title:\"Kayıt Ol\", tooltip:\"Kayıt oluştur\", action: onSubmit })\n      ];\n      const bar = new Survey.ActionBar(actions);\n      bar.render(host);\n    } else {\n      // Fallback: Survey buton sınıflarıyla HTML\n      host.innerHTML = `\n        <div class=\"sv-action-bar\">\n          <button type=\"button\" id=\"btnReset\"  class=\"sv-btn sv-footer__prev-btn me-2\">Temizle</button>\n          <button type=\"button\" id=\"btnSubmit\" class=\"sv-btn sv-footer__complete-btn\">\n            <span class=\"sv-action-bar-item__title\">Kayıt Ol</span>\n          </button>\n        </div>`;\n      document.getElementById(\"btnReset\").addEventListener(\"click\", doReset);\n      document.getElementById(\"btnSubmit\").addEventListener(\"click\", onSubmit);\n    }\n  });\n</script>\n</body>\n</html>\n",
         "output": "str",
         "x": 460,
-        "y": 560,
+        "y": 540,
         "wires": [
             [
                 "84be4beb553cbe26"
@@ -2395,7 +2118,7 @@
         "finalize": "",
         "libs": [],
         "x": 450,
-        "y": 440,
+        "y": 420,
         "wires": [
             [
                 "78a062b04551d6e3"
@@ -2423,7 +2146,7 @@
         "repair": false,
         "outputs": 2,
         "x": 310,
-        "y": 600,
+        "y": 580,
         "wires": [
             [
                 "8637acb46830d49a"
@@ -2442,7 +2165,7 @@
             "7817b550669eb8a2"
         ],
         "x": 215,
-        "y": 600,
+        "y": 580,
         "wires": [
             [
                 "5a5879c9b2e4a128"
@@ -2459,7 +2182,7 @@
             "126ead5b72b171f3"
         ],
         "x": 405,
-        "y": 640,
+        "y": 620,
         "wires": []
     },
     {
@@ -2474,8 +2197,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1390,
-        "y": 260,
+        "x": 1350,
+        "y": 240,
         "wires": [
             [
                 "86740e96f67da72b"
@@ -2494,8 +2217,8 @@
         "maxTimeMS": "0",
         "handleDocId": false,
         "name": "",
-        "x": 500,
-        "y": 280,
+        "x": 460,
+        "y": 260,
         "wires": [
             [
                 "23c69382a41e73a9"
@@ -2514,8 +2237,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 690,
-        "y": 280,
+        "x": 650,
+        "y": 260,
         "wires": [
             [
                 "ed58fab8df11b349"
@@ -2534,7 +2257,304 @@
         "headers": {
             "content-type": "application/json"
         },
-        "x": 1040,
+        "x": 1000,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "8a17d35dfec47d16",
+        "type": "http in",
+        "z": "ce31de18fd4f4005",
+        "name": "",
+        "url": "/categories-opt/:type",
+        "method": "post",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 170,
+        "y": 280,
+        "wires": [
+            [
+                "3685bfd7d557a4df"
+            ]
+        ]
+    },
+    {
+        "id": "4ee1a87518e79ddc",
+        "type": "http response",
+        "z": "ce31de18fd4f4005",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1030,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "cae3a7cac1ed0401",
+        "type": "function",
+        "z": "ce31de18fd4f4005",
+        "name": "validation",
+        "func": "// ---- validation (Outputs: 2) ----\nconst type = (msg.req?.params?.type || \"\").trim();\n\nif (![\"add\", \"update\", \"trash\"].includes(type)) {\n    msg.error = { message: `${type || \"(boş)\"} geçersiz bir parametre.` };\n    return [null, msg]; // HATA\n}\n\nif (type === \"add\" && (!msg.payload?.name || msg.payload.name.trim() === \"\")) {\n    msg.error = { message: \"Kategori adı zorunlu.\" };\n    return [null, msg]; // HATA\n}\n\nif ((type === \"update\" || type === \"trash\") && (!msg.payload?.id || msg.payload.id.toString().trim() === \"\")) {\n    msg.error = { message: \"id zorunlu.\" };\n    return [null, msg]; // HATA\n}\n\nreturn [msg, null]; // BAŞARI\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 280,
+        "wires": [
+            [
+                "6a93a54accf53b71"
+            ],
+            [
+                "32deda87e3d60747"
+            ]
+        ]
+    },
+    {
+        "id": "1d5518f3b2714e92",
+        "type": "mongodb4",
+        "z": "ce31de18fd4f4005",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "categories",
+        "operation": "findOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": true,
+        "name": "",
+        "x": 880,
+        "y": 320,
+        "wires": [
+            [
+                "7ef91cb0c74bc108"
+            ]
+        ]
+    },
+    {
+        "id": "3685bfd7d557a4df",
+        "type": "subflow:9357c048778312fb",
+        "z": "ce31de18fd4f4005",
+        "name": "",
+        "x": 390,
+        "y": 280,
+        "wires": [
+            [
+                "cae3a7cac1ed0401"
+            ]
+        ]
+    },
+    {
+        "id": "6996ef9ac9c8704f",
+        "type": "mongodb4",
+        "z": "ce31de18fd4f4005",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "categories",
+        "operation": "updateOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": true,
+        "name": "",
+        "x": 1250,
+        "y": 280,
+        "wires": [
+            [
+                "3b8d76a699667744"
+            ]
+        ]
+    },
+    {
+        "id": "08a61e2f6e727fba",
+        "type": "http in",
+        "z": "ce31de18fd4f4005",
+        "name": "",
+        "url": "/categories",
+        "method": "get",
+        "upload": false,
+        "skipBodyParsing": false,
+        "swaggerDoc": "",
+        "x": 140,
+        "y": 120,
+        "wires": [
+            [
+                "9b21e563bcc9ad0b"
+            ]
+        ]
+    },
+    {
+        "id": "ca6087eeac820f68",
+        "type": "http response",
+        "z": "ce31de18fd4f4005",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 810,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "bcd158a93b8de50f",
+        "type": "function",
+        "z": "ce31de18fd4f4005",
+        "name": "function 4",
+        "func": "msg.payload = [] ;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 120,
+        "wires": [
+            [
+                "c005219d393b46dc"
+            ]
+        ]
+    },
+    {
+        "id": "c005219d393b46dc",
+        "type": "mongodb4",
+        "z": "ce31de18fd4f4005",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "categories",
+        "operation": "aggregate",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": false,
+        "name": "",
+        "x": 660,
+        "y": 120,
+        "wires": [
+            [
+                "ca6087eeac820f68"
+            ]
+        ]
+    },
+    {
+        "id": "9b21e563bcc9ad0b",
+        "type": "subflow:9357c048778312fb",
+        "z": "ce31de18fd4f4005",
+        "name": "",
+        "x": 330,
+        "y": 120,
+        "wires": [
+            [
+                "bcd158a93b8de50f"
+            ]
+        ]
+    },
+    {
+        "id": "32deda87e3d60747",
+        "type": "link out",
+        "z": "ce31de18fd4f4005",
+        "name": "link out 10",
+        "mode": "link",
+        "links": [
+            "c5f4d0120c89df7e"
+        ],
+        "x": 655,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "254d8fb0f8e86f22",
+        "type": "mongodb4",
+        "z": "ce31de18fd4f4005",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "categories",
+        "operation": "insertOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": true,
+        "name": "",
+        "x": 880,
+        "y": 240,
+        "wires": [
+            [
+                "4ee1a87518e79ddc"
+            ]
+        ]
+    },
+    {
+        "id": "6a93a54accf53b71",
+        "type": "function",
+        "z": "ce31de18fd4f4005",
+        "name": "function 2",
+        "func": "// ---- function 2 (Outputs: 2) ----\n// OUT1 -> insertOne   |   OUT2 -> findOne\nconst type = (msg.req?.params?.type || \"\").trim();\nconst body = (msg.payload && typeof msg.payload === \"object\")\n  ? msg.payload\n  : (msg.req?.body || {});\n\nmsg.formData = body;\n\nif (type === \"add\") {\n  const name = (body.name || \"\").trim();\n  if (!name) {\n    msg.error = { message: \"Kategori adı zorunlu.\" };\n    return [null, null]; // HATA\n  }\n  msg.payload = { name };\n  return [msg, null]; // -> insertOne\n}\n\n// update | trash: önce findOne\nconst id = (body.id || body._id || \"\").toString().trim();\nif (!id) {\n  msg.error = { message: \"id geçersiz.\" };\n  return [null, null]; // HATA\n}\n\nmsg.payload = { _id: id };\nreturn [null, msg]; // -> findOne\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 280,
+        "wires": [
+            [
+                "254d8fb0f8e86f22"
+            ],
+            [
+                "1d5518f3b2714e92"
+            ]
+        ]
+    },
+    {
+        "id": "7ef91cb0c74bc108",
+        "type": "function",
+        "z": "ce31de18fd4f4005",
+        "name": "kategoriIslemleri",
+        "func": "// kategoriIslemleri  (Outputs: 2)\n// OUT1 -> mongodb (update/delete) | OUT2 -> http error\nconst type = (msg.req?.params?.type || \"\").trim();\nconst user = msg.user || {};\n\n// findOne çıktısını normalize et\nconst doc = Array.isArray(msg.payload) ? msg.payload[0] : msg.payload;\nif (!doc) {\n  msg.error = { message: \"id ile eşleşen bir kayıt bulunamadı\" };\n  return [null, null];\n}\n\n// basit yetki\nconst isAdmin = Array.isArray(user.roles) && user.roles.includes(\"admin\");\nif (doc?.stamp?.username && user?.username && doc.stamp.username !== user.username && !isAdmin) {\n  msg.error = { message: \"Yetkisiz işlem.\" };\n  return [null, null];\n}\n\nconst body = msg.formData || {};\nconst _id = doc?._id || body.id;\nif (!_id) {\n  msg.error = { message: \"Geçersiz id.\" };\n  return [null, null];\n}\n\nif (type === \"update\") {\n  const newName  = (body.name || \"\").trim();\n  const origName = (body.orig || \"\").trim();\n\n  if (!newName) {\n    msg.error = { message: \"Kategori adı boş olamaz.\" };\n    return [null, null];\n  }\n  if (newName === origName) {\n    msg.error = { message: \"Herhangi bir değişiklik yapmadınız.\" };\n    return [null, null];\n  }\n\n  msg.payload   = [{ _id }, { $set: { name: newName } }];\n  return [msg, null];\n}\n\nif (type === \"trash\") {\n  msg.payload   = { _id };\n  return [null, msg];\n}\n\nmsg.error = { message: \"Desteklenmeyen işlem.\" };\nreturn [null, null];\n",
+        "outputs": 2,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1060,
+        "y": 320,
+        "wires": [
+            [
+                "6996ef9ac9c8704f"
+            ],
+            [
+                "450dd7912061bfa5"
+            ]
+        ]
+    },
+    {
+        "id": "450dd7912061bfa5",
+        "type": "mongodb4",
+        "z": "ce31de18fd4f4005",
+        "clientNode": "071adb762f609302",
+        "mode": "collection",
+        "collection": "categories",
+        "operation": "deleteOne",
+        "output": "toArray",
+        "maxTimeMS": "0",
+        "handleDocId": true,
+        "name": "",
+        "x": 1250,
+        "y": 360,
+        "wires": [
+            [
+                "3b8d76a699667744"
+            ]
+        ]
+    },
+    {
+        "id": "3b8d76a699667744",
+        "type": "http response",
+        "z": "ce31de18fd4f4005",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 1430,
         "y": 320,
         "wires": []
     },
@@ -2564,7 +2584,7 @@
         "inputs": 1,
         "hasButton": false,
         "x": 180,
-        "y": 440,
+        "y": 420,
         "wires": [
             [
                 "d6134361a15b1330"
@@ -2593,7 +2613,7 @@
         "payload": "{}",
         "payloadType": "json",
         "x": 130,
-        "y": 340,
+        "y": 320,
         "wires": [
             [
                 "4957ed9e50014e41"
@@ -2614,7 +2634,7 @@
         "name": "",
         "dname": "",
         "x": 810,
-        "y": 440,
+        "y": 420,
         "wires": []
     },
     {
@@ -2630,7 +2650,7 @@
         "finalize": "",
         "libs": [],
         "x": 500,
-        "y": 440,
+        "y": 420,
         "wires": [
             [
                 "1e3410a2c0801097"
@@ -2649,7 +2669,7 @@
         "template": "<p>{{todo.name}} işi için hatırlatma.</p>\n\n{{#todo.schedule.formData.note}}\n  <p style=\"white-space:pre-wrap;\"><strong>Not:</strong> {{{todo.schedule.formData.note}}}</p>\n{{/todo.schedule.formData.note}}\n{{^todo.schedule.formData.note}}\n  {{#todo.lastNote}}\n    <p style=\"white-space:pre-wrap;\"><strong>Not:</strong> {{{todo.lastNote}}}</p>\n  {{/todo.lastNote}}\n{{/todo.schedule.formData.note}}\n",
         "output": "str",
         "x": 660,
-        "y": 440,
+        "y": 420,
         "wires": [
             [
                 "6deb06d96837b126"
@@ -2667,7 +2687,7 @@
             "c85f8a5a8f2e81bc"
         ],
         "x": 65,
-        "y": 440,
+        "y": 420,
         "wires": [
             [
                 "463e1db29a4e8833"
@@ -2684,7 +2704,7 @@
             "18dc3105a4edec0c"
         ],
         "x": 775,
-        "y": 340,
+        "y": 320,
         "wires": []
     },
     {
@@ -2700,7 +2720,7 @@
         "finalize": "",
         "libs": [],
         "x": 340,
-        "y": 440,
+        "y": 420,
         "wires": [
             [
                 "0b9f34182300bc33"
@@ -2724,7 +2744,7 @@
         "onceDelay": "0.2",
         "topic": "",
         "x": 130,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "a812e4a7bdb7b2cc"
@@ -2744,7 +2764,7 @@
         "handleDocId": false,
         "name": "",
         "x": 840,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "6d730899a4d541dd"
@@ -2764,7 +2784,7 @@
         "handleDocId": false,
         "name": "",
         "x": 480,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "42e20be815dfa074"
@@ -2784,7 +2804,7 @@
         "finalize": "",
         "libs": [],
         "x": 300,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "a15711b91a686a0d"
@@ -2804,7 +2824,7 @@
         "finalize": "",
         "libs": [],
         "x": 660,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
                 "b50b71bef2ac91e5"
@@ -2824,7 +2844,7 @@
         "handleDocId": false,
         "name": "",
         "x": 450,
-        "y": 340,
+        "y": 320,
         "wires": [
             [
                 "f81c142f4742637a"
@@ -2844,7 +2864,7 @@
         "finalize": "",
         "libs": [],
         "x": 290,
-        "y": 340,
+        "y": 320,
         "wires": [
             [
                 "193b96b36f8bb8a4"
@@ -2864,7 +2884,7 @@
         "finalize": "",
         "libs": [],
         "x": 630,
-        "y": 340,
+        "y": 320,
         "wires": [
             [
                 "dcacbd7ada1430a0"
@@ -2888,7 +2908,7 @@
         "onceDelay": "0.2",
         "topic": "",
         "x": 130,
-        "y": 240,
+        "y": 220,
         "wires": [
             [
                 "9105942e3472c470"
@@ -2909,7 +2929,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 1000,
-        "y": 140,
+        "y": 120,
         "wires": []
     },
     {
@@ -2925,7 +2945,7 @@
         "handleDocId": false,
         "name": "",
         "x": 810,
-        "y": 240,
+        "y": 220,
         "wires": [
             [
                 "818b6de1786b5082"
@@ -2945,7 +2965,7 @@
         "finalize": "",
         "libs": [],
         "x": 630,
-        "y": 240,
+        "y": 220,
         "wires": [
             [
                 "4ea6a2624de56531"
@@ -2965,8 +2985,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1000,
-        "y": 240,
+        "x": 980,
+        "y": 220,
         "wires": []
     },
     {
@@ -2982,7 +3002,7 @@
         "handleDocId": false,
         "name": "",
         "x": 470,
-        "y": 240,
+        "y": 220,
         "wires": [
             [
                 "158e65610cc8457c"
@@ -3002,7 +3022,7 @@
         "finalize": "",
         "libs": [],
         "x": 300,
-        "y": 240,
+        "y": 220,
         "wires": [
             [
                 "5bda306b9b8fe551"
